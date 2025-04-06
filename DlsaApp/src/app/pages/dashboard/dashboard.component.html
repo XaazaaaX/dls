@@ -1,0 +1,48 @@
+<app-navbar></app-navbar>
+
+<p>Sie haben folgende Rolle: {{ test }}</p>
+
+<router-outlet></router-outlet>
+
+
+
+<!--
+<div class="h-screen flex flex-col">
+    <p-menubar class="bg-blue-600 text-white p-4 flex justify-between">
+      <ng-template pTemplate="start">
+        <button pButton icon="pi pi-bars" class="p-button-text" (click)="toggleSidebar()"></button>
+      </ng-template>
+      <ng-template pTemplate="end">
+        <button pButton label="Logout" icon="pi pi-sign-out" class="p-button-danger" (click)="logout()"></button>
+      </ng-template>
+    </p-menubar>
+    
+    <div class="flex flex-1">
+      <p-panelMenu class="w-64 bg-gray-800 text-white p-4" [model]="menuItems" *ngIf="sidebarVisible"></p-panelMenu>
+      
+      <div class="flex-1 p-6 bg-gray-100">
+        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        <div class="grid grid-cols-3 gap-4 mt-4">
+          <p-card class="shadow-lg p-4">
+            <ng-template pTemplate="header">Benutzer</ng-template>
+            <ng-template pTemplate="content">
+              <p>Verwalte Benutzerkonten</p>
+            </ng-template>
+          </p-card>
+          <p-card class="shadow-lg p-4">
+            <ng-template pTemplate="header">Einstellungen</ng-template>
+            <ng-template pTemplate="content">
+              <p>Admin-Einstellungen anpassen</p>
+            </ng-template>
+          </p-card>
+          <p-card class="shadow-lg p-4">
+            <ng-template pTemplate="header">Berichte</ng-template>
+            <ng-template pTemplate="content">
+              <p>Analysen und Berichte anzeigen</p>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
+-->
