@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -56,7 +56,9 @@ interface ExportColumn {
         InputIconModule,
         IconFieldModule,
         ConfirmDialogModule,
-        ToggleSwitchModule
+        ToggleSwitchModule,
+        ReactiveFormsModule
+
     ],
     template: `
         <p-toolbar styleClass="mb-6">
@@ -80,8 +82,8 @@ interface ExportColumn {
             [rowsPerPageOptions]="[10, 20, 30]"
         >
             <ng-template #caption>
-                <div class="flex items-center justify-between">
-                    <h5 class="m-0">Benutzerverwaltung</h5>
+                <div class="flex flex-wrap items-center justify-between">
+                    <h4 class="m-0">Benutzerverwaltung</h4>
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
                         <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
@@ -131,20 +133,23 @@ interface ExportColumn {
             </ng-template>
         </p-table>
 
+
+
+
         <p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" header="Benutzerdetails" [modal]="true">
             <ng-template #content>
                 <div class="flex flex-col gap-6">
 
                     <div>
                         <label for="username" class="block font-bold mb-3">Benutzername</label>
-                        <input type="text" pInputText id="username" [(ngModel)]="user.username" required autofocus fluid />
+                        <input type="text" pInputText id="username" [(ngModel)]="user.username" [disabled]="isEdit"  required autofocus fluid />
                         <small class="text-red-500" *ngIf="submitted && !user.username">Benutzername ist erforderlich!</small>
                     </div>
 
                     <div>
                         <label for="password" class="block font-bold mb-3">Passwort</label>
                         <input type="text" pInputText id="password" [(ngModel)]="user.password" required autofocus fluid />
-                        <small class="text-red-500" *ngIf="submitted && !user.password">Passwort ist erforderlich!</small>
+                        <small class="text-red-500" *ngIf="submitted && !user.password && !isEdit">Passwort ist erforderlich!</small>
                     </div>
 
                     <div>
@@ -171,6 +176,10 @@ interface ExportColumn {
             </ng-template>
         </p-dialog>
 
+
+
+
+
         <p-confirmdialog [style]="{ width: '450px' }" />
 
         <p-toast />
@@ -180,6 +189,7 @@ interface ExportColumn {
 export class UserComponent implements OnInit {
 
     checked: boolean = false;
+    isEdit: boolean = false;
 
     userDialog: boolean = false;
 
@@ -207,6 +217,12 @@ export class UserComponent implements OnInit {
     ngOnInit() {
         this.loadUserData();
     }
+
+    onSubmit(form: any) {
+        if (form.valid) {
+          console.log('Form Submitted!', form.value);
+        }
+      }
 
     loadUserData() {
         this.userService.getAllUsers().subscribe({
@@ -245,6 +261,7 @@ export class UserComponent implements OnInit {
     editUser(user: User) {
         this.user = { ...user };
         this.userDialog = true;
+        this.isEdit = true;
     }
 
     hideDialog() {
@@ -253,8 +270,6 @@ export class UserComponent implements OnInit {
     }
 
     deleteUser(user: User) {
-
-
 
         this.confirmationService.confirm({
             message: 'Soll der Benutzer "' + user.username + '" wirklich gelöscht werden?',
@@ -274,13 +289,7 @@ export class UserComponent implements OnInit {
                 this.userService.deleteUser(user.id).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich gelöscht!" });
-                        /*this.users.set([...this.users(), ...data]);
-                        this.userDialog = false;
-                        this.user = {
-                            role: {}
-                        };
-                        */
-
+                        
                         this.users.set(this.users().filter((val) => val.id !== user.id));
                         this.user = {
                             role: {}
@@ -298,20 +307,56 @@ export class UserComponent implements OnInit {
     }
 
     saveUser() {
+
         this.submitted = true;
 
-        this.userService.createUsers([this.user]).subscribe({
-            next: (data) => {
-                this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich angelegt!" });
-                this.users.set([...this.users(), ...data]);
-                this.userDialog = false;
-                this.user = {
-                    role: {}
-                };
-            },
-            error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+        if (this.isEdit) {
+
+            if(this.user.username && this.user.role.rolename){
+                this.userService.updateUser(this.user).subscribe({
+                    next: (data) => {
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
+
+                        const currentUsers = this.users();
+                        const _users = currentUsers.map(user => 
+                        user.id === data.id ? { ...user, ...data } : user
+                        );
+                        
+                        // Aktualisiere das signal mit den neuen Benutzerdaten
+                        this.users.set(_users);
+        
+                        //this.users.set([...this.users(), ...data]);
+                        this.userDialog = false;
+                        this.user = {
+                            role: {}
+                        };
+                    },
+                    error: (err) => {
+                        this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                    }
+                });
             }
-        });
+
+            this.isEdit = false;
+
+        } else {
+
+            if(this.user.username && this.user.password && this.user.role.rolename){
+                this.userService.createUsers([this.user]).subscribe({
+                    next: (data) => {
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich angelegt!" });
+        
+                        this.users.set([...this.users(), ...data]);
+                        this.userDialog = false;
+                        this.user = {
+                            role: {}
+                        };
+                    },
+                    error: (err) => {
+                        this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                    }
+                });
+            }
+        }
     }
 }

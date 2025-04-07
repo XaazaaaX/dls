@@ -32,41 +32,41 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-            errorDetail.setProperty("description", "The username or password is incorrect");
+            errorDetail.setProperty("description", "Der Benutzername oder das Passwort ist falsch!");
 
             return errorDetail;
         }
 
         if (exception instanceof DataIntegrityViolationException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
-            errorDetail.setProperty("description", "The username is already used");
+            errorDetail.setProperty("description", "Der Benutzername wird bereits verwendet!");
 
             return errorDetail;
         }
 
-        if (exception instanceof AccountStatusException) {
+        if (exception instanceof AccountStatusException || exception instanceof UserDeactivatedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The account is locked");
+            errorDetail.setProperty("description", "Das Konto ist gesperrt!");
         }
 
         if (exception instanceof AccessDeniedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "You are not authorized to access this resource");
+            errorDetail.setProperty("description", "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen!");
         }
 
         if (exception instanceof SignatureException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT signature is invalid");
+            errorDetail.setProperty("description", "Der JWT ist ungültig!");
         }
 
         if (exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT token has expired");
+            errorDetail.setProperty("description", "Der JWT ist abgelaufen!");
         }
 
         if (errorDetail == null) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
-            errorDetail.setProperty("description", "Unknown internal server error.");
+            errorDetail.setProperty("description", "Unbekannter interner Serverfehler!");
         }
 
         return errorDetail;

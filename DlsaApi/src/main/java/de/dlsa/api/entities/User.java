@@ -19,7 +19,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, name = "id")
-    private Integer user_id;
+    private Long id;
 
     @Column(nullable = false, unique = true, name = "benutzername")
     private String username;
@@ -39,8 +39,8 @@ public class User implements UserDetails {
      *
      * @return Gibt den Wert aus dem Attribut "id" zurück
      */
-    public Integer getId() {
-        return user_id;
+    public Long getId() {
+        return id;
     }
 
     /**

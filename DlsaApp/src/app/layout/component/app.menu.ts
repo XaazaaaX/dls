@@ -56,7 +56,7 @@ export class AppMenu {
                 label: 'Sonstiges',
                 visible: this.isGuest,
                 items: [
-                    { label: 'Einstellungen', icon: 'pi pi-fw pi-cog', routerLink: ['/'], visible: this.isAdmin},
+                    { label: 'Einstellungen', icon: 'pi pi-fw pi-cog', routerLink: ['/dashboard/settings'], visible: this.isAdmin},
                     { label: 'Historie', icon: 'pi pi-fw pi-history', routerLink: ['/'], visible: this.isUser },
                     { label: 'Dokumentation', icon: 'pi pi-fw pi-book', routerLink: ['/dashboard/documentation'], visible: this.isGuest }
                 ]

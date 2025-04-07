@@ -1,6 +1,8 @@
 package de.dlsa.api.config;
 
+import de.dlsa.api.entities.User;
 import de.dlsa.api.repositories.UserRepository;
+import de.dlsa.api.responses.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -90,6 +92,16 @@ public class ApplicationConfiguration {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
+
+        /*
+        modelMapper.typeMap(User.class, UserResponse.class)
+                .addMapping(src -> src.getRole().getRolename(), UserResponse::setRolename);
+
+         */
+
+        /*modelMapper.typeMap(UserResponse.class, User.class)
+                .addMapping(UserResponse::getRolename, src -> src.getRole().setRolename());
+           */
 
         return modelMapper;
     }

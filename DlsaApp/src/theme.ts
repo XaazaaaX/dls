@@ -13,6 +13,7 @@ const Noir = definePreset(Aura, {
             600: '{zinc.600}',
             700: '{zinc.700}',
             800: '{zinc.800}',
+            850: '{zinc.850}',
             900: '{zinc.900}',
             950: '{zinc.950}'
         },
@@ -21,8 +22,8 @@ const Noir = definePreset(Aura, {
                 primary: {
                     color: '{zinc.950}',
                     inverseColor: '#ffffff',
-                    hoverColor: '{zinc.900}',
-                    activeColor: '{zinc.800}'
+                    hoverColor: '{zinc.800}',
+                    activeColor: '{zinc.700}'
                 },
                 highlight: {
                     background: '{zinc.950}',

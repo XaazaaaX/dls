@@ -1,8 +1,8 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.dtos.RegisterUserDto;
 import de.dlsa.api.dtos.LoginUserDto;
 import de.dlsa.api.entities.User;
+import de.dlsa.api.exceptions.UserDeactivatedException;
 import de.dlsa.api.repositories.UserRepository;
 import de.dlsa.api.responses.AuthResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,7 +48,7 @@ public class AuthenticationService {
      * @param input Zu registrierender User (RegisterUserDto)
      * @return Rückgabe eines gültigen JWT zur Nutzung der geschützten Endpunkte der API
      */
-    public AuthResponse register(RegisterUserDto input) {
+    /*public AuthResponse register(RegisterUserDto input) {
         User user = new User()
                 .setUsername(input.getUsername())
                 .setPassword(passwordEncoder.encode(input.getPassword()));
@@ -66,7 +66,7 @@ public class AuthenticationService {
         User dbUser = userRepository.findByUsername(input.getUsername()).orElseThrow();
 
         return handleJwt(dbUser);
-    }
+    }*/
 
     /**
      * Prüft die Credentials eines registrierten Users
@@ -74,7 +74,7 @@ public class AuthenticationService {
      * @param input Einzulogender User (LoginUserDto)
      * @return Rückgabe eines gültigen JWT zur Nutzung der geschützten Endpunkte der API
      */
-    public AuthResponse login(LoginUserDto input) {
+    public AuthResponse login(LoginUserDto input) throws UserDeactivatedException {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -84,6 +84,10 @@ public class AuthenticationService {
         );
 
         User user = userRepository.findByUsername(input.getUsername()).orElseThrow();
+
+        if (!user.getActive()){
+            throw new UserDeactivatedException();
+        }
 
         return handleJwt(user);
     }

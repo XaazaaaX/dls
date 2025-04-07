@@ -8,6 +8,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AppLayout } from './layout/component/app.layout';
 import { DocumentationComponent } from './pages/miscellaneous/documentation.component';
 import { UserComponent } from './pages/adminsitration/user.component';
+import { SettingsComponent } from './pages/miscellaneous/settings.component';
 
 /*canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast']*/
 
@@ -19,6 +20,7 @@ export const routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' as 'full' },
       { path: 'home', component: HomeComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } },
       { path: 'user', component: UserComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
+      { path: 'settings', component: SettingsComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'documentation', component: DocumentationComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } }
     ]
   },

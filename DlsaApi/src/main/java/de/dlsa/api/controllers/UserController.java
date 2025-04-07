@@ -1,10 +1,8 @@
 package de.dlsa.api.controllers;
 
-import de.dlsa.api.dtos.LoginUserDto;
-import de.dlsa.api.dtos.RegisterUserDto;
+import de.dlsa.api.dtos.UserDto;
 import de.dlsa.api.entities.User;
-import de.dlsa.api.responses.AuthResponse;
-import de.dlsa.api.services.AuthenticationService;
+import de.dlsa.api.responses.UserResponse;
 import de.dlsa.api.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +22,13 @@ public class UserController {
 
     //GET /api/users
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // POST /api/users
     @PostMapping
-    public ResponseEntity<List<User>> createUser(@RequestBody List<User> users) {
+    public ResponseEntity<List<User>> createUser(@RequestBody List<UserDto> users) {
         List<User> created = userService.createUser(users);
         return ResponseEntity.ok(created);
     }
@@ -38,14 +36,14 @@ public class UserController {
 
     // PUT /api/users/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User userDetails) {
-        User updated = userService.updateUser(id, userDetails);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable long id, @RequestBody UserDto userDetails) {
+        UserResponse updated = userService.updateUser(id, userDetails);
         return ResponseEntity.ok(updated);
     }
 
     // DELETE /api/users/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

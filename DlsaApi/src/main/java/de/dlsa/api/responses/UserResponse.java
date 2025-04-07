@@ -1,5 +1,13 @@
 package de.dlsa.api.responses;
 
+import de.dlsa.api.entities.Role;
+import de.dlsa.api.entities.User;
+import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Klasse zur Darstellung einer User Response bei Rückgabe aus der Level-Anfrage des UserControllers
  *
@@ -7,52 +15,20 @@ package de.dlsa.api.responses;
  * @version  01/2024
  */
 public class UserResponse {
-
-    private int id;
+    private Integer id;
 
     private String username;
 
-    private int level;
+    private boolean active;
 
-    /**
-     * Setter für die User-Id
-     *
-     * @param userId Id des Users
-     * @return Gibt die aktuelle Instanz der Klasse zurück
-     */
-    public UserResponse setId(int userId) {
-        this.id = userId;
-        return this;
-    }
-
-    /**
-     * Setter für den Username
-     *
-     * @param username Name des Users
-     * @return Gibt die aktuelle Instanz der Klasse zurück
-     */
-    public UserResponse setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    /**
-     * Setter für das User-Level
-     *
-     * @param level Userlevel
-     * @return Gibt die aktuelle Instanz der Klasse zurück
-     */
-    public UserResponse setLevel(int level) {
-        this.level = level;
-        return this;
-    }
+    private Role role;
 
     /**
      * Getter für das User-Id
      *
      * @return Gibt den Wert aus dem Attribut "id" zurück
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -65,12 +41,36 @@ public class UserResponse {
         return username;
     }
 
+    public UserResponse setId(Integer id) {
+        this.id = id;
+        return this;
+    }
     /**
-     * Getter für das User-Level
+     * Setter für den Username
      *
-     * @return Gibt den Wert aus dem Attribut "level" zurück
+     * @param username Name des Users
+     * @return Gibt die aktuelle Instanz der Klasse zurück
      */
-    public int getLevel() {
-        return level;
+    public UserResponse setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public UserResponse setActive(Boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public UserResponse setRole(Role role) {
+        this.role = role;
+        return this;
     }
 }

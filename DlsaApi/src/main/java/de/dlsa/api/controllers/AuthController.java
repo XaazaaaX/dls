@@ -1,19 +1,11 @@
 package de.dlsa.api.controllers;
 
 import de.dlsa.api.dtos.LoginUserDto;
-import de.dlsa.api.dtos.RegisterUserDto;
+import de.dlsa.api.exceptions.UserDeactivatedException;
 import de.dlsa.api.responses.AuthResponse;
 import de.dlsa.api.services.AuthenticationService;
-import jakarta.validation.constraints.Null;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
 
 /**
  * Verarbeitung von Anfragen für die Registrierung oder Anmeldung eines Users
@@ -56,7 +48,7 @@ public class AuthController {
      * @return Rückgabe eines gültigen JWT zur Nutzung der geschützten Endpunkte der API
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginUserDto loginUserDto) throws UserDeactivatedException {
         return ResponseEntity.ok(authenticationService.login(loginUserDto));
     }
 }
