@@ -8,7 +8,7 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, name = "id")
-    private Long role_id;
+    private Long id;
 
     @Column(name = "rollenname")
     private String rolename;
@@ -17,7 +17,8 @@ public class Role {
         return rolename;
     }
 
-    public void setRolename(String rolename) {
+    public Role setRolename(String rolename) {
         this.rolename = rolename;
+        return this;
     }
 }

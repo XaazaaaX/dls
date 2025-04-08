@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud',
+    selector: 'app-user',
     standalone: true,
     imports: [
         CommonModule,
@@ -61,19 +61,19 @@ interface ExportColumn {
 
     ],
     template: `
-        <p-toolbar styleClass="mb-6">
+        <!--<p-toolbar styleClass="mb-6">
             <ng-template #start>
-                <p-button label="Hinzufügen" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+                <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2" (onClick)="openNew()" />
             </ng-template>
-        </p-toolbar>
+        </p-toolbar>-->
 
-        <p-table
+       <div class="card">
+ <p-table
             #dt
             [value]="users()"
             [rows]="10"
             [paginator]="true"
             [globalFilterFields]="['username', 'role.rolename', 'active']"
-            [tableStyle]="{ 'min-width': '75rem' }"
             [(selection)]="selectedProducts"
             [rowHover]="true"
             dataKey="id"
@@ -84,10 +84,14 @@ interface ExportColumn {
             <ng-template #caption>
                 <div class="flex flex-wrap items-center justify-between">
                     <h4 class="m-0">Benutzerverwaltung</h4>
+                    <div class="flex flex-wrap items-center justify-between">
+                    <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2" (onClick)="openNew()" />
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
                         <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
                     </p-iconfield>
+                    </div>
+                    
                 </div>
             </ng-template>
 
@@ -107,14 +111,14 @@ interface ExportColumn {
                         <p-sortIcon field="active" />
                     </th>
                     
-                    <th style="min-width: 12rem">Optionen</th>
+                    <th>Optionen</th>
                 </tr>
             </ng-template>
 
 
             <ng-template #body let-user>
                 <tr>
-                    <td style="min-width: 12rem">{{ user.username }}</td>
+                    <td style="width: auto; min-width: 12rem">{{ user.username }}</td>
                     <td>{{ user.role.rolename }}</td>
 
                     <td>
@@ -125,13 +129,14 @@ interface ExportColumn {
                     }
                     </td>
 
-                    <td style="width: auto">
+                    <td style="width: 10%; min-width: 8rem">
                         <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editUser(user)" />
                         <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteUser(user)" />
                     </td>
                 </tr>
             </ng-template>
         </p-table>
+       </div>
 
 
 
@@ -217,12 +222,6 @@ export class UserComponent implements OnInit {
     ngOnInit() {
         this.loadUserData();
     }
-
-    onSubmit(form: any) {
-        if (form.valid) {
-          console.log('Form Submitted!', form.value);
-        }
-      }
 
     loadUserData() {
         this.userService.getAllUsers().subscribe({

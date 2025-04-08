@@ -1,15 +1,13 @@
 package de.dlsa.api.config;
 
-import de.dlsa.api.entities.Role;
-import de.dlsa.api.entities.Settings;
-import de.dlsa.api.entities.User;
-import de.dlsa.api.repositories.RoleRepository;
-import de.dlsa.api.repositories.SettingsRepository;
-import de.dlsa.api.repositories.UserRepository;
+import de.dlsa.api.entities.*;
+import de.dlsa.api.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -19,15 +17,21 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final SettingsRepository settingsRepository;
+    private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
                            SettingsRepository settingsRepository,
+                           MemberRepository memberRepository,
+                           CategoryRepository categoryRepository,
                            PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.settingsRepository = settingsRepository;
+        this.memberRepository = memberRepository;
+        this.categoryRepository = categoryRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -36,6 +40,7 @@ public class DataInitializer implements CommandLineRunner {
         createRoles();
         createUser();
         createSettings();
+        createMember();
     }
 
     private void createRoles(){
@@ -82,7 +87,7 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("User wurden initialisiert.");
     }
 
-    public void createSettings() {
+    private void createSettings() {
 
         settingsRepository.findOnlySettings()
                 .orElseGet(() -> {
@@ -99,5 +104,41 @@ public class DataInitializer implements CommandLineRunner {
                 });
 
         System.out.println("Einstellungen wurden initialisiert.");
+    }
+
+    private void createMember() {
+
+/*
+        new Member("Sander", "Thorsten", "123456",
+                new SimpleDateFormat("dd.MM.yyyy")
+                        .parse("11.01.2014"), sGroups, sSubjects),
+
+ */
+
+        try {
+            memberRepository.findByMemberId("1111")
+                    .orElseGet(() -> {
+
+                        List<Category> categories = categoryRepository.findAll();
+
+                        Member newMember = new Member()
+                                .setSurname("Mustermann")
+                                .setForename("Max")
+                                .setMemberId("1111")
+                                .setCategories(categories);
+                        try {
+                            newMember.setEntryDate(new SimpleDateFormat("dd.MM.yyyy").parse("11.01.2014"));
+                        } catch (ParseException e) {
+                            throw new RuntimeException("Fehler beim Parsen des Datums", e);
+                        }
+                        return memberRepository.save(newMember);
+                    });
+
+            System.out.println("Mitglied wurde initialisiert.");
+        } catch (Exception e) {
+            System.err.println("Fehler beim Initialisieren des Mitglieds: " + e.getMessage());
+        }
+
+        System.out.println("Member wurden initialisiert.");
     }
 }
