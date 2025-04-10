@@ -16,19 +16,23 @@ public class Group {
     @Column(nullable = false, name = "id")
     private Long id;
 
-    @Column(name = "gruppenname")
+    @Column(name = "gruppenname", unique = true)
     private String groupName;
+
     @Column(name = "befreit")
-    private Boolean liberated = false;
+    private Boolean liberated;
 
     @ManyToMany(mappedBy = "groups")
     private Collection<Member> member = new ArrayList<Member>();
 
-    @OneToOne
-    private BasicGroup basicGroup;
+    public Long getId() {
+        return id;
+    }
 
-    @Transient
-    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    public Group setId(Long id){
+        this.id = id;
+        return this;
+    }
 
     public String getGroupName() {
         return groupName;
@@ -44,10 +48,7 @@ public class Group {
     }
 
     public Group setLiberated(Boolean liberated) {
-        Boolean oldValue = this.liberated;
         this.liberated = liberated;
-        changes.firePropertyChange("Liberated", oldValue,
-                liberated);
         return this;
     }
 
@@ -58,28 +59,5 @@ public class Group {
     public Group setMember(Collection<Member> member) {
         this.member = member;
         return this;
-    }
-
-    public BasicGroup getBasicGroup() {
-        return basicGroup;
-    }
-
-    public Group setBasicGroup(BasicGroup basicGroup) {
-        this.basicGroup = basicGroup;
-        return this;
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        changes.addPropertyChangeListener(l);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener l) {
-        changes.removePropertyChangeListener(l);
-    }
-
-    public void removeAllPropertyChangeListeners() {
-        for (PropertyChangeListener l : changes.getPropertyChangeListeners()) {
-            changes.removePropertyChangeListener(l);
-        }
     }
 }
