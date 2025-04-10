@@ -28,8 +28,8 @@ public class UserController {
 
     // POST /api/users
     @PostMapping
-    public ResponseEntity<List<User>> createUser(@RequestBody List<UserDto> users) {
-        List<User> created = userService.createUser(users);
+    public ResponseEntity<List<UserResponse>> createUser(@RequestBody List<UserDto> users) {
+        List<UserResponse> created = userService.createUser(users);
         return ResponseEntity.ok(created);
     }
 
@@ -47,6 +47,4 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

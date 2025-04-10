@@ -42,7 +42,7 @@ public class UserService {
               .collect(Collectors.toList());
     }
 
-    public List<User> createUser(List<UserDto> users) {
+    public List<UserResponse> createUser(List<UserDto> users) {
 
         List<User> newUser = new ArrayList<>();;
 
@@ -57,7 +57,12 @@ public class UserService {
             newUser.add(modelMapper.map(user, User.class));
         }
 
-        return userRepository.saveAll(newUser);
+        List<User> addedUsers = userRepository.saveAll(newUser);
+
+        return addedUsers.stream()
+                .sorted(Comparator.comparingLong(User::getId))
+                .map(user -> modelMapper.map(user, UserResponse.class))
+                .collect(Collectors.toList());
     }
 
     public UserResponse updateUser(long id, UserDto userDetails) {
