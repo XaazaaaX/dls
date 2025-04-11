@@ -20,10 +20,12 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Category, CategoryService } from '../../services/category.service';
+
+import { Action, ActionDto, ActionService } from '../../services/action.service';
 //import { Product, ProductService } from '../service/product.service';
 
 @Component({
-    selector: 'app-category',
+    selector: 'app-action',
     standalone: true,
     imports: [
         CommonModule,
@@ -53,20 +55,20 @@ import { Category, CategoryService } from '../../services/category.service';
         <div class="card">
 <p-table
             #dt
-            [value]="categories()"
+            [value]="actions()"
             [rows]="10"
             [paginator]="true"
-            [globalFilterFields]="['categoryName']"
+            [globalFilterFields]="['description', 'year', 'contact.surname']"
             [rowHover]="true"
             dataKey="id"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} categories"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} actions"
             [showCurrentPageReport]="true"
             [rowsPerPageOptions]="[10, 20, 30]"
         >
 
         <ng-template #caption>
                 <div class="flex flex-wrap items-center justify-between">
-                    <h4 class="m-0">Spartenverwaltung</h4>
+                    <h4 class="m-0">Aktionsverwaltung</h4>
                     <div class="flex flex-wrap items-center justify-between">
                     <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2" (onClick)="openNew()" />
                     <p-iconfield>
@@ -82,9 +84,19 @@ import { Category, CategoryService } from '../../services/category.service';
 
             <ng-template #header>
                 <tr>
-                    <th pSortableColumn="categoryName">
-                        Spartenbezeichnung
-                        <p-sortIcon field="categoryName" />
+                    <th pSortableColumn="actionDescription">
+                        Beschreibung
+                        <p-sortIcon field="actionDescription" />
+                    </th>
+
+                    <th pSortableColumn="actionYear">
+                        Jahr
+                        <p-sortIcon field="actionYear" />
+                    </th>
+
+                    <th pSortableColumn="actionContact">
+                        Ansprechpartner
+                        <p-sortIcon field="actionContact" />
                     </th>
                     
                     <th>Optionen</th>
@@ -92,12 +104,14 @@ import { Category, CategoryService } from '../../services/category.service';
             </ng-template>
 
 
-            <ng-template #body let-category>
+            <ng-template #body let-action>
                 <tr>
-                    <td style="width: auto; min-width: 5rem;">{{ category.categoryName }}</td>
+                    <td style="width: auto; min-width: 5rem;">{{ action.description }}</td>
+                    <td style="width: auto; min-width: 5rem;">{{ action.year }}</td>
+                    <td style="width: auto; min-width: 5rem;">{{ action.contact.surname }}, {{ action.contact.forename }}</td>
 
                     <td style="width: 10%; min-width: 6rem;">
-                        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editCategory(category)" />
+                        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editAction(action)" />
                     </td>
                 </tr>
             </ng-template>
@@ -107,14 +121,14 @@ import { Category, CategoryService } from '../../services/category.service';
 
 
 
-        <p-dialog [(visible)]="categoryDialog" [style]="{ width: '450px' }" header="Spartendetails" [modal]="true">
+        <p-dialog [(visible)]="actionDialog" [style]="{ width: '450px' }" header="Aktionsdetails" [modal]="true">
             <ng-template #content>
                 <div class="flex flex-col gap-6">
 
                     <div>
                         <label for="categoryName" class="block font-bold mb-3">Spartenbezeichnung</label>
-                        <input type="text" pInputText id="categoryName" [(ngModel)]="category.categoryName"  required autofocus fluid />
-                        <small class="text-red-500" *ngIf="submitted && !category.categoryName">Benutzername ist erforderlich!</small>
+                        <input type="text" pInputText id="categoryName" [(ngModel)]="action.description"  required autofocus fluid />
+                        <small class="text-red-500" *ngIf="submitted && !action.description">Benutzername ist erforderlich!</small>
                     </div>
 
                 </div>
@@ -122,7 +136,7 @@ import { Category, CategoryService } from '../../services/category.service';
 
             <ng-template #footer>
                 <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
-                <p-button label="Speichern" icon="pi pi-check" (click)="saveCategory()" />
+                <p-button label="Speichern" icon="pi pi-check" (click)="saveAction()" />
             </ng-template>
         </p-dialog>
 
@@ -136,15 +150,15 @@ import { Category, CategoryService } from '../../services/category.service';
     `,
     providers: [MessageService, ConfirmationService]
 })
-export class CategoryComponent{
+export class ActionComponent{
 
     isEdit: boolean = false;
-    categoryDialog: boolean = false;
+    actionDialog: boolean = false;
     submitted: boolean = false;
 
-    categories = signal<Category[]>([]);
+    actions = signal<Action[]>([]);
 
-    category!: Category;
+    action!: Action;
 
     @ViewChild('dt') dt!: Table;
 
@@ -152,19 +166,20 @@ export class CategoryComponent{
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private categoryService: CategoryService
+        private actionService: ActionService
     ) {
         
     }
 
     ngOnInit() {
-        this.loadCategories();
+        this.loadActions();
     }
 
-    loadCategories() {
-        this.categoryService.getAllCategories().subscribe({
+    loadActions() {
+        this.actionService.getAllActions().subscribe({
             next: (data) => {
-                this.categories.set(data);
+                console.log(data);
+                this.actions.set(data);
             },
             error: (err) => {
                 this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -172,68 +187,34 @@ export class CategoryComponent{
         });
     }
 
+    
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
     openNew() {
-        this.category = {};
+        this.action = {};
 
         this.submitted = false;
-        this.categoryDialog = true;
+        this.actionDialog = true;
     }
 
-    editCategory(category: Category) {
-        this.category = { ...category };
-        this.categoryDialog = true;
+    editAction(action: Action) {
+        this.action = { ...action };
         this.isEdit = true;
+        this.actionDialog = true;
     }
 
     hideDialog() {
-        this.categoryDialog = false;
+        this.actionDialog = false;
         this.submitted = false;
     }
-
-    
-    /*
-    deleteCategory(category: Category) {
-
-        this.confirmationService.confirm({
-            message: 'Soll die Sparte "' + category.categoryName + '" wirklich gelöscht werden?',
-            header: 'Bestätigen',
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                icon: 'pi pi-times',
-                label: 'Nein',
-                outlined: true,
-            },
-            acceptButtonProps: {
-                icon: 'pi pi-check',
-                label: 'Ja',
-            },
-            accept: () => {
-
-                this.categoryService.deleteCategory(category.id).subscribe({
-                    next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich gelöscht!" });
-                        
-                        this.categories.set(this.categories().filter((val) => val.id !== category.id));
-                        this.category = {};
-                    },
-                    error: (err) => {
-                        this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                    }
-                });
-            }
-        });
-    }
-    */
         
 
 
-    saveCategory() {
+    saveAction() {
 
-        
+        /*
         this.submitted = true;
 
         if (this.isEdit) {
@@ -278,9 +259,9 @@ export class CategoryComponent{
                 });
             }
         }
-            
+             */
     }
-
+   
 
 
     

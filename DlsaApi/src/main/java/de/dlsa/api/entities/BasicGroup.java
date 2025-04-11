@@ -1,3 +1,4 @@
+/*
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
@@ -47,3 +48,4 @@ public class BasicGroup {
     }
 
 }
+*/

@@ -1,8 +1,10 @@
+/*
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 
 import java.util.Date;
+
 
 @Entity
 public class BasicMember {
@@ -60,3 +62,4 @@ public class BasicMember {
         return this;
     }
 }
+*/

@@ -108,13 +108,6 @@ public class DataInitializer implements CommandLineRunner {
 
     private void createMember() {
 
-/*
-        new Member("Sander", "Thorsten", "123456",
-                new SimpleDateFormat("dd.MM.yyyy")
-                        .parse("11.01.2014"), sGroups, sSubjects),
-
- */
-
         try {
             memberRepository.findByMemberId("1111")
                     .orElseGet(() -> {
@@ -134,11 +127,35 @@ public class DataInitializer implements CommandLineRunner {
                         return memberRepository.save(newMember);
                     });
 
-            System.out.println("Mitglied wurde initialisiert.");
+            System.out.println("Mitglied 1111 wurde initialisiert.");
         } catch (Exception e) {
             System.err.println("Fehler beim Initialisieren des Mitglieds: " + e.getMessage());
         }
 
-        System.out.println("Member wurden initialisiert.");
+        try {
+            memberRepository.findByMemberId("2222")
+                    .orElseGet(() -> {
+
+                        List<Category> categories = categoryRepository.findAll();
+
+                        Member newMember = new Member()
+                                .setSurname("Musterfrau")
+                                .setForename("Mina")
+                                .setMemberId("2222")
+                                .setCategories(categories);
+                        try {
+                            newMember.setEntryDate(new SimpleDateFormat("dd.MM.yyyy").parse("11.01.2014"));
+                        } catch (ParseException e) {
+                            throw new RuntimeException("Fehler beim Parsen des Datums", e);
+                        }
+                        return memberRepository.save(newMember);
+                    });
+
+            System.out.println("Mitglied 2222 wurde initialisiert.");
+        } catch (Exception e) {
+            System.err.println("Fehler beim Initialisieren des Mitglieds: " + e.getMessage());
+        }
+
+        System.out.println("Mitglieder wurden initialisiert.");
     }
 }

@@ -19,11 +19,16 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Category, CategoryService } from '../../services/category.service';
-//import { Product, ProductService } from '../service/product.service';
+import { PickListModule } from 'primeng/picklist';
+import { MultiSelectModule } from 'primeng/multiselect';
+
+import { Action, ActionDto, ActionService } from '../../services/action.service';
+import { Group, Sector, SectorDto, SectorService } from '../../services/sector.service';
+import { GroupService } from '../../services/group.service';
+
 
 @Component({
-    selector: 'app-category',
+    selector: 'app-sector',
     standalone: true,
     imports: [
         CommonModule,
@@ -45,28 +50,29 @@ import { Category, CategoryService } from '../../services/category.service';
         IconFieldModule,
         ConfirmDialogModule,
         ToggleSwitchModule,
-        ReactiveFormsModule
-
+        ReactiveFormsModule,
+        PickListModule,
+        MultiSelectModule
     ],
     template: `
 
         <div class="card">
 <p-table
             #dt
-            [value]="categories()"
+            [value]="sectors()"
             [rows]="10"
             [paginator]="true"
-            [globalFilterFields]="['categoryName']"
+            [globalFilterFields]="['asd']"
             [rowHover]="true"
             dataKey="id"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} categories"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} actions"
             [showCurrentPageReport]="true"
             [rowsPerPageOptions]="[10, 20, 30]"
         >
 
         <ng-template #caption>
                 <div class="flex flex-wrap items-center justify-between">
-                    <h4 class="m-0">Spartenverwaltung</h4>
+                    <h4 class="m-0">Bereichsverwaltung</h4>
                     <div class="flex flex-wrap items-center justify-between">
                     <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2" (onClick)="openNew()" />
                     <p-iconfield>
@@ -82,9 +88,10 @@ import { Category, CategoryService } from '../../services/category.service';
 
             <ng-template #header>
                 <tr>
-                    <th pSortableColumn="categoryName">
-                        Spartenbezeichnung
-                        <p-sortIcon field="categoryName" />
+
+                    <th pSortableColumn="actionDescription">
+                        Name
+                        <p-sortIcon field="actionDescription" />
                     </th>
                     
                     <th>Optionen</th>
@@ -92,12 +99,12 @@ import { Category, CategoryService } from '../../services/category.service';
             </ng-template>
 
 
-            <ng-template #body let-category>
+            <ng-template #body let-sector>
                 <tr>
-                    <td style="width: auto; min-width: 5rem;">{{ category.categoryName }}</td>
+                    <td style="width: auto; min-width: 5rem;">{{ sector.sectorname }}</td>
 
                     <td style="width: 10%; min-width: 6rem;">
-                        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editCategory(category)" />
+                        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editSector(sector)" />
                     </td>
                 </tr>
             </ng-template>
@@ -107,22 +114,35 @@ import { Category, CategoryService } from '../../services/category.service';
 
 
 
-        <p-dialog [(visible)]="categoryDialog" [style]="{ width: '450px' }" header="Spartendetails" [modal]="true">
+        <p-dialog [(visible)]="sectorDialog" [style]="{ width: '450px' }" header="Bereichsdetails" [modal]="true">
             <ng-template #content>
                 <div class="flex flex-col gap-6">
 
                     <div>
                         <label for="categoryName" class="block font-bold mb-3">Spartenbezeichnung</label>
-                        <input type="text" pInputText id="categoryName" [(ngModel)]="category.categoryName"  required autofocus fluid />
-                        <small class="text-red-500" *ngIf="submitted && !category.categoryName">Benutzername ist erforderlich!</small>
+                        <input type="text" pInputText id="categoryName" [(ngModel)]="sector.sectorname"  required autofocus fluid />
+                        <small class="text-red-500" *ngIf="submitted && !sector.sectorname">Benutzername ist erforderlich!</small>
                     </div>
+
+                    <div>
+                        <label for="categoryName" class="block font-bold mb-3">Funktionsgruppen</label>
+                        <p-multiselect [options]="groups" appendTo="body" [(ngModel)]="selectedGroups" optionLabel="groupName" optionValue="id" placeholder="Auswählen"  [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} Gruppe(n) ausgewählt!'" fluid />
+                        <small class="text-red-500" *ngIf="submitted && !sector.sectorname">Benutzername ist erforderlich!</small>
+                    </div>
+
+                
+
+
+
+
+
 
                 </div>
             </ng-template>
 
             <ng-template #footer>
                 <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
-                <p-button label="Speichern" icon="pi pi-check" (click)="saveCategory()" />
+                <p-button label="Speichern" icon="pi pi-check" (click)="saveSector()" />
             </ng-template>
         </p-dialog>
 
@@ -136,15 +156,19 @@ import { Category, CategoryService } from '../../services/category.service';
     `,
     providers: [MessageService, ConfirmationService]
 })
-export class CategoryComponent{
+export class SectorComponent{
 
     isEdit: boolean = false;
-    categoryDialog: boolean = false;
+    sectorDialog: boolean = false;
     submitted: boolean = false;
 
-    categories = signal<Category[]>([]);
+    sectors = signal<Sector[]>([]);
 
-    category!: Category;
+    groups: Group[] = [];
+
+    sector!: Sector;
+    selectedGroups!: number[];
+    sectorDto!: SectorDto;
 
     @ViewChild('dt') dt!: Table;
 
@@ -152,19 +176,21 @@ export class CategoryComponent{
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private categoryService: CategoryService
-    ) {
-        
-    }
+        private sectorService: SectorService,
+        private groupService: GroupService
+    ) {}
 
     ngOnInit() {
-        this.loadCategories();
+        this.loadSectors();
+        this.loadGroups();
     }
 
-    loadCategories() {
-        this.categoryService.getAllCategories().subscribe({
+    loadSectors() {
+        this.sectorService.getAllSectors().subscribe({
             next: (data) => {
-                this.categories.set(data);
+                this.sectors.set(data);
+                console.log("Bereiche:");
+                console.log(data);
             },
             error: (err) => {
                 this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -172,68 +198,57 @@ export class CategoryComponent{
         });
     }
 
+    loadGroups() {
+        this.groupService.getAllGroups().subscribe({
+            next: (data) => {
+                this.groups = data;
+                console.log("Gruppen");
+                console.log(data);
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+            }
+        });
+    }
+
+    
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
     openNew() {
-        this.category = {};
+        this.sector = {};
 
         this.submitted = false;
-        this.categoryDialog = true;
+        this.sectorDialog = true;
     }
 
-    editCategory(category: Category) {
-        this.category = { ...category };
-        this.categoryDialog = true;
+    editSector(sector: Sector) {
+        this.sector = { ...sector };
+
+        this.selectedGroups = this.sector.groups!
+        .map(group => group.id)
+        .filter(id => id !== undefined) as number[];
+
         this.isEdit = true;
+        this.sectorDialog = true;
     }
 
     hideDialog() {
-        this.categoryDialog = false;
+        /*
+        this.actionDialog = false;
         this.submitted = false;
+        */
     }
-
-    
-    /*
-    deleteCategory(category: Category) {
-
-        this.confirmationService.confirm({
-            message: 'Soll die Sparte "' + category.categoryName + '" wirklich gelöscht werden?',
-            header: 'Bestätigen',
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                icon: 'pi pi-times',
-                label: 'Nein',
-                outlined: true,
-            },
-            acceptButtonProps: {
-                icon: 'pi pi-check',
-                label: 'Ja',
-            },
-            accept: () => {
-
-                this.categoryService.deleteCategory(category.id).subscribe({
-                    next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich gelöscht!" });
-                        
-                        this.categories.set(this.categories().filter((val) => val.id !== category.id));
-                        this.category = {};
-                    },
-                    error: (err) => {
-                        this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                    }
-                });
-            }
-        });
-    }
-    */
         
 
 
-    saveCategory() {
+    saveSector() {
 
+        console.log(this.selectedGroups);
         
+
+        /*
         this.submitted = true;
 
         if (this.isEdit) {
@@ -278,9 +293,9 @@ export class CategoryComponent{
                 });
             }
         }
-            
+             */
     }
-
+   
 
 
     

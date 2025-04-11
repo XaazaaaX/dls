@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof DataIntegrityViolationException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
-            errorDetail.setProperty("description", "Der Benutzername wird bereits verwendet!");
+            errorDetail.setProperty("description", "Diese Bezeichnung wird bereits verwendet!");
 
             return errorDetail;
         }

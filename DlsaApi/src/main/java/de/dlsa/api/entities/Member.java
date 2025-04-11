@@ -37,17 +37,49 @@ public class Member {
 
     private Boolean aikz = true;
 
-    @OneToOne
+    /*
+    @OneToOne(cascade = CascadeType.ALL)
     private BasicMember basicMember;
+     */
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     private Collection<Group> groups = new ArrayList<Group>();
 
     @ManyToMany()
     private Collection<Category> categories = new ArrayList<Category>();
 
+    /*
     @Transient
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+
+     */
+
+    @PrePersist
+    public void prePersist() {
+
+        /*if (this.basicMember == null) {
+            this.basicMember = new BasicMember()
+                    .setActive(this.active)
+                    .setEntryDate(this.entryDate)
+                    .setLeavingDate(this.leavingDate)
+                    .setMember(this);
+        }
+        */
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Member setId(Long id){
+        this.id = id;
+        return this;
+    }
 
     public String getFullName() {
         return forename + " " + surname;
@@ -96,8 +128,7 @@ public class Member {
     public Member setEntryDate(Date entryDate) {
         Date oldDate = this.entryDate;
         this.entryDate = entryDate;
-        changes.firePropertyChange(MemberColumn.ENTRYDATE.toString(), oldDate,
-                entryDate);
+        //changes.firePropertyChange(MemberColumn.ENTRYDATE.toString(), oldDate,entryDate);
         return this;
     }
 
@@ -108,8 +139,7 @@ public class Member {
     public Member setLeavingDate(Date leavingDate) {
         Date oldDate = this.leavingDate;
         this.leavingDate = leavingDate;
-        changes.firePropertyChange(MemberColumn.LEAVINGDATE.toString(),
-                oldDate, leavingDate);
+        //changes.firePropertyChange(MemberColumn.LEAVINGDATE.toString(),oldDate, leavingDate);
         return this;
     }
 
@@ -120,8 +150,7 @@ public class Member {
     public Member setActive(Boolean active) {
         Boolean oldValue = this.active;
         this.active = active;
-        changes.firePropertyChange(MemberColumn.ACTIVE.toString(), oldValue,
-                active);
+        //changes.firePropertyChange(MemberColumn.ACTIVE.toString(), oldValue,active);
         return this;
     }
 
@@ -132,8 +161,7 @@ public class Member {
     public Member setGroups(Collection<Group> groups) {
         Collection<Group> oldGroups = this.groups;
         this.groups = groups;
-        changes.firePropertyChange(MemberColumn.GROUP.toString(), oldGroups,
-                groups);
+        //changes.firePropertyChange(MemberColumn.GROUP.toString(), oldGroups,groups);
         return this;
     }
 
@@ -173,6 +201,7 @@ public class Member {
         return Period.between(birthLocalDate, dueDate).getYears();
     }
 
+    /*
     public BasicMember getBasicMember() {
         return basicMember;
     }
@@ -180,20 +209,6 @@ public class Member {
     public Member setBasicMember(BasicMember basicMember) {
         this.basicMember = basicMember;
         return this;
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        changes.addPropertyChangeListener(l);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener l) {
-        changes.removePropertyChangeListener(l);
-    }
-
-    public void removeAllPropertyChangeListeners() {
-        for (PropertyChangeListener l : changes.getPropertyChangeListeners()) {
-            changes.removePropertyChangeListener(l);
-        }
     }
 
     public Boolean getAikz() {
@@ -204,6 +219,7 @@ public class Member {
         this.aikz = aikz;
         return this;
     }
+     */
 
 }
 

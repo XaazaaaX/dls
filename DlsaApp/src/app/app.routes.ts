@@ -7,6 +7,8 @@ import { DocumentationComponent } from './pages/miscellaneous/documentation.comp
 import { UserComponent } from './pages/adminsitration/user.component';
 import { SettingsComponent } from './pages/miscellaneous/settings.component';
 import { CategoryComponent } from './pages/adminsitration/category.component';
+import { ActionComponent } from './pages/adminsitration/action.component';
+import { SectorComponent } from './pages/adminsitration/sector.component';
 
 /*canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast']*/
 
@@ -19,6 +21,8 @@ export const routes = [
       //{ path: 'home', component: HomeComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } },
       { path: 'user', component: UserComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'categories', component: CategoryComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
+      { path: 'sectors', component: SectorComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
+      { path: 'actions', component: ActionComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'settings', component: SettingsComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'documentation', component: DocumentationComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } }
     ]
