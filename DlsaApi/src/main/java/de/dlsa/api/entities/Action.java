@@ -14,7 +14,7 @@ public class Action {
     @Column(name = "jahr")
     private String year;
 
-    @Column(name = "beschreibung")
+    @Column(name = "beschreibung", unique = true)
     private String description;
 
     @ManyToOne

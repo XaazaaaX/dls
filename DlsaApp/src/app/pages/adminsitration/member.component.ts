@@ -21,13 +21,16 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DatePickerModule } from 'primeng/datepicker';
 
 import { Sector, SectorDto, SectorService } from '../../services/sector.service';
 import { Group, GroupService } from '../../services/group.service';
+import { Member, MemberDto, MemberService } from '../../services/member.service';
+import { Category, CategoryService } from '../../services/category.service';
 
 
 @Component({
-    selector: 'app-group',
+    selector: 'app-member',
     standalone: true,
     imports: [
         CommonModule,
@@ -51,7 +54,8 @@ import { Group, GroupService } from '../../services/group.service';
         ToggleSwitchModule,
         ReactiveFormsModule,
         PickListModule,
-        MultiSelectModule
+        MultiSelectModule,
+        DatePickerModule
     ],
     templateUrl: `./member.component.html`,
     providers: [MessageService, ConfirmationService]
@@ -59,12 +63,18 @@ import { Group, GroupService } from '../../services/group.service';
 export class MemberComponent{
 
     isEdit: boolean = false;
-    groupDialog: boolean = false;
+    memberDialog: boolean = false;
     submitted: boolean = false;
 
-    groups = signal<Group[]>([]);
+    members = signal<Member[]>([]);
+    member!: Member;
+    memberDto!: MemberDto;
 
-    group!: Group;
+    groups: Group[] = [];
+    categories: Category[] = [];
+
+    selectedGroups!: number[];
+    selectedCategories!: number[];
 
     @ViewChild('dt') dt!: Table;
 
@@ -72,18 +82,45 @@ export class MemberComponent{
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private sectorService: SectorService,
+        private memberService: MemberService,
+        private categoryService: CategoryService,
         private groupService: GroupService
     ) {}
 
     ngOnInit() {
+        this.loadMembers();
         this.loadGroups();
+        this.loadCategories();
+    }
+
+    loadMembers() {
+        this.memberService.getAllMembers().subscribe({
+            next: (data) => {
+                this.members.set(data);
+                console.log(data);
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+            }
+        });
+    }
+
+    loadCategories() {
+        this.categoryService.getAllCategories().subscribe({
+            next: (data) => {
+                this.categories = data;
+                console.log(data);
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+            }
+        });
     }
 
     loadGroups() {
         this.groupService.getAllGroups().subscribe({
             next: (data) => {
-                this.groups.set(data);
+                this.groups = data;
                 console.log(data);
             },
             error: (err) => {
@@ -98,46 +135,77 @@ export class MemberComponent{
     }
 
     openNew() {
-        this.group = {};
+        this.member = {};
+        this.memberDto = {};
         this.submitted = false;
-        this.groupDialog = true;
+        this.isEdit = false;
+        this.memberDialog = true;
     }
 
-    editGroup(group: Group) {
-        this.group = { ...group };
+    editMember(member: Member) {
+        this.member = { ...member };
+
+        this.selectedGroups = this.member.groups!
+        .map(group => group.id)
+        .filter(id => id !== undefined) as number[];
+
+        this.selectedCategories = this.member.categories!
+        .map(category => category.id)
+        .filter(id => id !== undefined) as number[];
+
+        this.member.birthdate ? this.member.birthdate = new Date(this.member.birthdate!) : null;
+        this.member.entryDate ? this.member.entryDate = new Date(this.member.entryDate!) : null;
+        this.member.leavingDate ? this.member.leavingDate = new Date(this.member.leavingDate!) : null;
+
+        this.memberDto = {};
+
         this.isEdit = true;
-        this.groupDialog = true;
+        this.memberDialog = true;
     }
 
     hideDialog() {
-        this.groupDialog = false;
+        this.memberDialog = false;
         this.submitted = false;
+        this.isEdit = false;
     }
         
 
 
-    saveGroup() {
-        /*
+    saveMember() {
+        
         this.submitted = true;
 
         if (this.isEdit) {
 
             
-            if(this.group.groupName){
+            if(this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){
 
-                this.groupService.updateGroup(this.group).subscribe({
+                this.memberDto = {
+                    memberId: this.member.memberId,
+                    surname: this.member.surname,
+                    forename: this.member.forename,
+                    birthdate: this.member.birthdate,
+                    entryDate: this.member.entryDate,
+                    leavingDate: this.member.leavingDate,
+                    active: this.member.active,
+                    groupIds: this.selectedGroups,
+                    categorieIds: this.selectedCategories
+                }
+
+                this.memberService.updateMember(this.memberDto, this.member.id!).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
-                        const currentGroup = this.groups();
-                        const _groups = currentGroup.map(group => 
-                            group.id === data.id ? { ...group, ...data } : group
+                        const currentMember = this.members();
+                        const _members = currentMember.map(member => 
+                            member.id === data.id ? { ...member, ...data } : member
                         );
                         
-                        this.groups.set(_groups);
+                        this.members.set(_members);
         
-                        this.groupDialog = false;
-                        this.group = {};
+                        this.memberDialog = false;
+                        this.member = {};
+                        this.memberDto = {};
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -149,15 +217,27 @@ export class MemberComponent{
             this.isEdit = false;
         } else {
 
-            if(this.group.groupName){
+            if(this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){
 
-                this.groupService.createGroups([this.group]).subscribe({
+                this.memberDto = {
+                    memberId: this.member.memberId,
+                    surname: this.member.surname,
+                    forename: this.member.forename,
+                    birthdate: this.member.birthdate,
+                    entryDate: this.member.entryDate,
+                    active: true,
+                    groupIds: this.selectedGroups,
+                    categorieIds: this.selectedCategories
+                }
+
+                this.memberService.createMembers([this.memberDto]).subscribe({
                     next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Bereich wurde erfolgreich angelegt!" });
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Das Mitglied wurde erfolgreich angelegt!" });
         
-                        this.groups.set([...this.groups(), ...data]);
-                        this.groupDialog = false;
-                        this.group = {};
+                        this.members.set([...this.members(), ...data]);
+                        this.memberDialog = false;
+                        this.member = {};
+                        this.memberDto = {};
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -165,6 +245,6 @@ export class MemberComponent{
                 });
             }
         }
-        */
+        
     }
 }

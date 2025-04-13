@@ -17,7 +17,7 @@ export interface Action {
 }
 
 export interface Contact {
-    memberId?: number;
+    memberId?: string;
     surname?: string;
     forename?: string;
 }
@@ -46,13 +46,11 @@ export class ActionService {
       return this.http.get<Action[]>(this.apiUrl + "/actions", this.getHttpHeader());
   }
 
-  /*
-  createActions(categories: Category[]): Observable<Category[]> {
-    return this.http.post<Category[]>(this.apiUrl + "/sectors", categories, this.getHttpHeader());
+  createActions(actions: ActionDto[]): Observable<Action[]> {
+    return this.http.post<Action[]>(this.apiUrl + "/actions", actions, this.getHttpHeader());
   }
 
-  updateAction(category: Category): Observable<Category> {
-    return this.http.put<Category>(this.apiUrl + "/sectors/" + category.id, category,this.getHttpHeader());
+  updateAction(action: ActionDto, id: number): Observable<Action> {
+    return this.http.put<Action>(this.apiUrl + "/actions/" + id, action,this.getHttpHeader());
   }
-    */
 }

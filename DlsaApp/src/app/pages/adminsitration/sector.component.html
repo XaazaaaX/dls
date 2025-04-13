@@ -1,5 +1,5 @@
 <div class="card">
-    <p-table #dt [value]="sectors()" [rows]="10" [paginator]="true" [globalFilterFields]="['asd']" [rowHover]="true"
+    <p-table #dt [value]="sectors()" [rows]="10" [paginator]="true" [globalFilterFields]="['sectorname']" [rowHover]="true"
         dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Bereichen"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
@@ -54,7 +54,7 @@
         <div class="flex flex-col gap-6">
 
             <div>
-                <label for="sectorName" class="block font-bold mb-3">Bezeichnung</label>
+                <label for="sectorName" class="block font-bold mb-3">Bezeichnung*</label>
                 <input type="text" pInputText id="sectorName" [(ngModel)]="sector.sectorname" required autofocus
                     fluid />
                 <small class="text-red-500" *ngIf="submitted && !sector.sectorname">Bereichsbezeichnung ist

@@ -1,1 +1,159 @@
-member
+<div class="card">
+    <p-table #dt [value]="members()" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['memberId', 'surname', 'forename', 'entryDate']" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="{first} bis {last} von {totalRecords} Bereichen" [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 20, 30]">
+
+        <ng-template #caption>
+            <div class="flex flex-wrap items-center justify-between">
+                <h4 class="m-0">Mitgliederverwaltung</h4>
+                <div class="flex flex-wrap items-center justify-between">
+                    <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2"
+                        (onClick)="openNew()" />
+                    <p-iconfield>
+                        <p-inputicon styleClass="pi pi-search" />
+                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
+                    </p-iconfield>
+                </div>
+
+            </div>
+        </ng-template>
+
+
+
+        <ng-template #header>
+            <tr>
+
+                <th pSortableColumn="memberId">
+                    Mitgliedsnummer
+                    <p-sortIcon field="memberId" />
+                </th>
+
+                <th pSortableColumn="surname">
+                    Nachname
+                    <p-sortIcon field="surname" />
+                </th>
+
+                <th pSortableColumn="forename">
+                    Vorname
+                    <p-sortIcon field="forename" />
+                </th>
+
+                <th pSortableColumn="entryDate">
+                    Eintrittsdatum
+                    <p-sortIcon field="entryDate" />
+                </th>
+
+                <th>Optionen</th>
+            </tr>
+        </ng-template>
+
+
+        <ng-template #body let-member>
+            <tr>
+                <td style="width: auto; min-width: 5rem;">{{ member.memberId }}</td>
+
+                <td style="width: auto; min-width: 5rem;">{{ member.surname }}</td>
+
+                <td style="width: auto; min-width: 5rem;">{{ member.forename }}</td>
+
+                <td style="width: auto; min-width: 5rem;">{{ member.entryDate | date: 'dd.MM.yyyy' }}</td>
+
+                <td style="width: 10%; min-width: 6rem;">
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="editMember(member)" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-dialog [(visible)]="memberDialog" [style]="{ width: '450px' }" header="Mitgliedsdetails" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+
+            <div>
+                <label for="memberId" class="block font-bold mb-3">Mitgliedsnummer*</label>
+                <input type="text" pInputText id="memberId" [(ngModel)]="member.memberId" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !member.memberId">Mitgliedsnummer ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="memberForename" class="block font-bold mb-3">Vorname*</label>
+                <input type="text" pInputText id="memberForename" [(ngModel)]="member.forename" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !member.forename">Vorname ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="memberSurname" class="block font-bold mb-3">Nachname*</label>
+                <input type="text" pInputText id="memberSurname" [(ngModel)]="member.surname" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !member.surname">Nachname ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="memberBirthdate" class="block font-bold mb-3">Geburtstag*</label>
+                <p-datepicker id="memberBirthdate" [(ngModel)]="member.birthdate" dateFormat="dd.mm.yy" required
+                    fluid />
+                <small class="text-red-500" *ngIf="submitted && !member.birthdate">Geburtstag ist
+                    erforderlich!</small>
+            </div>
+
+            <div class="flex flex-wrap gap-6">
+                <div class="flex flex-col grow basis-0">
+                    <label for="memberEntryDate" class="block font-bold mb-3">Eintrittsdatum*</label>
+                    <p-datepicker id="memberEntryDate" appendTo="body" [(ngModel)]="member.entryDate" dateFormat="dd.mm.yy" required
+                        fluid />
+                    <small class="text-red-500" *ngIf="submitted && !member.entryDate">Eintrittsdatum ist
+                        erforderlich!</small>
+                </div>
+                @if(isEdit) {
+                <div class="flex flex-col grow basis-0">
+                    <label for="memberLeavingDate" class="block font-bold mb-3">Austrittsdatum</label>
+                    <p-datepicker id="memberLeavingDate" appendTo="body" [(ngModel)]="member.leavingDate" dateFormat="dd.mm.yy" fluid />
+                </div>
+                }
+            </div>
+
+            @if(isEdit) {
+            <div>
+                <label for="memberActive" class="block font-bold mb-3">Aktiv?</label>
+                <p-toggleswitch id="memberActive" [(ngModel)]="member.active">
+                    <ng-template #handle let-checked="checked">
+                        <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+                    </ng-template>
+                </p-toggleswitch>
+            </div>
+            }
+
+            <div>
+                <label for="memberGroups" class="block font-bold mb-3">Funktionsgruppen</label>
+                <p-multiselect id="memberGroups" [options]="groups" appendTo="body" [(ngModel)]="selectedGroups"
+                    optionLabel="groupName" optionValue="id" placeholder="Auswählen" [maxSelectedLabels]="0"
+                    [selectedItemsLabel]="'{0} Gruppe(n) ausgewählt'" fluid />
+            </div>
+
+            <div>
+                <label for="memberCategories" class="block font-bold mb-3">Sparten</label>
+                <p-multiselect id="memberCategories" [options]="categories" appendTo="body"
+                    [(ngModel)]="selectedCategories" optionLabel="categoryName" optionValue="id" placeholder="Auswählen"
+                    [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} Sparte(n) ausgewählt'" fluid />
+            </div>
+
+
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Speichern" icon="pi pi-check" (click)="saveMember()" />
+    </ng-template>
+</p-dialog>
+
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+
+<p-toast />

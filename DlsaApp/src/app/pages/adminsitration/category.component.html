@@ -1,7 +1,7 @@
 <div class="card">
     <p-table #dt [value]="categories()" [rows]="10" [paginator]="true" [globalFilterFields]="['categoryName']"
         [rowHover]="true" dataKey="id"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} categories"
+        currentPageReportTemplate="{first} bis {last} von {totalRecords} Sparten"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
         <ng-template #caption>
@@ -54,10 +54,10 @@
         <div class="flex flex-col gap-6">
 
             <div>
-                <label for="categoryName" class="block font-bold mb-3">Spartenbezeichnung</label>
+                <label for="categoryName" class="block font-bold mb-3">Bezeichnung*</label>
                 <input type="text" pInputText id="categoryName" [(ngModel)]="category.categoryName" required autofocus
                     fluid />
-                <small class="text-red-500" *ngIf="submitted && !category.categoryName">Benutzername ist
+                <small class="text-red-500" *ngIf="submitted && !category.categoryName">Bezeichnung ist
                     erforderlich!</small>
             </div>
 

@@ -101,6 +101,7 @@ export class GroupComponent{
         this.group = {};
         this.submitted = false;
         this.groupDialog = true;
+        this.isEdit = false;
     }
 
     editGroup(group: Group) {

@@ -1,5 +1,5 @@
 <div class="card">
-    <p-table #dt [value]="groups()" [rows]="10" [paginator]="true" [globalFilterFields]="['asd']" [rowHover]="true"
+    <p-table #dt [value]="groups()" [rows]="10" [paginator]="true" [globalFilterFields]="['groupName', 'liberated']" [rowHover]="true"
         dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Bereichen"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
@@ -23,14 +23,14 @@
         <ng-template #header>
             <tr>
 
-                <th pSortableColumn="actionDescription">
+                <th pSortableColumn="groupName">
                     Bezeichnung
-                    <p-sortIcon field="actionDescription" />
+                    <p-sortIcon field="groupName" />
                 </th>
 
-                <th pSortableColumn="actionDescription">
+                <th pSortableColumn="liberated">
                     DLS-Befreit?
-                    <p-sortIcon field="actionDescription" />
+                    <p-sortIcon field="liberated" />
                 </th>
 
                 <th>Optionen</th>
@@ -67,10 +67,10 @@
         <div class="flex flex-col gap-6">
 
             <div>
-                <label for="groupName" class="block font-bold mb-3">Bezeichnung</label>
+                <label for="groupName" class="block font-bold mb-3">Bezeichnung*</label>
                 <input type="text" pInputText id="groupName" [(ngModel)]="group.groupName" required autofocus
                     fluid />
-                <small class="text-red-500" *ngIf="submitted && !group.groupName">Funktionsgruppenbezeichnung ist
+                <small class="text-red-500" *ngIf="submitted && !group.groupName">Bezeichnung ist
                     erforderlich!</small>
             </div>
 

@@ -1,12 +1,18 @@
 package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.GroupDto;
+import de.dlsa.api.dtos.MemberDto;
+import de.dlsa.api.dtos.SectorDto;
+import de.dlsa.api.entities.Category;
+import de.dlsa.api.entities.Group;
 import de.dlsa.api.entities.Member;
+import de.dlsa.api.entities.Sector;
 import de.dlsa.api.repositories.CategoryRepository;
 import de.dlsa.api.repositories.GroupRepository;
 import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.responses.GroupResponse;
 import de.dlsa.api.responses.MemberResponse;
+import de.dlsa.api.responses.SectorResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -42,43 +48,79 @@ public class MemberService {
                 .collect(Collectors.toList());
     }
 
-    /*
-    public List<GroupResponse> createGroups(List<GroupDto> groups) {
 
-        List<Group> newGroups = new ArrayList<>();
+    public List<MemberResponse> createMembers(List<MemberDto> members) {
 
-        for (GroupDto group: groups) {
+        List<Member> newMembers = new ArrayList<>();
 
-            Group mappedGroup = modelMapper.map(group, Group.class);
-            newGroups.add(mappedGroup);
+        for (MemberDto member: members) {
+
+            Member mappedMember = modelMapper.map(member, Member.class);
+
+            List<Group> groupList = groupRepository.findAllById(member.getGroupIds());
+            mappedMember.setGroups(groupList);
+
+            List<Category> categoryList = categoryRepository.findAllById(member.getCategorieIds());
+            mappedMember.setCategories(categoryList);
+
+            newMembers.add(mappedMember);
         }
 
-        List<Group> addedGroups = groupRepository.saveAll(newGroups);
+        List<Member> addedMembers = memberRepository.saveAll(newMembers);
 
-        return addedGroups.stream()
-                .sorted(Comparator.comparingLong(Group::getId))
-                .map(group -> modelMapper.map(group, GroupResponse.class))
+        return addedMembers.stream()
+                .sorted(Comparator.comparingLong(Member::getId))
+                .map(member -> modelMapper.map(member, MemberResponse.class))
                 .collect(Collectors.toList());
     }
 
-    public GroupResponse updateGroup(long id, GroupDto group) {
 
-        Group existing = groupRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Gruppe wurde nicht gefunden!"));
+    public MemberResponse updateMember(long id, MemberDto member) {
+
+        Member existing = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mitglied wurde nicht gefunden!"));
 
 
-        if (group.getGroupName() != null) {
-            existing.setGroupName(group.getGroupName());
+        if (member.getMemberId() != null) {
+            existing.setMemberId(member.getMemberId());
         }
 
-        if (group.getLiberated() != null) {
-            existing.setLiberated(group.getLiberated());
+        if (member.getForename() != null) {
+            existing.setForename(member.getForename() );
         }
 
-        Group updatedGroup =  groupRepository.save(existing);
+        if (member.getSurname() != null) {
+            existing.setSurname(member.getSurname());
+        }
 
-        return modelMapper.map(updatedGroup, GroupResponse.class);
+        if (member.getBirthdate() != null) {
+            existing.setBirthdate(member.getBirthdate());
+        }
+
+        if (member.getEntryDate() != null) {
+            existing.setEntryDate(member.getEntryDate() );
+        }
+
+        if (member.getLeavingDate() != null) {
+            existing.setLeavingDate(member.getLeavingDate());
+        }
+
+        if (member.getActive() != null) {
+            existing.setActive(member.getActive());
+        }
+
+        if (member.getGroupIds() != null) {
+            existing.setGroups(groupRepository.findAllById(member.getGroupIds()));
+        }
+
+        if (member.getCategorieIds() != null) {
+            existing.setCategories(categoryRepository.findAllById(member.getCategorieIds()));
+        }
+
+        Member updatedMember =  memberRepository.save(existing);
+
+        return modelMapper.map(updatedMember, MemberResponse.class);
 
     }
-     */
+
 }

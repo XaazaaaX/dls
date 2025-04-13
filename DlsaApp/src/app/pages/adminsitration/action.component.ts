@@ -20,8 +20,10 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Category, CategoryService } from '../../services/category.service';
+import { InputMaskModule } from 'primeng/inputmask';
 
 import { Action, ActionDto, ActionService } from '../../services/action.service';
+import { Member, MemberService } from '../../services/member.service';
 //import { Product, ProductService } from '../service/product.service';
 
 @Component({
@@ -47,7 +49,8 @@ import { Action, ActionDto, ActionService } from '../../services/action.service'
         IconFieldModule,
         ConfirmDialogModule,
         ToggleSwitchModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        InputMaskModule
 
     ],
     templateUrl: `./action.component.html`,
@@ -59,9 +62,13 @@ export class ActionComponent{
     actionDialog: boolean = false;
     submitted: boolean = false;
 
-    actions = signal<Action[]>([]);
+    members: Member[] = [];
 
+    actions = signal<Action[]>([]);
     action!: Action;
+    actionDto!: ActionDto;
+
+    contactId!: string;
 
     @ViewChild('dt') dt!: Table;
 
@@ -69,6 +76,7 @@ export class ActionComponent{
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
+        private memberService: MemberService,
         private actionService: ActionService
     ) {
         
@@ -76,6 +84,14 @@ export class ActionComponent{
 
     ngOnInit() {
         this.loadActions();
+        this.loadMembers();
+    }
+
+    get fullNameMemberOptions() {
+        return this.members.map(member => ({
+            memberId: member.memberId,
+            fullname: member.surname + ", " + member.forename
+        }));
     }
 
     loadActions() {
@@ -90,6 +106,17 @@ export class ActionComponent{
         });
     }
 
+    loadMembers() {
+        this.memberService.getAllMembers().subscribe({
+            next: (data) => {
+                this.members = data;
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+            }
+        });
+    }
+
     
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
@@ -97,15 +124,21 @@ export class ActionComponent{
 
     openNew() {
         this.action = {};
-
+        this.actionDto = {};
         this.submitted = false;
         this.actionDialog = true;
+        this.isEdit = false;
+        this.contactId = "";
     }
 
     editAction(action: Action) {
         this.action = { ...action };
         this.isEdit = true;
+
+        this.contactId = this.action.contact?.memberId!;
+
         this.actionDialog = true;
+        this.actionDto = {};
     }
 
     hideDialog() {
@@ -117,25 +150,34 @@ export class ActionComponent{
 
     saveAction() {
 
-        /*
         this.submitted = true;
 
         if (this.isEdit) {
             
-            if(this.category.categoryName){
-                this.categoryService.updateSettings(this.category).subscribe({
+            
+            if(this.action.year && this.action.description && this.contactId){
+
+                this.actionDto = {
+                    year: this.action.year,
+                    description: this.action.description,
+                    contactId: this.contactId
+                }
+
+
+                this.actionService.updateAction(this.actionDto, this.action.id!).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
-                        const currentCategory = this.categories();
-                        const _categories = currentCategory.map(category => 
-                            category.id === data.id ? { ...category, ...data } : category
+                        const currentAction = this.actions();
+                        const _actions = currentAction.map(action => 
+                            action.id === data.id ? { ...action, ...data } : action
                         );
                         
-                        this.categories.set(_categories);
+                        this.actions.set(_actions);
         
-                        this.categoryDialog = false;
-                        this.category = {};
+                        this.actionDialog = false;
+                        this.action = {};
+                        this.actionDto = {};
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -147,14 +189,23 @@ export class ActionComponent{
 
         } else {
 
-            if(this.category.categoryName){
-                this.categoryService.createSettings([this.category]).subscribe({
+            if(this.action.year && this.action.description && this.contactId){
+
+                this.actionDto = {
+                    year: this.action.year,
+                    description: this.action.description,
+                    contactId: this.contactId
+                }
+
+
+                this.actionService.createActions([this.actionDto]).subscribe({
                     next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Sparte wurde erfolgreich angelegt!" });
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Aktion wurde erfolgreich angelegt!" });
         
-                        this.categories.set([...this.categories(), ...data]);
-                        this.categoryDialog = false;
-                        this.category = {};
+                        this.actions.set([...this.actions(), ...data]);
+                        this.actionDialog = false;
+                        this.action = {};
+                        this.actionDto = {};
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -162,7 +213,6 @@ export class ActionComponent{
                 });
             }
         }
-             */
     }
    
 
