@@ -1,0 +1,99 @@
+<div class="card">
+    <p-table #dt [value]="groups()" [rows]="10" [paginator]="true" [globalFilterFields]="['asd']" [rowHover]="true"
+        dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Bereichen"
+        [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
+
+        <ng-template #caption>
+            <div class="flex flex-wrap items-center justify-between">
+                <h4 class="m-0">Funktionsgruppenverwaltung</h4>
+                <div class="flex flex-wrap items-center justify-between">
+                    <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2"
+                        (onClick)="openNew()" />
+                    <p-iconfield>
+                        <p-inputicon styleClass="pi pi-search" />
+                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
+                    </p-iconfield>
+                </div>
+
+            </div>
+        </ng-template>
+
+
+
+        <ng-template #header>
+            <tr>
+
+                <th pSortableColumn="actionDescription">
+                    Bezeichnung
+                    <p-sortIcon field="actionDescription" />
+                </th>
+
+                <th pSortableColumn="actionDescription">
+                    DLS-Befreit?
+                    <p-sortIcon field="actionDescription" />
+                </th>
+
+                <th>Optionen</th>
+            </tr>
+        </ng-template>
+
+
+        <ng-template #body let-group>
+            <tr>
+                <td style="width: auto; min-width: 5rem;">{{ group.groupName }}</td>
+
+                <td>
+                    @if(group.liberated) {
+                    <i class="pi pi-check"></i>
+                    } @else {
+                    <i class="pi pi-times"></i>
+                    }
+                </td>
+
+                <td style="width: 10%; min-width: 6rem;">
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="editGroup(group)" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+
+
+<p-dialog [(visible)]="groupDialog" [style]="{ width: '450px' }" header="Funktionsgruppendetails" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+
+            <div>
+                <label for="groupName" class="block font-bold mb-3">Bezeichnung</label>
+                <input type="text" pInputText id="groupName" [(ngModel)]="group.groupName" required autofocus
+                    fluid />
+                <small class="text-red-500" *ngIf="submitted && !group.groupName">Funktionsgruppenbezeichnung ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="isLiberated" class="block font-bold mb-3">Dienstleistungsstundenbefreit?</label>
+                <p-toggleswitch id="isLiberated" [(ngModel)]="group.liberated">
+                    <ng-template #handle let-checked="checked">
+                        <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+                    </ng-template>
+                </p-toggleswitch>
+            </div>
+
+
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Speichern" icon="pi pi-check" (click)="saveGroup()" />
+    </ng-template>
+</p-dialog>
+
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+
+<p-toast />

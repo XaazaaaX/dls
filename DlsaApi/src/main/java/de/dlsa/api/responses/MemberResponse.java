@@ -1,17 +1,31 @@
 package de.dlsa.api.responses;
 
+import de.dlsa.api.dtos.MemberDto;
+import de.dlsa.api.entities.Member;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+
 public class MemberResponse {
-    private String memberId;
+    private Long id;
     private String surname;
     private String forename;
+    private String memberId;
+    private Date entryDate;
+    private Date leavingDate;
+    private Boolean active;
+    private Date birthdate;
+    private Boolean aikz = true;
+    private Collection<GroupResponse> groups = new ArrayList<GroupResponse>();
+    private Collection<CategoryResponse> categories = new ArrayList<CategoryResponse>();
 
-
-    public String getMemberId() {
-        return memberId;
+    public Long getId() {
+        return id;
     }
 
-    public MemberResponse setMemberId(String memberId) {
-        this.memberId = memberId;
+    public MemberResponse setId(Long id){
+        this.id = id;
         return this;
     }
 
@@ -30,6 +44,78 @@ public class MemberResponse {
 
     public MemberResponse setForename(String forename) {
         this.forename = forename;
+        return this;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public MemberResponse setMemberId(String memberId) {
+        this.memberId = memberId;
+        return this;
+    }
+
+    public Date getEntryDate() {
+        return entryDate;
+    }
+
+    public MemberResponse setEntryDate(Date entryDate) {
+        this.entryDate = entryDate;
+        return this;
+    }
+
+    public Date getLeavingDate() {
+        return leavingDate;
+    }
+
+    public MemberResponse setLeavingDate(Date leavingDate) {
+        this.leavingDate = leavingDate;
+        return this;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public MemberResponse setActive(Boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public Collection<GroupResponse> getGroups() {
+        return groups;
+    }
+
+    public MemberResponse setGroups(Collection<GroupResponse> groups) {
+        this.groups = groups;
+        return this;
+    }
+
+    public Collection<CategoryResponse> getCategories() {
+        return categories;
+    }
+
+    public MemberResponse setCategories(Collection<CategoryResponse> categories) {
+        this.categories = categories;
+        return this;
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public MemberResponse setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+        return this;
+    }
+
+    public Boolean getAikz() {
+        return aikz;
+    }
+
+    public MemberResponse setAikz(Boolean aikz) {
+        this.aikz = aikz;
         return this;
     }
 }

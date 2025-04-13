@@ -19,13 +19,15 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Category, CategoryService } from '../../services/category.service';
+import { PickListModule } from 'primeng/picklist';
+import { MultiSelectModule } from 'primeng/multiselect';
 
-import { Action, ActionDto, ActionService } from '../../services/action.service';
-//import { Product, ProductService } from '../service/product.service';
+import { Sector, SectorDto, SectorService } from '../../services/sector.service';
+import { Group, GroupService } from '../../services/group.service';
+
 
 @Component({
-    selector: 'app-action',
+    selector: 'app-group',
     standalone: true,
     imports: [
         CommonModule,
@@ -47,21 +49,22 @@ import { Action, ActionDto, ActionService } from '../../services/action.service'
         IconFieldModule,
         ConfirmDialogModule,
         ToggleSwitchModule,
-        ReactiveFormsModule
-
+        ReactiveFormsModule,
+        PickListModule,
+        MultiSelectModule
     ],
-    templateUrl: `./action.component.html`,
+    templateUrl: `./group.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class ActionComponent{
+export class GroupComponent{
 
     isEdit: boolean = false;
-    actionDialog: boolean = false;
+    groupDialog: boolean = false;
     submitted: boolean = false;
 
-    actions = signal<Action[]>([]);
+    groups = signal<Group[]>([]);
 
-    action!: Action;
+    group!: Group;
 
     @ViewChild('dt') dt!: Table;
 
@@ -69,20 +72,19 @@ export class ActionComponent{
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private actionService: ActionService
-    ) {
-        
-    }
+        private sectorService: SectorService,
+        private groupService: GroupService
+    ) {}
 
     ngOnInit() {
-        this.loadActions();
+        this.loadGroups();
     }
 
-    loadActions() {
-        this.actionService.getAllActions().subscribe({
+    loadGroups() {
+        this.groupService.getAllGroups().subscribe({
             next: (data) => {
+                this.groups.set(data);
                 console.log(data);
-                this.actions.set(data);
             },
             error: (err) => {
                 this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -96,65 +98,65 @@ export class ActionComponent{
     }
 
     openNew() {
-        this.action = {};
-
+        this.group = {};
         this.submitted = false;
-        this.actionDialog = true;
+        this.groupDialog = true;
     }
 
-    editAction(action: Action) {
-        this.action = { ...action };
+    editGroup(group: Group) {
+        this.group = { ...group };
         this.isEdit = true;
-        this.actionDialog = true;
+        this.groupDialog = true;
     }
 
     hideDialog() {
-        this.actionDialog = false;
+        this.groupDialog = false;
         this.submitted = false;
     }
         
 
 
-    saveAction() {
-
-        /*
+    saveGroup() {
         this.submitted = true;
 
         if (this.isEdit) {
+
             
-            if(this.category.categoryName){
-                this.categoryService.updateSettings(this.category).subscribe({
+            if(this.group.groupName){
+
+                this.groupService.updateGroup(this.group).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
-                        const currentCategory = this.categories();
-                        const _categories = currentCategory.map(category => 
-                            category.id === data.id ? { ...category, ...data } : category
+                        const currentGroup = this.groups();
+                        const _groups = currentGroup.map(group => 
+                            group.id === data.id ? { ...group, ...data } : group
                         );
                         
-                        this.categories.set(_categories);
+                        this.groups.set(_groups);
         
-                        this.categoryDialog = false;
-                        this.category = {};
+                        this.groupDialog = false;
+                        this.group = {};
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
                     }
                 });
             }
+            
 
             this.isEdit = false;
-
         } else {
 
-            if(this.category.categoryName){
-                this.categoryService.createSettings([this.category]).subscribe({
+            if(this.group.groupName){
+
+                this.groupService.createGroups([this.group]).subscribe({
                     next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Sparte wurde erfolgreich angelegt!" });
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Bereich wurde erfolgreich angelegt!" });
         
-                        this.categories.set([...this.categories(), ...data]);
-                        this.categoryDialog = false;
-                        this.category = {};
+                        this.groups.set([...this.groups(), ...data]);
+                        this.groupDialog = false;
+                        this.group = {};
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -162,10 +164,5 @@ export class ActionComponent{
                 });
             }
         }
-             */
     }
-   
-
-
-    
 }

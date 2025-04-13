@@ -14,11 +14,11 @@ public class Sector {
     @Column(nullable = false, name = "id")
     private Long id;
 
-    @Column(name = "Name")
+    @Column(name = "Name", unique = true)
     private String sectorname;
 
     @ManyToMany
-    private Collection<Group> groups = new ArrayList<Group>();
+    private Collection<Group> groups;
 
     public Long getId() {
         return id;

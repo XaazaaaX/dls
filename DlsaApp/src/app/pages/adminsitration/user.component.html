@@ -1,0 +1,124 @@
+<!--<p-toolbar styleClass="mb-6">
+            <ng-template #start>
+                <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2" (onClick)="openNew()" />
+            </ng-template>
+        </p-toolbar>-->
+
+<div class="card">
+    <p-table #dt [value]="users()" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['username', 'role.rolename', 'active']" [(selection)]="selectedProducts"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+        [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
+        <ng-template #caption>
+            <div class="flex flex-wrap items-center justify-between">
+                <h4 class="m-0">Benutzerverwaltung</h4>
+                <div class="flex flex-wrap items-center justify-between">
+                    <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2"
+                        (onClick)="openNew()" />
+                    <p-iconfield>
+                        <p-inputicon styleClass="pi pi-search" />
+                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
+                    </p-iconfield>
+                </div>
+
+            </div>
+        </ng-template>
+
+
+        <ng-template #header>
+            <tr>
+                <th pSortableColumn="username" style="min-width: 12rem">
+                    Benutzername
+                    <p-sortIcon field="username" />
+                </th>
+                <th pSortableColumn="role.rolename" style="min-width: 12rem">
+                    Rolle
+                    <p-sortIcon field="role.rolename" />
+                </th>
+                <th pSortableColumn="active" style="min-width: 12rem">
+                    Aktiviert
+                    <p-sortIcon field="active" />
+                </th>
+
+                <th>Optionen</th>
+            </tr>
+        </ng-template>
+
+
+        <ng-template #body let-user>
+            <tr>
+                <td style="width: auto; min-width: 12rem">{{ user.username }}</td>
+                <td>{{ user.role.rolename }}</td>
+
+                <td>
+                    @if(user.active) {
+                    <i class="pi pi-check"></i>
+                    } @else {
+                    <i class="pi pi-times"></i>
+                    }
+                </td>
+
+                <td style="width: 10%; min-width: 8rem">
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="editUser(user)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                        (click)="deleteUser(user)" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+
+
+<p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" header="Benutzerdetails" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+
+            <div>
+                <label for="username" class="block font-bold mb-3">Benutzername</label>
+                <input type="text" pInputText id="username" [(ngModel)]="user.username" [disabled]="isEdit" required
+                    autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !user.username">Benutzername ist erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="password" class="block font-bold mb-3">Passwort</label>
+                <input type="text" pInputText id="password" [(ngModel)]="user.password" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !user.password && !isEdit">Passwort ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="role" class="block font-bold mb-3">Rolle</label>
+                <p-select [(ngModel)]="user.role.rolename" appendTo="body" inputId="role" [options]="roles"
+                    optionLabel="label" optionValue="value" placeholder="Auswählen" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !user.role.rolename">Rolle ist erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="isActive" class="block font-bold mb-3">Aktiver Account?</label>
+                <p-toggleswitch id="isActive" [(ngModel)]="user.active">
+                    <ng-template #handle let-checked="checked">
+                        <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+                    </ng-template>
+                </p-toggleswitch>
+            </div>
+
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Speichern" icon="pi pi-check" (click)="saveUser()" />
+    </ng-template>
+</p-dialog>
+
+
+
+
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+
+<p-toast />

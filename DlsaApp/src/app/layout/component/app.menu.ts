@@ -45,8 +45,8 @@ export class AppMenu {
                 visible: this.isGuest,
                 items: [
                     { label: 'Benutzer', icon: 'pi pi-fw pi-shield', routerLink: ['/dashboard/user'], visible: this.isAdmin },
-                    { label: 'Mitglieder', icon: 'pi pi-fw pi-user', routerLink: ['/'], visible: this.isGuest },
-                    { label: 'Funktionsgruppen', icon: 'pi pi-fw pi-users', routerLink: ['/'], visible: this.isUser },
+                    { label: 'Mitglieder', icon: 'pi pi-fw pi-user', routerLink: ['/dashboard/members'], visible: this.isGuest },
+                    { label: 'Funktionsgruppen', icon: 'pi pi-fw pi-users', routerLink: ['/dashboard/groups'], visible: this.isUser },
                     { label: 'Sparten', icon: 'pi pi-fw pi-folder', routerLink: ['/dashboard/categories'], visible: this.isUser },
                     { label: 'Bereiche', icon: 'pi pi-fw pi-file', routerLink: ['/dashboard/sectors'], visible: this.isUser },
                     { label: 'Aktionen', icon: 'pi pi-fw pi-play', routerLink: ['/dashboard/actions'], visible: this.isUser },

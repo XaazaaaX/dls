@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { Group } from './group.service';
 
 
 export interface SectorDto {
@@ -13,12 +14,6 @@ export interface Sector {
   id?: number;
   sectorname?: string;
   groups?: Group[];
-}
-
-export interface Group {
-    id?: number;
-    groupName?: string;
-    liberated?: boolean;
 }
 
 @Injectable({
@@ -45,13 +40,11 @@ export class SectorService {
       return this.http.get<Sector[]>(this.apiUrl + "/sectors", this.getHttpHeader());
   }
 
-  /*
-  createActions(categories: Category[]): Observable<Category[]> {
-    return this.http.post<Category[]>(this.apiUrl + "/sectors", categories, this.getHttpHeader());
+  createSectors(categories: SectorDto[]): Observable<Sector[]> {
+    return this.http.post<Sector[]>(this.apiUrl + "/sectors", categories, this.getHttpHeader());
   }
 
-  updateAction(category: Category): Observable<Category> {
-    return this.http.put<Category>(this.apiUrl + "/sectors/" + category.id, category,this.getHttpHeader());
+  updateSector(sector: SectorDto, id: number): Observable<Sector> {
+    return this.http.put<Sector>(this.apiUrl + "/sectors/" + id, sector,this.getHttpHeader());
   }
-    */
 }

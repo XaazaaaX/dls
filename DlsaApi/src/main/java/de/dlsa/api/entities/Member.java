@@ -37,22 +37,12 @@ public class Member {
 
     private Boolean aikz = true;
 
-    /*
-    @OneToOne(cascade = CascadeType.ALL)
-    private BasicMember basicMember;
-     */
+    @ManyToMany
+    private Collection<Group> groups;
 
-    @ManyToMany()
-    private Collection<Group> groups = new ArrayList<Group>();
+    @ManyToMany
+    private Collection<Category> categories;
 
-    @ManyToMany()
-    private Collection<Category> categories = new ArrayList<Category>();
-
-    /*
-    @Transient
-    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
-
-     */
 
     @PrePersist
     public void prePersist() {
@@ -201,16 +191,6 @@ public class Member {
         return Period.between(birthLocalDate, dueDate).getYears();
     }
 
-    /*
-    public BasicMember getBasicMember() {
-        return basicMember;
-    }
-
-    public Member setBasicMember(BasicMember basicMember) {
-        this.basicMember = basicMember;
-        return this;
-    }
-
     public Boolean getAikz() {
         return aikz;
     }
@@ -219,7 +199,7 @@ public class Member {
         this.aikz = aikz;
         return this;
     }
-     */
+
 
 }
 
