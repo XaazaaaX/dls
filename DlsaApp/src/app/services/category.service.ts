@@ -32,17 +32,11 @@ export class CategoryService {
       return this.http.get<Category[]>(this.apiUrl + "/categories", this.getHttpHeader());
   }
 
-  createSettings(categories: Category[]): Observable<Category[]> {
-    return this.http.post<Category[]>(this.apiUrl + "/categories", categories, this.getHttpHeader());
+  createCategory(category: Category): Observable<Category> {
+    return this.http.post<Category>(this.apiUrl + "/category", category, this.getHttpHeader());
   }
 
-  updateSettings(category: Category): Observable<Category> {
+  updateCategory(category: Category): Observable<Category> {
     return this.http.put<Category>(this.apiUrl + "/categories/" + category.id, category,this.getHttpHeader());
   }
-
-  /*
-  deleteCategory(categoryId?: number): Observable<any> {
-    return this.http.delete<any>(this.apiUrl + "/categories/" + categoryId, this.getHttpHeader());
-  }
-    */
 }

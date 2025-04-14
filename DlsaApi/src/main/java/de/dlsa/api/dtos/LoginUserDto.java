@@ -1,5 +1,7 @@
 package de.dlsa.api.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  * Klasse zur Übertragung der Logindaten vom Client zum Server
  *
@@ -7,8 +9,9 @@ package de.dlsa.api.dtos;
  * @version  01/2024
  */
 public class LoginUserDto {
+    @NotBlank(message = "Benutzername ist erforderlich")
     private String username;
-
+    @NotBlank(message = "Passwort ist erforderlich")
     private String password;
 
     /**

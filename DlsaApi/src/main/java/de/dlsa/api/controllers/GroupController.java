@@ -1,17 +1,13 @@
 package de.dlsa.api.controllers;
 
-import de.dlsa.api.dtos.ActionDto;
 import de.dlsa.api.dtos.GroupDto;
-import de.dlsa.api.responses.ActionResponse;
 import de.dlsa.api.responses.GroupResponse;
-import de.dlsa.api.services.ActionService;
 import de.dlsa.api.services.GroupService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-@RequestMapping("/groups")
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class GroupController {
@@ -22,18 +18,18 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @GetMapping
+    @GetMapping("/groups")
     public ResponseEntity<List<GroupResponse>> getGroups() {
         return ResponseEntity.ok(groupService.getGroups());
     }
 
-    @PostMapping
-    public ResponseEntity<List<GroupResponse>> createGroups(@RequestBody List<GroupDto> groups) {
-        List<GroupResponse> created = groupService.createGroups(groups);
+    @PostMapping("/group")
+    public ResponseEntity<GroupResponse> createGroup(@Valid @RequestBody GroupDto group) {
+        GroupResponse created = groupService.createGroup(group);
         return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/groups/{id}")
     public ResponseEntity<GroupResponse> updateGroup(@PathVariable long id, @RequestBody GroupDto group) {
         GroupResponse updated = groupService.updateGroup(id, group);
         return ResponseEntity.ok(updated);

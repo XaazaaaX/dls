@@ -106,7 +106,6 @@ export class SectorComponent{
         });
     }
 
-    
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
@@ -179,11 +178,11 @@ export class SectorComponent{
                 this.sectorDto.sectorname = this.sector.sectorname;
                 this.sectorDto.groupIds = this.selectedGroups;
 
-                this.sectorService.createSectors([this.sectorDto]).subscribe({
+                this.sectorService.createSectors(this.sectorDto).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Bereich wurde erfolgreich angelegt!" });
         
-                        this.sectors.set([...this.sectors(), ...data]);
+                        this.sectors.set([...this.sectors(), data]);
                         this.sectorDialog = false;
                         this.sector = {};
                         this.sectorDto = {};

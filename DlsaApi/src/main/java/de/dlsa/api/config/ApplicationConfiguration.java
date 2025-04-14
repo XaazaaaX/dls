@@ -1,9 +1,12 @@
 package de.dlsa.api.config;
 
+import de.dlsa.api.dtos.ActionDto;
+import de.dlsa.api.entities.Action;
 import de.dlsa.api.entities.User;
 import de.dlsa.api.repositories.UserRepository;
 import de.dlsa.api.responses.UserResponse;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -93,11 +96,6 @@ public class ApplicationConfiguration {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        /*
-        modelMapper.typeMap(User.class, UserResponse.class)
-                .addMapping(src -> src.getRole().getRolename(), UserResponse::setRolename);
-
-         */
 
         /*modelMapper.typeMap(UserResponse.class, User.class)
                 .addMapping(UserResponse::getRolename, src -> src.getRole().setRolename());

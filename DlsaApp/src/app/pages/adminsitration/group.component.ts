@@ -115,8 +115,6 @@ export class GroupComponent{
         this.submitted = false;
     }
         
-
-
     saveGroup() {
         this.submitted = true;
 
@@ -151,11 +149,11 @@ export class GroupComponent{
 
             if(this.group.groupName){
 
-                this.groupService.createGroups([this.group]).subscribe({
+                this.groupService.createGroup(this.group).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Bereich wurde erfolgreich angelegt!" });
         
-                        this.groups.set([...this.groups(), ...data]);
+                        this.groups.set([...this.groups(), data]);
                         this.groupDialog = false;
                         this.group = {};
                     },

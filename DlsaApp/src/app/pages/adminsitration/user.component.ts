@@ -213,11 +213,11 @@ export class UserComponent implements OnInit {
         } else {
 
             if(this.user.username && this.user.password && this.user.role.rolename){
-                this.userService.createUsers([this.user]).subscribe({
+                this.userService.createUser(this.user).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich angelegt!" });
         
-                        this.users.set([...this.users(), ...data]);
+                        this.users.set([...this.users(), data]);
                         this.userDialog = false;
                         this.user = {
                             role: {}

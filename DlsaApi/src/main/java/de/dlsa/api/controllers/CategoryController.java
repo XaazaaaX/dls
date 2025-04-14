@@ -1,18 +1,13 @@
 package de.dlsa.api.controllers;
 
 import de.dlsa.api.dtos.CategoryDto;
-import de.dlsa.api.dtos.UserDto;
-import de.dlsa.api.entities.Category;
-import de.dlsa.api.entities.Settings;
-import de.dlsa.api.entities.User;
 import de.dlsa.api.responses.CategoryResponse;
 import de.dlsa.api.services.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-@RequestMapping("/categories")
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class CategoryController {
@@ -23,18 +18,18 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping
+    @GetMapping("/categories")
     public ResponseEntity<List<CategoryResponse>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategories());
     }
 
-    @PostMapping
-    public ResponseEntity<List<CategoryResponse>> createCategories(@RequestBody List<CategoryDto> categories) {
-        List<CategoryResponse> created = categoryService.createCategories(categories);
+    @PostMapping("/category")
+    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryDto category) {
+        CategoryResponse created = categoryService.createCategory(category);
         return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable long id, @RequestBody CategoryDto category) {
         CategoryResponse updated = categoryService.updateCategory(id, category);
         return ResponseEntity.ok(updated);

@@ -33,8 +33,8 @@ export class GroupService {
     return this.http.get<Group[]>(this.apiUrl + "/groups", this.getHttpHeader());
   }
 
-  createGroups(groups: Group[]): Observable<Group[]> {
-    return this.http.post<Group[]>(this.apiUrl + "/groups", groups, this.getHttpHeader());
+  createGroup(group: Group): Observable<Group> {
+    return this.http.post<Group>(this.apiUrl + "/group", group, this.getHttpHeader());
   }
 
   updateGroup(group: Group): Observable<Group> {

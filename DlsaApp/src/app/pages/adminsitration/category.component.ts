@@ -109,43 +109,6 @@ export class CategoryComponent{
         this.submitted = false;
     }
 
-    
-    /*
-    deleteCategory(category: Category) {
-
-        this.confirmationService.confirm({
-            message: 'Soll die Sparte "' + category.categoryName + '" wirklich gelöscht werden?',
-            header: 'Bestätigen',
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                icon: 'pi pi-times',
-                label: 'Nein',
-                outlined: true,
-            },
-            acceptButtonProps: {
-                icon: 'pi pi-check',
-                label: 'Ja',
-            },
-            accept: () => {
-
-                this.categoryService.deleteCategory(category.id).subscribe({
-                    next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich gelöscht!" });
-                        
-                        this.categories.set(this.categories().filter((val) => val.id !== category.id));
-                        this.category = {};
-                    },
-                    error: (err) => {
-                        this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                    }
-                });
-            }
-        });
-    }
-    */
-        
-
-
     saveCategory() {
 
         
@@ -154,7 +117,7 @@ export class CategoryComponent{
         if (this.isEdit) {
             
             if(this.category.categoryName){
-                this.categoryService.updateSettings(this.category).subscribe({
+                this.categoryService.updateCategory(this.category).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
@@ -179,11 +142,11 @@ export class CategoryComponent{
         } else {
 
             if(this.category.categoryName){
-                this.categoryService.createSettings([this.category]).subscribe({
+                this.categoryService.createCategory(this.category).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Sparte wurde erfolgreich angelegt!" });
         
-                        this.categories.set([...this.categories(), ...data]);
+                        this.categories.set([...this.categories(), data]);
                         this.categoryDialog = false;
                         this.category = {};
                     },

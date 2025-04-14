@@ -1,20 +1,13 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.dtos.GroupDto;
 import de.dlsa.api.dtos.SectorDto;
 import de.dlsa.api.entities.Group;
-import de.dlsa.api.entities.Role;
 import de.dlsa.api.entities.Sector;
 import de.dlsa.api.repositories.GroupRepository;
-import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.repositories.SectorRepository;
-import de.dlsa.api.responses.GroupResponse;
 import de.dlsa.api.responses.SectorResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,26 +36,18 @@ public class SectorService {
                 .collect(Collectors.toList());
     }
 
-    public List<SectorResponse> createSectors(List<SectorDto> sectors) {
+    public SectorResponse createSector(SectorDto sector) {
 
-        List<Sector> newSectors = new ArrayList<>();
+        Sector mappedSector = modelMapper.map(sector, Sector.class);
 
-        for (SectorDto sector: sectors) {
-
-            Sector mappedSector = modelMapper.map(sector, Sector.class);
+        if (sector.getGroupIds() != null) {
             List<Group> groupList = groupRepository.findAllById(sector.getGroupIds());
-
             mappedSector.setGroups(groupList);
-
-            newSectors.add(mappedSector);
         }
 
-        List<Sector> addedSectors = sectorRepository.saveAll(newSectors);
+        Sector addedSector = sectorRepository.save(mappedSector);
 
-        return addedSectors.stream()
-                .sorted(Comparator.comparingLong(Sector::getId))
-                .map(sector -> modelMapper.map(sector, SectorResponse.class))
-                .collect(Collectors.toList());
+        return modelMapper.map(addedSector, SectorResponse.class);
     }
 
     public SectorResponse updateSector(long id, SectorDto sector) {
@@ -81,7 +66,6 @@ public class SectorService {
         Sector updatedSector =  sectorRepository.save(existing);
 
         return modelMapper.map(updatedSector, SectorResponse.class);
-
     }
 
 

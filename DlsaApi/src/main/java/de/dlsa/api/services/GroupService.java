@@ -2,32 +2,28 @@ package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.GroupDto;
 import de.dlsa.api.entities.Group;
-import de.dlsa.api.entities.Member;
+import de.dlsa.api.entities.GroupChanges;
+import de.dlsa.api.repositories.GroupChangesRepository;
 import de.dlsa.api.repositories.GroupRepository;
-import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.responses.GroupResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
 
     private final GroupRepository groupRepository;
-    private final MemberRepository memberRepository;
+    private final GroupChangesRepository groupChangesRepository;
     private final ModelMapper modelMapper;
 
     public GroupService(
             GroupRepository groupRepository,
-            MemberRepository memberRepository,
+            GroupChangesRepository groupChangesRepository,
             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
-        this.memberRepository = memberRepository;
+        this.groupChangesRepository = groupChangesRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -39,22 +35,13 @@ public class GroupService {
                 .collect(Collectors.toList());
     }
 
-    public List<GroupResponse> createGroups(List<GroupDto> groups) {
+    public GroupResponse createGroup(GroupDto group) {
 
-        List<Group> newGroups = new ArrayList<>();
+        Group mappedGroup = modelMapper.map(group, Group.class);
 
-        for (GroupDto group: groups) {
+        Group addedGroups = groupRepository.save(mappedGroup);
 
-            Group mappedGroup = modelMapper.map(group, Group.class);
-            newGroups.add(mappedGroup);
-        }
-
-        List<Group> addedGroups = groupRepository.saveAll(newGroups);
-
-        return addedGroups.stream()
-                .sorted(Comparator.comparingLong(Group::getId))
-                .map(group -> modelMapper.map(group, GroupResponse.class))
-                .collect(Collectors.toList());
+        return modelMapper.map(addedGroups, GroupResponse.class);
     }
 
     public GroupResponse updateGroup(long id, GroupDto group) {
@@ -67,7 +54,16 @@ public class GroupService {
             existing.setGroupName(group.getGroupName());
         }
 
-        if (group.getLiberated() != null) {
+        if (group.getLiberated() != null && group.getLiberated() != existing.getLiberated()) {
+
+            GroupChanges newGroupChanges = new GroupChanges()
+                    .setGroupId(existing.getId())
+                    .setNewValue(group.getLiberated())
+                    .setOldValue(existing.getLiberated())
+                    .setRefDate(new Date());
+
+            groupChangesRepository.save(newGroupChanges);
+
             existing.setLiberated(group.getLiberated());
         }
 

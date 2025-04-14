@@ -1,9 +1,10 @@
 package de.dlsa.api.dtos;
 
 import de.dlsa.api.responses.CategoryResponse;
+import jakarta.validation.constraints.NotBlank;
 
 public class CategoryDto {
-
+    @NotBlank(message = "Spartenbezeichnung ist erforderlich")
     private String categoryName;
 
 

@@ -198,11 +198,11 @@ export class ActionComponent{
                 }
 
 
-                this.actionService.createActions([this.actionDto]).subscribe({
+                this.actionService.createActions(this.actionDto).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Aktion wurde erfolgreich angelegt!" });
         
-                        this.actions.set([...this.actions(), ...data]);
+                        this.actions.set([...this.actions(), data]);
                         this.actionDialog = false;
                         this.action = {};
                         this.actionDto = {};

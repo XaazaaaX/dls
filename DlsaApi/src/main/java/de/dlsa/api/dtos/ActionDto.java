@@ -1,12 +1,16 @@
 package de.dlsa.api.dtos;
 
-import de.dlsa.api.responses.MemberResponse;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 
 public class ActionDto {
+    @NotBlank(message = "Jahr ist erforderlich")
+    @Pattern(regexp = "^\\d{1,4}$", message = "Jahr darf nur 4 Zahlen besitzen")
     private String year;
-
+    @NotBlank(message = "Beschreibung ist erforderlich")
     private String description;
-
+    @NotBlank(message = "Kontakt ist erforderlich")
     private String contactId;
 
     public String getYear() {

@@ -46,8 +46,8 @@ export class ActionService {
       return this.http.get<Action[]>(this.apiUrl + "/actions", this.getHttpHeader());
   }
 
-  createActions(actions: ActionDto[]): Observable<Action[]> {
-    return this.http.post<Action[]>(this.apiUrl + "/actions", actions, this.getHttpHeader());
+  createActions(action: ActionDto): Observable<Action> {
+    return this.http.post<Action>(this.apiUrl + "/action", action, this.getHttpHeader());
   }
 
   updateAction(action: ActionDto, id: number): Observable<Action> {

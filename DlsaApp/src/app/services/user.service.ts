@@ -47,16 +47,16 @@ export class UserService {
       return this.http.get<User[]>(this.apiUrl + "/users", this.getHttpHeader());
   }
 
-  createUsers(data: User[]): Observable<any> {
-    return this.http.post<any>(this.apiUrl + "/users", data, this.getHttpHeader());
+  createUser(data: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl + "/user", data, this.getHttpHeader());
   }
 
   deleteUser(userId?: number): Observable<any> {
     return this.http.delete<any>(this.apiUrl + "/users/" + userId, this.getHttpHeader());
   }
 
-  updateUser(user: User): Observable<any> {
-    return this.http.put<any>(this.apiUrl + "/users/" + user.id, user,this.getHttpHeader());
+  updateUser(user: User): Observable<User> {
+    return this.http.put<User>(this.apiUrl + "/users/" + user.id, user,this.getHttpHeader());
   }
   
 }

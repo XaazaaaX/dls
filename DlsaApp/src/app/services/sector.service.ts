@@ -40,8 +40,8 @@ export class SectorService {
       return this.http.get<Sector[]>(this.apiUrl + "/sectors", this.getHttpHeader());
   }
 
-  createSectors(categories: SectorDto[]): Observable<Sector[]> {
-    return this.http.post<Sector[]>(this.apiUrl + "/sectors", categories, this.getHttpHeader());
+  createSectors(sector: SectorDto): Observable<Sector> {
+    return this.http.post<Sector>(this.apiUrl + "/sector", sector, this.getHttpHeader());
   }
 
   updateSector(sector: SectorDto, id: number): Observable<Sector> {

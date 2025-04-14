@@ -1,13 +1,13 @@
 package de.dlsa.api.dtos;
 
-import java.util.ArrayList;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Collection;
 
 public class SectorDto {
+    @NotBlank(message = "Bereichsbezeichnung ist erforderlich")
     private String sectorname;
-    //private Collection<Long> groupIds = new ArrayList<Long>();
     private Collection<Long> groupIds;
-
     public String getSectorname() {
         return sectorname;
     }

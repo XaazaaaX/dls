@@ -2,6 +2,7 @@ package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.UserDto;
 import de.dlsa.api.entities.Role;
+import de.dlsa.api.entities.Sector;
 import de.dlsa.api.repositories.RoleRepository;
 import de.dlsa.api.repositories.UserRepository;
 import de.dlsa.api.entities.User;
@@ -42,27 +43,19 @@ public class UserService {
               .collect(Collectors.toList());
     }
 
-    public List<UserResponse> createUser(List<UserDto> users) {
+    public UserResponse createUser(UserDto user) {
 
-        List<User> newUser = new ArrayList<>();;
+        User mappedUser = modelMapper.map(user, User.class);
 
-        for (UserDto user: users) {
+        Role role = roleRepository.findByRolename(user.getRole().getRolename())
+                .orElseThrow(() -> new RuntimeException("Rolle nicht gefunden: " + user.getRole().getRolename()));
 
-            Role role = roleRepository.findByRolename(user.getRole().getRolename())
-                    .orElseThrow(() -> new RuntimeException("Rolle nicht gefunden: " + user.getRole().getRolename()));
+        mappedUser.setRole(role);
+        mappedUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            user.setRole(role);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User addedUser = userRepository.save(mappedUser);
 
-            newUser.add(modelMapper.map(user, User.class));
-        }
-
-        List<User> addedUsers = userRepository.saveAll(newUser);
-
-        return addedUsers.stream()
-                .sorted(Comparator.comparingLong(User::getId))
-                .map(user -> modelMapper.map(user, UserResponse.class))
-                .collect(Collectors.toList());
+        return modelMapper.map(addedUser, UserResponse.class);
     }
 
     public UserResponse updateUser(long id, UserDto userDetails) {

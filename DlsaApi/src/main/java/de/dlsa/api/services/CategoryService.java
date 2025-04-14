@@ -2,12 +2,10 @@ package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.CategoryDto;
 import de.dlsa.api.dtos.UserDto;
-import de.dlsa.api.entities.Category;
-import de.dlsa.api.entities.Role;
-import de.dlsa.api.entities.Settings;
-import de.dlsa.api.entities.User;
+import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.CategoryRepository;
 import de.dlsa.api.repositories.SettingsRepository;
+import de.dlsa.api.responses.ActionResponse;
 import de.dlsa.api.responses.CategoryResponse;
 import de.dlsa.api.responses.UserResponse;
 import org.modelmapper.ModelMapper;
@@ -37,17 +35,13 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public List<CategoryResponse> createCategories(List<CategoryDto> categories) {
-        List<Category> newCategories = new ArrayList<>();;
+    public CategoryResponse createCategory(CategoryDto category) {
 
-        for (CategoryDto category: categories) {
-            newCategories.add(modelMapper.map(category, Category.class));
-        }
+        Category mappedCategory = modelMapper.map(category, Category.class);
 
-        return categoryRepository.saveAll(newCategories).stream()
-                .sorted(Comparator.comparingLong(Category::getId))
-                .map(category -> modelMapper.map(category, CategoryResponse.class))
-                .collect(Collectors.toList());
+        Category addedCategory = categoryRepository.save(mappedCategory);
+
+        return modelMapper.map(addedCategory, CategoryResponse.class);
     }
 
     public CategoryResponse updateCategory(long id, CategoryDto category) {

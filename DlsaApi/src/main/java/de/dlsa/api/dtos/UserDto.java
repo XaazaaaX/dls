@@ -3,15 +3,17 @@ package de.dlsa.api.dtos;
 import de.dlsa.api.entities.Role;
 import de.dlsa.api.entities.User;
 import de.dlsa.api.responses.UserResponse;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class UserDto {
-
+    @NotBlank(message = "Benutzername ist erforderlich")
     private String username;
-
+    @NotBlank(message = "Passwort ist erforderlich")
     private String password;
-
+    @NotNull(message = "Aktiv? ist erforderlich")
     private boolean active;
-
+    @NotNull(message = "Rolle ist erforderlich")
     private Role role;
 
     public String getUsername() {

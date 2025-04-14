@@ -7,8 +7,6 @@ import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.responses.ActionResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,27 +34,17 @@ public class ActionService {
                 .collect(Collectors.toList());
     }
 
-    public List<ActionResponse> createActions(List<ActionDto> actions) {
+    public ActionResponse createAction(ActionDto action) {
 
-        List<Action> newAction = new ArrayList<>();
+        Action mappedAction = modelMapper.map(action, Action.class);
 
-        for (ActionDto action: actions) {
+        Member member = memberRepository.findByMemberId(action.getContactId())
+                .orElseThrow(() -> new RuntimeException("Mitglied nicht gefunden"));
+        mappedAction.setContact(member);
 
-            Action mappedAction = modelMapper.map(action, Action.class);
+        Action addedAction = actionRepository.save(mappedAction);
 
-            Member member = memberRepository.findByMemberId(action.getContactId())
-                    .orElseThrow(() -> new RuntimeException("Mitglied nicht gefunden"));
-            mappedAction.setContact(member);
-
-            newAction.add(mappedAction);
-        }
-
-        List<Action> addedActions = actionRepository.saveAll(newAction);
-
-        return addedActions.stream()
-                .sorted(Comparator.comparingLong(Action::getId))
-                .map(action -> modelMapper.map(action, ActionResponse.class))
-                .collect(Collectors.toList());
+        return modelMapper.map(addedAction, ActionResponse.class);
     }
 
     public ActionResponse updateAction(long id, ActionDto action) {

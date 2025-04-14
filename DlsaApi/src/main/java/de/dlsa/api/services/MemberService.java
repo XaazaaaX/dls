@@ -1,23 +1,17 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.dtos.GroupDto;
 import de.dlsa.api.dtos.MemberDto;
-import de.dlsa.api.dtos.SectorDto;
-import de.dlsa.api.entities.Category;
-import de.dlsa.api.entities.Group;
-import de.dlsa.api.entities.Member;
-import de.dlsa.api.entities.Sector;
+import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.CategoryRepository;
 import de.dlsa.api.repositories.GroupRepository;
+import de.dlsa.api.repositories.MemberChangesRepository;
 import de.dlsa.api.repositories.MemberRepository;
-import de.dlsa.api.responses.GroupResponse;
 import de.dlsa.api.responses.MemberResponse;
-import de.dlsa.api.responses.SectorResponse;
+import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,16 +21,19 @@ public class MemberService {
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final MemberChangesRepository memberChangesRepository;
     private final ModelMapper modelMapper;
 
     public MemberService(
             GroupRepository groupRepository,
             CategoryRepository categoryRepository,
             MemberRepository memberRepository,
+            MemberChangesRepository memberChangesRepository,
             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
         this.categoryRepository = categoryRepository;
         this.memberRepository = memberRepository;
+        this.memberChangesRepository = memberChangesRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -49,29 +46,23 @@ public class MemberService {
     }
 
 
-    public List<MemberResponse> createMembers(List<MemberDto> members) {
+    public MemberResponse createMember(MemberDto member) {
 
-        List<Member> newMembers = new ArrayList<>();
+        Member mappedMember = modelMapper.map(member, Member.class);
 
-        for (MemberDto member: members) {
-
-            Member mappedMember = modelMapper.map(member, Member.class);
-
+        if (member.getGroupIds() != null) {
             List<Group> groupList = groupRepository.findAllById(member.getGroupIds());
             mappedMember.setGroups(groupList);
-
-            List<Category> categoryList = categoryRepository.findAllById(member.getCategorieIds());
-            mappedMember.setCategories(categoryList);
-
-            newMembers.add(mappedMember);
         }
 
-        List<Member> addedMembers = memberRepository.saveAll(newMembers);
+        if (member.getCategorieIds() != null) {
+            List<Category> categoryList = categoryRepository.findAllById(member.getCategorieIds());
+            mappedMember.setCategories(categoryList);
+        }
 
-        return addedMembers.stream()
-                .sorted(Comparator.comparingLong(Member::getId))
-                .map(member -> modelMapper.map(member, MemberResponse.class))
-                .collect(Collectors.toList());
+        Member addedMember = memberRepository.save(mappedMember);
+
+        return modelMapper.map(addedMember, MemberResponse.class);
     }
 
 
@@ -105,7 +96,17 @@ public class MemberService {
             existing.setLeavingDate(member.getLeavingDate());
         }
 
-        if (member.getActive() != null) {
+        if (member.getActive() != null && member.getActive() != existing.getActive()) {
+
+            MemberChanges newMemberChanges = new MemberChanges()
+                    .setMemberId(existing.getId())
+                    .setRefDate(new Date())
+                    .setColumn(MemberColumn.ACTIVE.name())
+                    .setNewValue(member.getActive().toString())
+                    .setOldValue(existing.getActive().toString());
+
+            memberChangesRepository.save(newMemberChanges);
+
             existing.setActive(member.getActive());
         }
 

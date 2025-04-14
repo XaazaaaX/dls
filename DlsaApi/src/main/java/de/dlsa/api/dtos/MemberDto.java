@@ -1,15 +1,23 @@
 package de.dlsa.api.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Collection;
 import java.util.Date;
 
 public class MemberDto {
+    @NotBlank(message = "Nachname ist erforderlich")
     private String surname;
+    @NotBlank(message = "Vorname ist erforderlich")
     private String forename;
+    @NotBlank(message = "Mitgliedsnummer ist erforderlich")
     private String memberId;
+    @NotNull(message = "Eintrittsdatum ist erforderlich")
     private Date entryDate;
     private Date leavingDate;
     private Boolean active;
+    @NotNull(message = "Geburtstag ist erforderlich")
     private Date birthdate;
     private Boolean aikz = true;
     private Collection<Long> groupIds;

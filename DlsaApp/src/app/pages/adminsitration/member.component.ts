@@ -230,11 +230,11 @@ export class MemberComponent{
                     categorieIds: this.selectedCategories
                 }
 
-                this.memberService.createMembers([this.memberDto]).subscribe({
+                this.memberService.createMember(this.memberDto).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Das Mitglied wurde erfolgreich angelegt!" });
         
-                        this.members.set([...this.members(), ...data]);
+                        this.members.set([...this.members(), data]);
                         this.memberDialog = false;
                         this.member = {};
                         this.memberDto = {};
