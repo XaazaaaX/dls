@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -118,12 +120,10 @@ public class DataInitializer implements CommandLineRunner {
                                 .setSurname("Mustermann")
                                 .setForename("Max")
                                 .setMemberId("1111")
-                                .setCategories(categories);
-                        try {
-                            newMember.setEntryDate(new SimpleDateFormat("dd.MM.yyyy").parse("11.01.2014"));
-                        } catch (ParseException e) {
-                            throw new RuntimeException("Fehler beim Parsen des Datums", e);
-                        }
+                                .setCategories(categories)
+                                .setEntryDate(LocalDateTime.parse("2019-03-27T00:00:00"))
+                                .setBirthdate(LocalDateTime.parse("2019-03-27T00:00:00"));
+
                         return memberRepository.save(newMember);
                     });
 
@@ -142,12 +142,10 @@ public class DataInitializer implements CommandLineRunner {
                                 .setSurname("Musterfrau")
                                 .setForename("Mina")
                                 .setMemberId("2222")
-                                .setCategories(categories);
-                        try {
-                            newMember.setEntryDate(new SimpleDateFormat("dd.MM.yyyy").parse("11.01.2014"));
-                        } catch (ParseException e) {
-                            throw new RuntimeException("Fehler beim Parsen des Datums", e);
-                        }
+                                .setCategories(categories)
+                                .setEntryDate(LocalDateTime.parse("2019-03-27T00:00:00"))
+                                .setBirthdate(LocalDateTime.parse("2019-03-27T00:00:00"));
+
                         return memberRepository.save(newMember);
                     });
 

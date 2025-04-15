@@ -185,7 +185,7 @@ export class MemberComponent{
                     surname: this.member.surname,
                     forename: this.member.forename,
                     birthdate: this.member.birthdate,
-                    entryDate: this.member.entryDate,
+                    entryDate: new Date(Date.UTC(this.member.entryDate.getUTCFullYear(), this.member.entryDate.getUTCMonth(), this.member.entryDate.getUTCDate())),
                     leavingDate: this.member.leavingDate,
                     active: this.member.active,
                     groupIds: this.selectedGroups,

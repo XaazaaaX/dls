@@ -1,8 +1,7 @@
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
-
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class MemberChanges {
@@ -12,10 +11,10 @@ public class MemberChanges {
     @Column(nullable = false, name = "id")
     private Long id;
 
-    private Date timestamp = new Date();
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     @Column(name = "bezugsdatum")
-    private Date refDate;
+    private LocalDateTime refDate;
 
     @Column(name = "spaltenname")
     private String column;
@@ -37,11 +36,11 @@ public class MemberChanges {
         return this;
     }
 
-    public Date getRefDate() {
+    public LocalDateTime getRefDate() {
         return refDate;
     }
 
-    public MemberChanges setRefDate(Date refDate) {
+    public MemberChanges setRefDate(LocalDateTime refDate) {
         this.refDate = refDate;
         return this;
     }
@@ -82,11 +81,11 @@ public class MemberChanges {
         return this;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public MemberChanges setTimestamp(Date timestamp) {
+    public MemberChanges setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }

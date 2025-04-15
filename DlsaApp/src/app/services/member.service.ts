@@ -60,6 +60,7 @@ export class MemberService {
     }
 
     updateMember(member: MemberDto, id: number): Observable<Member> {
+        console.log(member.entryDate);
         return this.http.put<Member>(this.apiUrl + "/members/" + id, member,this.getHttpHeader());
     }
 }

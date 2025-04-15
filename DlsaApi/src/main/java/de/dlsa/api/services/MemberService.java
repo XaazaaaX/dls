@@ -10,8 +10,10 @@ import de.dlsa.api.responses.MemberResponse;
 import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,11 +90,31 @@ public class MemberService {
             existing.setBirthdate(member.getBirthdate());
         }
 
-        if (member.getEntryDate() != null) {
-            existing.setEntryDate(member.getEntryDate() );
+        if (member.getEntryDate() != null && (member.getEntryDate() != existing.getEntryDate())) {
+
+            MemberChanges newMemberChanges = new MemberChanges()
+                    .setMemberId(existing.getId())
+                    .setRefDate(LocalDateTime.now())
+                    .setColumn(MemberColumn.ENTRYDATE.name())
+                    .setNewValue(member.getEntryDate().toString())
+                    .setOldValue(existing.getEntryDate().toString());
+
+                memberChangesRepository.save(newMemberChanges);
+
+                existing.setEntryDate(member.getEntryDate());
         }
 
-        if (member.getLeavingDate() != null) {
+        if (member.getLeavingDate() != null && member.getLeavingDate() != existing.getLeavingDate()) {
+
+            MemberChanges newMemberChanges = new MemberChanges()
+                    .setMemberId(existing.getId())
+                    .setRefDate(LocalDateTime.now())
+                    .setColumn(MemberColumn.LEAVINGDATE.name())
+                    .setNewValue(member.getEntryDate().toString())
+                    .setOldValue(existing.getEntryDate().toString());
+
+            memberChangesRepository.save(newMemberChanges);
+
             existing.setLeavingDate(member.getLeavingDate());
         }
 
@@ -100,7 +122,7 @@ public class MemberService {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(new Date())
+                    .setRefDate(LocalDateTime.now())
                     .setColumn(MemberColumn.ACTIVE.name())
                     .setNewValue(member.getActive().toString())
                     .setOldValue(existing.getActive().toString());

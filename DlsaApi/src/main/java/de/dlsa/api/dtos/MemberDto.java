@@ -3,8 +3,9 @@ package de.dlsa.api.dtos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 
 public class MemberDto {
     @NotBlank(message = "Nachname ist erforderlich")
@@ -14,11 +15,11 @@ public class MemberDto {
     @NotBlank(message = "Mitgliedsnummer ist erforderlich")
     private String memberId;
     @NotNull(message = "Eintrittsdatum ist erforderlich")
-    private Date entryDate;
-    private Date leavingDate;
+    private LocalDateTime entryDate;
+    private LocalDateTime  leavingDate;
     private Boolean active;
     @NotNull(message = "Geburtstag ist erforderlich")
-    private Date birthdate;
+    private LocalDateTime  birthdate;
     private Boolean aikz = true;
     private Collection<Long> groupIds;
     private Collection<Long> categorieIds;
@@ -50,20 +51,20 @@ public class MemberDto {
         return this;
     }
 
-    public Date getEntryDate() {
+    public LocalDateTime  getEntryDate() {
         return entryDate;
     }
 
-    public MemberDto setEntryDate(Date entryDate) {
+    public MemberDto setEntryDate(LocalDateTime  entryDate) {
         this.entryDate = entryDate;
         return this;
     }
 
-    public Date getLeavingDate() {
+    public LocalDateTime  getLeavingDate() {
         return leavingDate;
     }
 
-    public MemberDto setLeavingDate(Date leavingDate) {
+    public MemberDto setLeavingDate(LocalDateTime  leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -95,11 +96,11 @@ public class MemberDto {
         return this;
     }
 
-    public Date getBirthdate() {
+    public LocalDateTime  getBirthdate() {
         return birthdate;
     }
 
-    public MemberDto setBirthdate(Date birthdate) {
+    public MemberDto setBirthdate(LocalDateTime  birthdate) {
         this.birthdate = birthdate;
         return this;
     }
