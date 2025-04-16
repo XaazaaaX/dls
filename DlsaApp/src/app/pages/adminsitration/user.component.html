@@ -84,7 +84,7 @@
             </div>
 
             <div>
-                <label for="password" class="block font-bold mb-3">Passwort*</label>
+                <label for="password" class="block font-bold mb-3">Passwort@if(!isEdit) {*}</label>
                 <input type="text" pInputText id="password" [(ngModel)]="user.password" required autofocus fluid />
                 <small class="text-red-500" *ngIf="submitted && !user.password && !isEdit">Passwort ist
                     erforderlich!</small>

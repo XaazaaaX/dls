@@ -8,6 +8,8 @@ import de.dlsa.api.repositories.GroupRepository;
 import de.dlsa.api.responses.GroupResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,7 +62,7 @@ public class GroupService {
                     .setGroupId(existing.getId())
                     .setNewValue(group.getLiberated())
                     .setOldValue(existing.getLiberated())
-                    .setRefDate(new Date());
+                    .setRefDate(Instant.now());
 
             groupChangesRepository.save(newGroupChanges);
 

@@ -164,13 +164,6 @@ public class MemberService {
 
                 existing.setGroups(memberGroups);
             }
-
-            /*
-            if (!existing.getGroups().equals(memberGroups)){
-                existing.setGroups(memberGroups);
-            }
-
-             */
         }
 
         if (member.getCategorieIds() != null) {

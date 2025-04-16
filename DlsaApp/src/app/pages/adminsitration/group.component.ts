@@ -98,7 +98,7 @@ export class GroupComponent{
     }
 
     openNew() {
-        this.group = {};
+        this.group = {liberated:false};
         this.submitted = false;
         this.groupDialog = true;
         this.isEdit = false;

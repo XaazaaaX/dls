@@ -20,7 +20,7 @@ public class Group {
     private String groupName;
 
     @Column(name = "befreit")
-    private Boolean liberated;
+    private Boolean liberated = false;
 
     @ManyToMany(mappedBy = "groups")
     private Collection<Member> member = new ArrayList<Member>();

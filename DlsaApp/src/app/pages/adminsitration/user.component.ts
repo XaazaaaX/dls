@@ -124,7 +124,7 @@ export class UserComponent implements OnInit {
             active: true,
             role: {}
         };
-
+        this.isEdit = false;
         this.submitted = false;
         this.userDialog = true;
     }
@@ -207,8 +207,6 @@ export class UserComponent implements OnInit {
                     }
                 });
             }
-
-            this.isEdit = false;
 
         } else {
 

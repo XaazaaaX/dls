@@ -84,7 +84,7 @@
             <div>
                 <label for="actionContact" class="block font-bold mb-3">Ansprechpartner:in*</label>
                 <p-select id="actionContact" [options]="fullNameMemberOptions" appendTo="body" [filter]="true"
-                    filterBy="fullname" [(ngModel)]="contactId" optionLabel="fullname" optionValue="memberId"
+                    filterBy="fullname" [(ngModel)]="contactId" optionLabel="fullname" optionValue="id"
                     placeholder="Auswählen" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !contactId">Ansprechpartner:in ist
                         erforderlich!</small>

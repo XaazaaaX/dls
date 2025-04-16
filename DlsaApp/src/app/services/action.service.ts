@@ -17,7 +17,7 @@ export interface Action {
 }
 
 export interface Contact {
-    memberId?: string;
+    id?: string;
     surname?: string;
     forename?: string;
 }

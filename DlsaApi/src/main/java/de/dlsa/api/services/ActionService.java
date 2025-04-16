@@ -38,7 +38,7 @@ public class ActionService {
 
         Action mappedAction = modelMapper.map(action, Action.class);
 
-        Member member = memberRepository.findByMemberId(action.getContactId())
+        Member member = memberRepository.findById(action.getContactId())
                 .orElseThrow(() -> new RuntimeException("Mitglied nicht gefunden"));
         mappedAction.setContact(member);
 
@@ -62,7 +62,7 @@ public class ActionService {
 
         if (action.getContactId() != null) {
 
-            Member member = memberRepository.findByMemberId(action.getContactId())
+            Member member = memberRepository.findById(action.getContactId())
                     .orElseThrow(() -> new RuntimeException("Mitglied nicht gefunden"));
             existing.setContact(member);
         }

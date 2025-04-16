@@ -19,7 +19,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Category, CategoryService } from '../../services/category.service';
 import { InputMaskModule } from 'primeng/inputmask';
 
 import { Action, ActionDto, ActionService } from '../../services/action.service';
@@ -89,7 +88,7 @@ export class ActionComponent{
 
     get fullNameMemberOptions() {
         return this.members.map(member => ({
-            memberId: member.memberId,
+            id: member.id,
             fullname: member.surname + ", " + member.forename
         }));
     }
@@ -135,7 +134,7 @@ export class ActionComponent{
         this.action = { ...action };
         this.isEdit = true;
 
-        this.contactId = this.action.contact?.memberId!;
+        this.contactId = this.action.contact?.id!;
 
         this.actionDialog = true;
         this.actionDto = {};

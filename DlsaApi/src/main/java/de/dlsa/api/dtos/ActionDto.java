@@ -1,6 +1,7 @@
 package de.dlsa.api.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 
@@ -10,8 +11,8 @@ public class ActionDto {
     private String year;
     @NotBlank(message = "Beschreibung ist erforderlich")
     private String description;
-    @NotBlank(message = "Kontakt ist erforderlich")
-    private String contactId;
+    @NotNull(message = "Kontakt ist erforderlich")
+    private Long contactId;
 
     public String getYear() {
         return year;
@@ -31,11 +32,11 @@ public class ActionDto {
         return this;
     }
 
-    public String getContactId() {
+    public Long getContactId() {
         return contactId;
     }
 
-    public ActionDto setContactId(String contactId) {
+    public ActionDto setContactId(Long contactId) {
         this.contactId = contactId;
         return this;
     }
