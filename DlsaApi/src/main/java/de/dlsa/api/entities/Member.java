@@ -5,10 +5,10 @@ import jakarta.persistence.*;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.Period;
 import java.time.ZoneId;
 
@@ -27,13 +27,13 @@ public class Member {
     @Column(name = "mitgliedsnummer")
     private String memberId;
     @Column(name = "eintrittsdatum")
-    private LocalDateTime entryDate;
+    private Instant entryDate;
     @Column(name = "austrittsdatum")
-    private LocalDateTime  leavingDate;
+    private Instant  leavingDate;
     @Column(name = "aktiv")
     private Boolean active = true;
     @Column(name = "geburtsdatum")
-    private LocalDateTime  birthdate;
+    private Instant  birthdate;
 
     private Boolean aikz = true;
 
@@ -111,23 +111,23 @@ public class Member {
         return this;
     }
 
-    public LocalDateTime  getEntryDate() {
+    public Instant  getEntryDate() {
         return entryDate;
     }
 
-    public Member setEntryDate(LocalDateTime  entryDate) {
-        LocalDateTime  oldDate = this.entryDate;
+    public Member setEntryDate(Instant  entryDate) {
+        Instant  oldDate = this.entryDate;
         this.entryDate = entryDate;
         //changes.firePropertyChange(MemberColumn.ENTRYDATE.toString(), oldDate,entryDate);
         return this;
     }
 
-    public LocalDateTime  getLeavingDate() {
+    public Instant  getLeavingDate() {
         return leavingDate;
     }
 
-    public Member setLeavingDate(LocalDateTime  leavingDate) {
-        LocalDateTime  oldDate = this.leavingDate;
+    public Member setLeavingDate(Instant  leavingDate) {
+        Instant  oldDate = this.leavingDate;
         this.leavingDate = leavingDate;
         //changes.firePropertyChange(MemberColumn.LEAVINGDATE.toString(),oldDate, leavingDate);
         return this;
@@ -164,26 +164,26 @@ public class Member {
         return this;
     }
 
-    public LocalDateTime  getBirthdate() {
+    public Instant  getBirthdate() {
         return birthdate;
     }
 
-    public Member setBirthdate(LocalDateTime  birthdate) {
+    public Member setBirthdate(Instant  birthdate) {
         this.birthdate = birthdate;
         return this;
     }
 
-    public int getAge(LocalDateTime dueDate) {
+    public int getAge(Instant dueDate) {
         if (birthdate == null) {
             return -1;
         }
 
         /*
-        Years age = Years.yearsBetween(new LocalDateTime (birthdate), dueDate);
+        Years age = Years.yearsBetween(new Instant (birthdate), dueDate);
         return age.getYears();
          */
 
-        // birthdate ist vom Typ java.util.LocalDateTime  → in LocalDateTime umwandeln
+        // birthdate ist vom Typ java.util.Instant  → in Instant umwandeln
 
 
         return 0;

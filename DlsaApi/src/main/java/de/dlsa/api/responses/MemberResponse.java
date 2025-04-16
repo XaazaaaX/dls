@@ -3,7 +3,7 @@ package de.dlsa.api.responses;
 import de.dlsa.api.dtos.MemberDto;
 import de.dlsa.api.entities.Member;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -13,10 +13,10 @@ public class MemberResponse {
     private String surname;
     private String forename;
     private String memberId;
-    private LocalDateTime entryDate;
-    private LocalDateTime leavingDate;
+    private Instant entryDate;
+    private Instant leavingDate;
     private Boolean active;
-    private LocalDateTime birthdate;
+    private Instant birthdate;
     private Boolean aikz = true;
     private Collection<GroupResponse> groups = new ArrayList<GroupResponse>();
     private Collection<CategoryResponse> categories = new ArrayList<CategoryResponse>();
@@ -57,20 +57,20 @@ public class MemberResponse {
         return this;
     }
 
-    public LocalDateTime getEntryDate() {
+    public Instant getEntryDate() {
         return entryDate;
     }
 
-    public MemberResponse setEntryDate(LocalDateTime entryDate) {
+    public MemberResponse setEntryDate(Instant entryDate) {
         this.entryDate = entryDate;
         return this;
     }
 
-    public LocalDateTime getLeavingDate() {
+    public Instant getLeavingDate() {
         return leavingDate;
     }
 
-    public MemberResponse setLeavingDate(LocalDateTime leavingDate) {
+    public MemberResponse setLeavingDate(Instant leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -102,11 +102,11 @@ public class MemberResponse {
         return this;
     }
 
-    public LocalDateTime getBirthdate() {
+    public Instant getBirthdate() {
         return birthdate;
     }
 
-    public MemberResponse setBirthdate(LocalDateTime birthdate) {
+    public MemberResponse setBirthdate(Instant birthdate) {
         this.birthdate = birthdate;
         return this;
     }

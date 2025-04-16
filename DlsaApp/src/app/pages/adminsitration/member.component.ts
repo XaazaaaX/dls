@@ -184,9 +184,9 @@ export class MemberComponent{
                     memberId: this.member.memberId,
                     surname: this.member.surname,
                     forename: this.member.forename,
-                    birthdate: this.member.birthdate,
-                    entryDate: new Date(Date.UTC(this.member.entryDate.getUTCFullYear(), this.member.entryDate.getUTCMonth(), this.member.entryDate.getUTCDate())),
-                    leavingDate: this.member.leavingDate,
+                    birthdate: new Date(Date.UTC(this.member.birthdate.getFullYear(), this.member.birthdate.getMonth(), this.member.birthdate.getDate())),
+                    entryDate: new Date(Date.UTC(this.member.entryDate.getFullYear(), this.member.entryDate.getMonth(), this.member.entryDate.getDate())),
+                    leavingDate: this.member.leavingDate ? new Date(Date.UTC(this.member.leavingDate.getFullYear(), this.member.leavingDate.getMonth(), this.member.leavingDate.getDate())) : undefined,
                     active: this.member.active,
                     groupIds: this.selectedGroups,
                     categorieIds: this.selectedCategories

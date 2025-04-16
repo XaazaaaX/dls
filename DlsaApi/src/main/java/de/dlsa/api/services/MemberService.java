@@ -12,9 +12,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,11 +93,11 @@ public class MemberService {
             existing.setBirthdate(member.getBirthdate());
         }
 
-        if (member.getEntryDate() != null && (member.getEntryDate() != existing.getEntryDate())) {
+        if (member.getEntryDate() != null && !member.getEntryDate().equals(existing.getEntryDate())) {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(LocalDateTime.now())
+                    .setRefDate(Instant.now())
                     .setColumn(MemberColumn.ENTRYDATE.name())
                     .setNewValue(member.getEntryDate().toString())
                     .setOldValue(existing.getEntryDate().toString());
@@ -104,14 +107,14 @@ public class MemberService {
                 existing.setEntryDate(member.getEntryDate());
         }
 
-        if (member.getLeavingDate() != null && member.getLeavingDate() != existing.getLeavingDate()) {
+        if (member.getLeavingDate() != null && !member.getLeavingDate().equals(existing.getLeavingDate())) {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(LocalDateTime.now())
+                    .setRefDate(Instant.now())
                     .setColumn(MemberColumn.LEAVINGDATE.name())
-                    .setNewValue(member.getEntryDate().toString())
-                    .setOldValue(existing.getEntryDate().toString());
+                    .setNewValue(member.getLeavingDate().toString())
+                    .setOldValue(existing.getLeavingDate().toString());
 
             memberChangesRepository.save(newMemberChanges);
 
@@ -122,7 +125,7 @@ public class MemberService {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(LocalDateTime.now())
+                    .setRefDate(Instant.now())
                     .setColumn(MemberColumn.ACTIVE.name())
                     .setNewValue(member.getActive().toString())
                     .setOldValue(existing.getActive().toString());
@@ -133,7 +136,41 @@ public class MemberService {
         }
 
         if (member.getGroupIds() != null) {
-            existing.setGroups(groupRepository.findAllById(member.getGroupIds()));
+
+            Collection<Group> memberGroups = groupRepository.findAllById(member.getGroupIds());
+
+            Set<Long> existingGroupIds = existing.getGroups().stream()
+                    .map(Group::getId)
+                    .collect(Collectors.toSet());
+
+            Set<Long> memberGroupIds = memberGroups.stream()
+                    .map(Group::getId)
+                    .collect(Collectors.toSet());
+
+            if (!existingGroupIds.equals(memberGroupIds)){
+
+                MemberChanges newMemberChanges = new MemberChanges()
+                        .setMemberId(existing.getId())
+                        .setRefDate(Instant.now())
+                        .setColumn(MemberColumn.GROUP.name())
+                        .setNewValue(memberGroupIds.stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(" ")))
+                        .setOldValue(existingGroupIds.stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(" ")));
+
+                memberChangesRepository.save(newMemberChanges);
+
+                existing.setGroups(memberGroups);
+            }
+
+            /*
+            if (!existing.getGroups().equals(memberGroups)){
+                existing.setGroups(memberGroups);
+            }
+
+             */
         }
 
         if (member.getCategorieIds() != null) {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -121,8 +122,8 @@ public class DataInitializer implements CommandLineRunner {
                                 .setForename("Max")
                                 .setMemberId("1111")
                                 .setCategories(categories)
-                                .setEntryDate(LocalDateTime.parse("2019-03-27T00:00:00"))
-                                .setBirthdate(LocalDateTime.parse("2019-03-27T00:00:00"));
+                                .setEntryDate(Instant.parse("2019-03-27T00:00:00Z"))
+                                .setBirthdate(Instant.parse("2019-03-27T00:00:00Z"));
 
                         return memberRepository.save(newMember);
                     });
@@ -143,8 +144,8 @@ public class DataInitializer implements CommandLineRunner {
                                 .setForename("Mina")
                                 .setMemberId("2222")
                                 .setCategories(categories)
-                                .setEntryDate(LocalDateTime.parse("2019-03-27T00:00:00"))
-                                .setBirthdate(LocalDateTime.parse("2019-03-27T00:00:00"));
+                                .setEntryDate(Instant.parse("2019-03-27T00:00:00Z"))
+                                .setBirthdate(Instant.parse("2019-03-27T00:00:00Z"));
 
                         return memberRepository.save(newMember);
                     });
