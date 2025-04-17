@@ -61,13 +61,13 @@ export class AppMenu {
                         {
                             label: 'Mitglieder',
                             icon: 'pi pi-fw pi-user',
-                            routerLink: ['/auth/login'],
+                            routerLink: ['/dashboard/memberchanges'],
                             visible: this.isUser
                         },
                         {
                             label: 'Funktionsgruppen',
                             icon: 'pi pi-fw pi-users',
-                            routerLink: ['/auth/error'],
+                            routerLink: ['/dashboard/groupchanges'],
                             visible: this.isUser
                         }
                     ]},

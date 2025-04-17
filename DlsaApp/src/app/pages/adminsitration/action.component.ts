@@ -184,8 +184,6 @@ export class ActionComponent{
                 });
             }
 
-            this.isEdit = false;
-
         } else {
 
             if(this.action.year && this.action.description && this.contactId){

@@ -142,9 +142,6 @@ export class GroupComponent{
                     }
                 });
             }
-            
-
-            this.isEdit = false;
         } else {
 
             if(this.group.groupName){

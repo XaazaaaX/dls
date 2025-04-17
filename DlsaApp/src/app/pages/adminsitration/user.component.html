@@ -7,7 +7,7 @@
 <div class="card">
     <p-table #dt [value]="users()" [rows]="10" [paginator]="true"
         [globalFilterFields]="['username', 'role.rolename', 'active']" [(selection)]="selectedProducts"
-        [rowHover]="true" dataKey="id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Benutzern"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
         <ng-template #caption>
             <div class="flex flex-wrap items-center justify-between">
@@ -49,7 +49,6 @@
             <tr>
                 <td style="width: auto; min-width: 12rem">{{ user.username }}</td>
                 <td>{{ user.role.rolename }}</td>
-
                 <td>
                     @if(user.active) {
                     <i class="pi pi-check"></i>
@@ -57,7 +56,6 @@
                     <i class="pi pi-times"></i>
                     }
                 </td>
-
                 <td style="width: 10%; min-width: 8rem">
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                         (click)="editUser(user)" />

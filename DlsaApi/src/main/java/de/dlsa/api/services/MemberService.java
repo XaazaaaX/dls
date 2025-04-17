@@ -10,10 +10,7 @@ import de.dlsa.api.responses.MemberResponse;
 import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -113,8 +110,8 @@ public class MemberService {
                     .setMemberId(existing.getId())
                     .setRefDate(Instant.now())
                     .setColumn(MemberColumn.LEAVINGDATE.name())
-                    .setNewValue(member.getLeavingDate().toString())
-                    .setOldValue(existing.getLeavingDate().toString());
+                    .setNewValue(member.getLeavingDate() != null ? member.getLeavingDate().toString()  : "")
+                    .setOldValue(existing.getLeavingDate() != null ? existing.getLeavingDate().toString() : "");
 
             memberChangesRepository.save(newMemberChanges);
 

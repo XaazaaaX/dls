@@ -166,7 +166,6 @@ export class MemberComponent{
     hideDialog() {
         this.memberDialog = false;
         this.submitted = false;
-        this.isEdit = false;
     }
         
 
@@ -212,9 +211,6 @@ export class MemberComponent{
                     }
                 });
             }
-            
-
-            this.isEdit = false;
         } else {
 
             if(this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){

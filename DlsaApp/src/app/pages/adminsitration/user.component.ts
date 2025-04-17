@@ -172,9 +172,6 @@ export class UserComponent implements OnInit {
                 });
             }
         });
-
-
-
     }
 
     saveUser() {

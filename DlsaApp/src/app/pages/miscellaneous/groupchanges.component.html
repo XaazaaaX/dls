@@ -1,0 +1,70 @@
+<div class="card">
+    <p-table #dt [value]="groupChanges()" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['groupName', 'refDate']" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="{first} bis {last} von {totalRecords} Änderungen" [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 20, 30]">
+
+        <ng-template #caption>
+            <div class="flex flex-wrap items-center justify-between">
+                <h4 class="m-0">Funktionsgruppenhistorie</h4>
+                <div class="flex flex-wrap items-center justify-between">
+                    <p-iconfield>
+                        <p-inputicon styleClass="pi pi-search" />
+                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
+                    </p-iconfield>
+                </div>
+
+            </div>
+        </ng-template>
+
+
+
+        <ng-template #header>
+            <tr>
+                <th pSortableColumn="groupName">
+                    Gruppenname
+                    <p-sortIcon field="groupName" />
+                </th>
+
+                <th pSortableColumn="newValue">
+                    DLS-Befreit? (Neu)
+                    <p-sortIcon field="newValue" />
+                </th>
+
+                <th pSortableColumn="oldValue">
+                    DLS-Befreit? (Alt)
+                    <p-sortIcon field="oldValue" />
+                </th>
+
+                <th pSortableColumn="refDate">
+                    Bezugsdatum
+                    <p-sortIcon field="refDate" />
+                </th>
+            </tr>
+        </ng-template>
+
+
+        <ng-template #body let-groupChanges>
+            <tr>
+                <td style="width: auto; min-width: 5rem;">{{ groupChanges.groupName }}</td>
+                <td style="width: auto; min-width: 5rem;">
+                    @if(groupChanges.newValue) {
+                        Ja
+                    } @else {
+                        Nein
+                    }
+                </td>
+                <td style="width: auto; min-width: 5rem;">
+                    @if(groupChanges.oldValue) {
+                        Ja
+                    } @else {
+                        Nein
+                    }
+                </td>
+                <td style="width: auto; min-width: 5rem;">{{ groupChanges.refDate | date:'dd.MM.yyyy HH:mm:ss' }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast />

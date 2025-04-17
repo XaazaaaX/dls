@@ -11,6 +11,8 @@ import { ActionComponent } from './pages/adminsitration/action.component';
 import { SectorComponent } from './pages/adminsitration/sector.component';
 import { GroupComponent } from './pages/adminsitration/group.component';
 import { MemberComponent } from './pages/adminsitration/member.component';
+import { GroupChangesComponent } from './pages/miscellaneous/grougchanges.component';
+import { MemberChangesComponent } from './pages/miscellaneous/memberchanges.component';
 
 /*canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast']*/
 
@@ -28,6 +30,8 @@ export const routes = [
       { path: 'members', component: MemberComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'actions', component: ActionComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'settings', component: SettingsComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
+      { path: 'groupchanges', component: GroupChangesComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
+      { path: 'memberchanges', component: MemberChangesComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'documentation', component: DocumentationComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } }
     ]
   },

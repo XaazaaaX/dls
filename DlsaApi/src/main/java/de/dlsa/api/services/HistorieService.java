@@ -37,7 +37,7 @@ public class HistorieService {
     public List<GroupChangesResponse> getGroupChanges() {
 
         return groupChangesRepository.findAll().stream()
-                .sorted(Comparator.comparingLong(GroupChanges::getId))
+                .sorted(Comparator.comparing(GroupChanges::getRefDate).reversed())
                 .map(this::mapGroupChangesToResponse)
                 .collect(Collectors.toList());
     }
@@ -58,7 +58,7 @@ public class HistorieService {
     public List<MemberChangesResponse> getMemberChanges() {
 
         return memberChangesRepository.findAll().stream()
-                .sorted(Comparator.comparingLong(MemberChanges::getId))
+                .sorted(Comparator.comparing(MemberChanges::getRefDate).reversed())
                 .map(this::mapMemberChangesToResponse)
                 .collect(Collectors.toList());
     }
@@ -87,6 +87,11 @@ public class HistorieService {
     }
 
     private String getGroupNames(String groupIds) {
+
+        if (groupIds == null || groupIds.trim().isEmpty()) {
+            return "";
+        }
+
         String[] ids = groupIds.split(" ");
         List<String> groupNames = new ArrayList<>();
 

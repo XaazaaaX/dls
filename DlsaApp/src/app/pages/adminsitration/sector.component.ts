@@ -114,6 +114,7 @@ export class SectorComponent{
         this.sector = {};
         this.selectedGroups = [];
         this.sectorDto = {};
+        this.isEdit = false;
         this.submitted = false;
         this.sectorDialog = true;
     }
@@ -169,8 +170,6 @@ export class SectorComponent{
                     }
                 });
             }
-
-            this.isEdit = false;
         } else {
 
             if(this.sector.sectorname){

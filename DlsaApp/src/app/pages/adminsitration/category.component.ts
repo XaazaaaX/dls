@@ -93,7 +93,7 @@ export class CategoryComponent{
 
     openNew() {
         this.category = {};
-
+        this.isEdit = false;
         this.submitted = false;
         this.categoryDialog = true;
     }
@@ -136,8 +136,6 @@ export class CategoryComponent{
                     }
                 });
             }
-
-            this.isEdit = false;
 
         } else {
 
