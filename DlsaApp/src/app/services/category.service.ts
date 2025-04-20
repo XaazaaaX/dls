@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { HttpService } from './http.service';
 
 export interface Category {
   id?: number;
@@ -13,30 +14,17 @@ export interface Category {
 })
 export class CategoryService {
 
-  private apiUrl = 'http://127.0.0.1:5005'; // Ersetze mit deiner API-URL
-
-  constructor(private http: HttpClient, private authService:AuthService) {
-  }
-
-  private getHttpHeader() {
-    let authToken = this.authService.getToken();
-    return {
-      headers: new HttpHeaders({
-        "Content-type": "application/json",
-        Authorization: `Bearer ${authToken}`
-      })
-    };
-  }
+  constructor(private httpService: HttpService) {}
 
   getAllCategories(): Observable<Category[]> {
-      return this.http.get<Category[]>(this.apiUrl + "/categories", this.getHttpHeader());
+      return this.httpService.get<Category[]>("categories");
   }
 
   createCategory(category: Category): Observable<Category> {
-    return this.http.post<Category>(this.apiUrl + "/category", category, this.getHttpHeader());
+    return this.httpService.post<Category>("category", category);
   }
 
   updateCategory(category: Category): Observable<Category> {
-    return this.http.put<Category>(this.apiUrl + "/categories/" + category.id, category,this.getHttpHeader());
+    return this.httpService.put<Category>("categories/" + category.id, category);
   }
 }

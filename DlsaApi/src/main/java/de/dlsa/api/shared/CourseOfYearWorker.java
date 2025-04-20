@@ -1,119 +1,115 @@
 package de.dlsa.api.shared;
 
+import de.dlsa.api.entities.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class CourseOfYearWorker {
-    /*
+/*
     private Settings settings;
     private Year year;
     private Member member;
     private List<Booking> bookings;
-    private DateTime fromDate;
-    private DateTime toDate;
-    private DateTime lastCOYDueDate;
+    private LocalDate fromDate;
+    private LocalDate toDate;
+    private LocalDate lastCOYDueDate;
     private Double achievedDls;
     private int monthCount;
 
-    private final DateTimeFormatter dateStringFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+    private final DateTimeFormatter dateStringFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public CourseOfYearWorker(Year year, Settings settings) {
         this.settings = settings;
         this.year = year;
-
         calculateDates();
     }
 
     public CourseOfYearWorker(Year year, Settings settings, Date lastCOYDueDate) {
         this.settings = settings;
         this.year = year;
-        this.setLastCOYDueDate(new DateTime(lastCOYDueDate));
-
+        this.setLastCOYDueDate(convertToLocalDate(lastCOYDueDate));
         calculateDates();
     }
 
-    // Tested
     private void calculateDates() {
         if (year != null && settings != null && settings.getDueDate() != null) {
-            toDate = dateStringFormat.parseDateTime(settings.getDueDate() + "." + (year.getYear()));
+            toDate = LocalDate.parse(settings.getDueDate() + "." + year.getYear(), dateStringFormat);
+            fromDate = toDate.minusYears(1).plusDays(1);
 
-            fromDate = dateStringFormat.parseDateTime(settings.getDueDate() + "." + (year.getYear()));
-            fromDate = fromDate.minusYears(1);
-            fromDate = fromDate.plusDays(1);
-
-            // Did the due date change since the last course of year?
             if (lastCOYDueDate != null && fromDate.isBefore(lastCOYDueDate)) {
                 fromDate = lastCOYDueDate.plusDays(1);
-            } else {
-
             }
         }
     }
 
-    // Tested
     public Boolean isMemberLiberated() {
         return getMemberLiberated(member);
     }
 
     private Boolean getMemberLiberated(Member m) {
-        // Member is not active at the moment
         if (m.getActive() != null && !m.getActive()) {
             return true;
         }
-        // Member is too Young
+
         if (m.getAge(toDate) != -1 && m.getAge(toDate) < settings.getAgeFrom()) {
             return true;
         }
-        // Member is too old
+
         if (m.getAge(fromDate) != -1 && m.getAge(fromDate) >= settings.getAgeTo()) {
             return true;
         }
-        // Entry date is after the due date
-        if ( m.getEntryDate() != null && (new DateTime(m.getEntryDate())).isAfter(toDate) ) {
+
+        if (m.getEntryDate() != null && convertToLocalDate(m.getEntryDate()).isAfter(toDate)) {
             return true;
         }
-        // Leaving date is before the due date
-        if ( m.getLeavingDate() != null && new DateTime(m.getLeavingDate()).isBefore(fromDate) ) {
+
+        if (m.getLeavingDate() != null && convertToLocalDate(m.getLeavingDate()).isBefore(fromDate)) {
             return true;
         }
-        // Member is part of a group which liberates him at the moment
+
         for (Group g : m.getGroups()) {
             if (g.getLiberated()) {
                 return true;
             }
         }
-        // Default is false
+
         return false;
     }
 
-    // Tested
     public double getMemberDebit(List<Booking> bookings, int fullMonth) {
         double sum = 0;
-        // Calculating the sum of all DLS
+
         for (Booking b : bookings) {
-            DateTime dDate = new DateTime(b.getDoneDate());
-            // Only use bookings from the timespan
-            if ( (fromDate.isBefore(dDate) || fromDate.isEqual(dDate) ) &&
-                    (toDate.isAfter(dDate) || toDate.isEqual(dDate)) ) {
+            LocalDate dDate = convertToLocalDate(b.getDoneDate());
+
+            if ((fromDate.isBefore(dDate) || fromDate.isEqual(dDate)) &&
+                    (toDate.isAfter(dDate) || toDate.isEqual(dDate))) {
                 sum += b.getCountDls();
             }
         }
+
         achievedDls = sum;
         sum = getRequiredDls(fullMonth) - sum;
-        // If the sum is lower than 0, the member has no debt
+
         if (sum < 0) {
             sum = 0;
         }
-        double debit = sum * settings.getCostDls();
-        return debit;
+
+        return sum * settings.getCostDls();
     }
 
     public double getRequiredDls(int fullMonth) {
         return (((double) Math.round(settings.getCountDls() / 12 * fullMonth * 10)) / 10);
     }
 
-    // Number of non liberated months
     public int getFullDlsMonth() {
         monthCount = 0;
-        DateTime month = getStartMonthDate(fromDate);
-        List<DateTime> months = new ArrayList<DateTime>();
+        LocalDate month = getStartMonthDate(fromDate);
+        List<LocalDate> months = new ArrayList<>();
+
         do {
             months.add(month);
             month = getNextMonth(month);
@@ -123,37 +119,47 @@ public class CourseOfYearWorker {
         MemberInfo mi = new MemberInfo(member);
         int dlsLibMonth = 0;
 
-        for (DateTime dt : months) {
-            Member m = mi.getMemberStateFromDate(HibernateUtil.getBasicMember(member.getId()), getLastDayOfMonth(dt).plusDays(1).toDate());
+        for (LocalDate dt : months) {
+            Member m = mi.getMemberStateFromDate(
+                    HibernateUtil.getBasicMember(member.getId()),
+                    getLastDayOfMonth(dt).plusDays(1)
+            );
             m.setBirthdate(member.getBirthdate());
             if (getMemberLiberated(m)) {
                 dlsLibMonth++;
             }
         }
+
         return monthCount - dlsLibMonth;
     }
 
-    private DateTime getNextMonth(DateTime dt) {
-        return dt.plusDays(1).plusMonths(1).minusDays(1);
+    private LocalDate getNextMonth(LocalDate dt) {
+        return dt.withDayOfMonth(1).plusMonths(1);
     }
 
-    private DateTime getLastDayOfMonth(DateTime dt) {
-        return dt.plusMonths(1).minusDays(1);
+    private LocalDate getLastDayOfMonth(LocalDate dt) {
+        return dt.withDayOfMonth(1).plusMonths(1).minusDays(1);
     }
 
-    private DateTime getStartMonthDate(DateTime dt) {
-        if (dt.equals(dt.withDayOfMonth(1))) {
+    private LocalDate getStartMonthDate(LocalDate dt) {
+        if (dt.getDayOfMonth() == 1) {
             return dt;
         } else {
-            return dt.plusMonths(1).withDayOfMonth(1);
+            return dt.withDayOfMonth(1).plusMonths(1);
         }
     }
 
-    public DateTime getFromDate() {
+    private LocalDate convertToLocalDate(Date date) {
+        return new java.sql.Date(date.getTime()).toLocalDate();
+    }
+
+    // Getter & Setter
+
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public DateTime getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
@@ -189,11 +195,11 @@ public class CourseOfYearWorker {
         this.bookings = bookings;
     }
 
-    public DateTime getLastCOYDueDate() {
+    public LocalDate getLastCOYDueDate() {
         return lastCOYDueDate;
     }
 
-    public void setLastCOYDueDate(DateTime lastCOYDueDate) {
+    public void setLastCOYDueDate(LocalDate lastCOYDueDate) {
         this.lastCOYDueDate = lastCOYDueDate;
     }
 
@@ -213,5 +219,6 @@ public class CourseOfYearWorker {
         this.monthCount = monthCount;
     }
 
-     */
+ */
 }
+

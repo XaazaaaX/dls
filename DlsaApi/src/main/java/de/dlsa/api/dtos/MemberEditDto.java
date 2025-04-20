@@ -1,13 +1,15 @@
 package de.dlsa.api.dtos;
 
+import de.dlsa.api.entities.MemberChanges;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
-import java.time.Instant;
 import java.util.Collection;
 
-public class MemberDto {
+public class MemberEditDto {
+    @NotNull(message = "Bezugsdatum ist erforderlich")
+    private Instant refDate;
     @NotBlank(message = "Nachname ist erforderlich")
     private String surname;
     @NotBlank(message = "Vorname ist erforderlich")
@@ -24,11 +26,19 @@ public class MemberDto {
     private Collection<Long> groupIds;
     private Collection<Long> categorieIds;
 
+    public Instant getRefDate() {
+        return refDate;
+    }
+
+    public MemberEditDto setRefDate(Instant refDate) {
+        this.refDate = refDate;
+        return this;
+    }
     public String getSurname() {
         return surname;
     }
 
-    public MemberDto setSurname(String surname) {
+    public MemberEditDto setSurname(String surname) {
         this.surname = surname;
         return this;
     }
@@ -37,7 +47,7 @@ public class MemberDto {
         return forename;
     }
 
-    public MemberDto setForename(String forename) {
+    public MemberEditDto setForename(String forename) {
         this.forename = forename;
         return this;
     }
@@ -46,7 +56,7 @@ public class MemberDto {
         return memberId;
     }
 
-    public MemberDto setMemberId(String memberId) {
+    public MemberEditDto setMemberId(String memberId) {
         this.memberId = memberId;
         return this;
     }
@@ -55,7 +65,7 @@ public class MemberDto {
         return entryDate;
     }
 
-    public MemberDto setEntryDate(Instant  entryDate) {
+    public MemberEditDto setEntryDate(Instant  entryDate) {
         this.entryDate = entryDate;
         return this;
     }
@@ -64,7 +74,7 @@ public class MemberDto {
         return leavingDate;
     }
 
-    public MemberDto setLeavingDate(Instant  leavingDate) {
+    public MemberEditDto setLeavingDate(Instant  leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -73,7 +83,7 @@ public class MemberDto {
         return active;
     }
 
-    public MemberDto setActive(Boolean active) {
+    public MemberEditDto setActive(Boolean active) {
         this.active = active;
         return this;
     }
@@ -82,7 +92,7 @@ public class MemberDto {
         return groupIds;
     }
 
-    public MemberDto setGroupIds(Collection<Long> groupIds) {
+    public MemberEditDto setGroupIds(Collection<Long> groupIds) {
         this.groupIds = groupIds;
         return this;
     }
@@ -91,7 +101,7 @@ public class MemberDto {
         return categorieIds;
     }
 
-    public MemberDto setCategorieIds(Collection<Long> categorieIds) {
+    public MemberEditDto setCategorieIds(Collection<Long> categorieIds) {
         this.categorieIds = categorieIds;
         return this;
     }
@@ -100,7 +110,7 @@ public class MemberDto {
         return birthdate;
     }
 
-    public MemberDto setBirthdate(Instant  birthdate) {
+    public MemberEditDto setBirthdate(Instant  birthdate) {
         this.birthdate = birthdate;
         return this;
     }
@@ -109,7 +119,7 @@ public class MemberDto {
         return aikz;
     }
 
-    public MemberDto setAikz(Boolean aikz) {
+    public MemberEditDto setAikz(Boolean aikz) {
         this.aikz = aikz;
         return this;
     }

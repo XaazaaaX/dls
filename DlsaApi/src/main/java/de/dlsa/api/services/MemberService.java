@@ -1,6 +1,7 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.dtos.MemberDto;
+import de.dlsa.api.dtos.MemberCreateDto;
+import de.dlsa.api.dtos.MemberEditDto;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.CategoryRepository;
 import de.dlsa.api.repositories.GroupRepository;
@@ -47,8 +48,7 @@ public class MemberService {
                 .collect(Collectors.toList());
     }
 
-
-    public MemberResponse createMember(MemberDto member) {
+    public MemberResponse createMember(MemberCreateDto member) {
 
         Member mappedMember = modelMapper.map(member, Member.class);
 
@@ -68,7 +68,7 @@ public class MemberService {
     }
 
 
-    public MemberResponse updateMember(long id, MemberDto member) {
+    public MemberResponse updateMember(long id, MemberEditDto member) {
 
         Member existing = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mitglied wurde nicht gefunden!"));
@@ -94,7 +94,7 @@ public class MemberService {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(Instant.now())
+                    .setRefDate(member.getRefDate())
                     .setColumn(MemberColumn.ENTRYDATE.name())
                     .setNewValue(member.getEntryDate().toString())
                     .setOldValue(existing.getEntryDate().toString());
@@ -108,7 +108,7 @@ public class MemberService {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(Instant.now())
+                    .setRefDate(member.getRefDate())
                     .setColumn(MemberColumn.LEAVINGDATE.name())
                     .setNewValue(member.getLeavingDate() != null ? member.getLeavingDate().toString()  : "")
                     .setOldValue(existing.getLeavingDate() != null ? existing.getLeavingDate().toString() : "");
@@ -122,7 +122,7 @@ public class MemberService {
 
             MemberChanges newMemberChanges = new MemberChanges()
                     .setMemberId(existing.getId())
-                    .setRefDate(Instant.now())
+                    .setRefDate(member.getRefDate())
                     .setColumn(MemberColumn.ACTIVE.name())
                     .setNewValue(member.getActive().toString())
                     .setOldValue(existing.getActive().toString());
@@ -148,7 +148,7 @@ public class MemberService {
 
                 MemberChanges newMemberChanges = new MemberChanges()
                         .setMemberId(existing.getId())
-                        .setRefDate(Instant.now())
+                        .setRefDate(member.getRefDate())
                         .setColumn(MemberColumn.GROUP.name())
                         .setNewValue(memberGroupIds.stream()
                                 .map(String::valueOf)

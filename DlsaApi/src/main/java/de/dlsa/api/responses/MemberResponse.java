@@ -1,12 +1,8 @@
 package de.dlsa.api.responses;
 
-import de.dlsa.api.dtos.MemberDto;
-import de.dlsa.api.entities.Member;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 public class MemberResponse {
     private Long id;

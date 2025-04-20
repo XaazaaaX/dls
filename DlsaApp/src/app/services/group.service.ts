@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable, of } from 'rxjs';
+import { HttpService } from './http.service';
 
 export interface Group {
   id?: number;
@@ -14,30 +15,17 @@ export interface Group {
 })
 export class GroupService {
 
-  private apiUrl = 'http://127.0.0.1:5005';
-
-  constructor(private http: HttpClient, private authService: AuthService) {
-  }
-
-  private getHttpHeader() {
-    let authToken = this.authService.getToken();
-    return {
-      headers: new HttpHeaders({
-        "Content-type": "application/json",
-        Authorization: `Bearer ${authToken}`
-      })
-    };
-  }
+  constructor(private httpService: HttpService) {}
 
   getAllGroups(): Observable<Group[]> {
-    return this.http.get<Group[]>(this.apiUrl + "/groups", this.getHttpHeader());
+    return this.httpService.get<Group[]>("groups");
   }
 
   createGroup(group: Group): Observable<Group> {
-    return this.http.post<Group>(this.apiUrl + "/group", group, this.getHttpHeader());
+    return this.httpService.post<Group>("group", group);
   }
 
   updateGroup(group: Group): Observable<Group> {
-    return this.http.put<Group>(this.apiUrl + "/groups/" + group.id, group,this.getHttpHeader());
+    return this.httpService.put<Group>("groups/" + group.id, group);
   }
 }

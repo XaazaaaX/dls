@@ -72,6 +72,15 @@
 <p-dialog [(visible)]="memberDialog" [style]="{ width: '450px' }" header="Mitgliedsdetails" [modal]="true">
     <ng-template #content>
         <div class="flex flex-col gap-6">
+            
+            @if(isEdit) {
+            <div>
+                <label for="memberRefDate" class="block font-bold mb-3">Bezugsdatum der Änderung*</label>
+                <p-datepicker id="memberRefDate" [(ngModel)]="member.refDate" dateFormat="dd.mm.yy" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !member.refDate">Bezugsdatum ist
+                    erforderlich!</small>
+            </div>
+            }
 
             <div>
                 <label for="memberId" class="block font-bold mb-3">Mitgliedsnummer*</label>
@@ -94,40 +103,42 @@
                     erforderlich!</small>
             </div>
 
-            <div>
-                <label for="memberBirthdate" class="block font-bold mb-3">Geburtstag*</label>
-                <p-datepicker id="memberBirthdate" [(ngModel)]="member.birthdate" dateFormat="dd.mm.yy" required
-                    fluid />
-                <small class="text-red-500" *ngIf="submitted && !member.birthdate">Geburtstag ist
-                    erforderlich!</small>
+            <div class="flex flex-wrap gap-6">
+                <div class="flex flex-col grow basis-0">
+                    <label for="memberBirthdate" class="block font-bold mb-3">Geburtstag*</label>
+                    <p-datepicker id="memberBirthdate" appendTo="body" [(ngModel)]="member.birthdate"
+                        dateFormat="dd.mm.yy" required fluid />
+                    <small class="text-red-500" *ngIf="submitted && !member.birthdate">Geburtstag ist
+                        erforderlich!</small>
+                </div>
+                @if(isEdit) {
+                <div class="flex flex-col grow basis-0">
+                    <label for="memberActive" class="block font-bold mb-3">Mitglied aktiv?</label>
+                    <p-toggleswitch id="memberActive" [(ngModel)]="member.active">
+                        <ng-template #handle let-checked="checked">
+                            <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+                        </ng-template>
+                    </p-toggleswitch>
+                </div>
+                }
             </div>
 
             <div class="flex flex-wrap gap-6">
                 <div class="flex flex-col grow basis-0">
                     <label for="memberEntryDate" class="block font-bold mb-3">Eintrittsdatum*</label>
-                    <p-datepicker id="memberEntryDate" appendTo="body" [(ngModel)]="member.entryDate" dateFormat="dd.mm.yy" required
-                        fluid />
+                    <p-datepicker id="memberEntryDate" appendTo="body" [(ngModel)]="member.entryDate"
+                        dateFormat="dd.mm.yy" required fluid />
                     <small class="text-red-500" *ngIf="submitted && !member.entryDate">Eintrittsdatum ist
                         erforderlich!</small>
                 </div>
                 @if(isEdit) {
                 <div class="flex flex-col grow basis-0">
                     <label for="memberLeavingDate" class="block font-bold mb-3">Austrittsdatum</label>
-                    <p-datepicker id="memberLeavingDate" appendTo="body" [(ngModel)]="member.leavingDate" dateFormat="dd.mm.yy" fluid />
+                    <p-datepicker id="memberLeavingDate" appendTo="body" [(ngModel)]="member.leavingDate"
+                        dateFormat="dd.mm.yy" fluid />
                 </div>
                 }
             </div>
-
-            @if(isEdit) {
-            <div>
-                <label for="memberActive" class="block font-bold mb-3">Aktiv?</label>
-                <p-toggleswitch id="memberActive" [(ngModel)]="member.active">
-                    <ng-template #handle let-checked="checked">
-                        <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
-                    </ng-template>
-                </p-toggleswitch>
-            </div>
-            }
 
             <div>
                 <label for="memberGroups" class="block font-bold mb-3">Funktionsgruppen</label>

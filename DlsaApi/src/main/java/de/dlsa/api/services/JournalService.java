@@ -1,14 +1,11 @@
 package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.BookingDto;
-import de.dlsa.api.dtos.UserDto;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
 import de.dlsa.api.responses.BookingResponse;
-import de.dlsa.api.responses.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,7 +21,6 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 @Service
 public class JournalService {
@@ -85,16 +81,24 @@ public class JournalService {
         return modelMapper.map(addedBooking, BookingResponse.class);
     }
 
-    public BookingResponse cancelBooking(long id) {
+    public void cancelBooking(long id) {
 
         Booking existing = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Buchung wurde nicht gefunden!"));
 
         existing.setCanceled(true);
+        bookingRepository.save(existing);
 
-        Booking canceledBooking =  bookingRepository.save(existing);
+        Booking newBooking = new Booking()
+                .setAction(existing.getAction())
+                .setComment("Stornierung von: " + existing.getComment())
+                .setDoneDate(existing.getDoneDate())
+                .setMember(existing.getMember())
+                .setCountDls(existing.getCountDls() * -1);
 
-        return modelMapper.map(canceledBooking, BookingResponse.class);
+        bookingRepository.save(newBooking);
+
+        //return modelMapper.map(canceledBooking, BookingResponse.class);
     }
 
 
@@ -105,6 +109,8 @@ public class JournalService {
 
     public ResponseEntity<byte[]> generateAndExportCsv() throws IOException {
 
+
+        handleMemberData();
 
 
 
@@ -162,5 +168,14 @@ public class JournalService {
             writer.flush(); // wichtig!
             return out.toByteArray();
         }
+    }
+
+    private void handleMemberData(){
+
+
+
+
+
+
     }
 }

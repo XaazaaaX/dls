@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import { Member } from './member.service';
 import { Action } from './action.service';
+import { HttpService } from './http.service';
 
 
 export interface BookingDto {
@@ -30,31 +29,18 @@ export interface Booking {
 })
 export class JournalService {
 
-    private apiUrl = 'http://127.0.0.1:5005'; // Ersetze mit deiner API-URL
-
-    constructor(private http: HttpClient, private authService: AuthService) {
-    }
-
-    private getHttpHeader() {
-        let authToken = this.authService.getToken();
-        return {
-            headers: new HttpHeaders({
-                "Content-type": "application/json",
-                Authorization: `Bearer ${authToken}`
-            })
-        };
-    }
+    constructor(private httpService: HttpService) {}
 
     getAllBookings(): Observable<Booking[]> {
-        return this.http.get<Booking[]>(this.apiUrl + "/journal/bookings", this.getHttpHeader());
+        return this.httpService.get<Booking[]>("journal/bookings");
     }
 
     createBooking(booking: BookingDto): Observable<Booking> {
-        return this.http.post<Booking>(this.apiUrl + "/journal/booking", booking, this.getHttpHeader());
+        return this.httpService.post<Booking>("journal/booking", booking);
     }
 
     cancelBooking(id: number): Observable<Booking> {
-        return this.http.delete<Booking>(this.apiUrl + "/journal/bookings/" + id, this.getHttpHeader());
+        return this.httpService.delete<Booking>("journal/bookings/" + id);
     } 
 
 }

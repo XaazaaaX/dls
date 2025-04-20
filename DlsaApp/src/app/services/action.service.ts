@@ -1,7 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { HttpService } from './http.service';
 
 export interface ActionDto {
     year?: string;
@@ -27,30 +26,17 @@ export interface Contact {
 })
 export class ActionService {
 
-  private apiUrl = 'http://127.0.0.1:5005';
-
-  constructor(private http: HttpClient, private authService:AuthService) {
-  }
-
-  private getHttpHeader() {
-    let authToken = this.authService.getToken();
-    return {
-      headers: new HttpHeaders({
-        "Content-type": "application/json",
-        Authorization: `Bearer ${authToken}`
-      })
-    };
-  }
+  constructor(private httpService: HttpService) {}
 
   getAllActions(): Observable<Action[]> {
-      return this.http.get<Action[]>(this.apiUrl + "/actions", this.getHttpHeader());
+      return this.httpService.get<Action[]>("actions");
   }
 
   createActions(action: ActionDto): Observable<Action> {
-    return this.http.post<Action>(this.apiUrl + "/action", action, this.getHttpHeader());
+    return this.httpService.post<Action>("action", action);
   }
 
   updateAction(action: ActionDto, id: number): Observable<Action> {
-    return this.http.put<Action>(this.apiUrl + "/actions/" + id, action,this.getHttpHeader());
+    return this.httpService.put<Action>("actions/" + id, action);
   }
 }

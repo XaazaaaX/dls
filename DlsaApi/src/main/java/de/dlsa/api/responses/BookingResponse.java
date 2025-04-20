@@ -1,9 +1,5 @@
 package de.dlsa.api.responses;
 
-import de.dlsa.api.dtos.ActionDto;
-import de.dlsa.api.dtos.MemberDto;
-import de.dlsa.api.entities.Action;
-import de.dlsa.api.entities.Member;
 import java.time.Instant;
 
 public class BookingResponse {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import { Group } from './group.service';
+import { HttpService } from './http.service';
 
 
 export interface SectorDto {
@@ -21,30 +22,17 @@ export interface Sector {
 })
 export class SectorService {
 
-  private apiUrl = 'http://127.0.0.1:5005';
-
-  constructor(private http: HttpClient, private authService:AuthService) {
-  }
-
-  private getHttpHeader() {
-    let authToken = this.authService.getToken();
-    return {
-      headers: new HttpHeaders({
-        "Content-type": "application/json",
-        Authorization: `Bearer ${authToken}`
-      })
-    };
-  }
+  constructor(private httpService: HttpService) {}
 
   getAllSectors(): Observable<Sector[]> {
-      return this.http.get<Sector[]>(this.apiUrl + "/sectors", this.getHttpHeader());
+      return this.httpService.get<Sector[]>("sectors");
   }
 
   createSectors(sector: SectorDto): Observable<Sector> {
-    return this.http.post<Sector>(this.apiUrl + "/sector", sector, this.getHttpHeader());
+    return this.httpService.post<Sector>("sector", sector);
   }
 
   updateSector(sector: SectorDto, id: number): Observable<Sector> {
-    return this.http.put<Sector>(this.apiUrl + "/sectors/" + id, sector,this.getHttpHeader());
+    return this.httpService.put<Sector>("sectors/" + id, sector);
   }
 }

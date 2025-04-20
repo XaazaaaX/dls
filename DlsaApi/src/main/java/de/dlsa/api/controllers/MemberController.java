@@ -1,6 +1,7 @@
 package de.dlsa.api.controllers;
 
-import de.dlsa.api.dtos.MemberDto;
+import de.dlsa.api.dtos.MemberCreateDto;
+import de.dlsa.api.dtos.MemberEditDto;
 import de.dlsa.api.responses.MemberResponse;
 import de.dlsa.api.services.MemberService;
 import jakarta.validation.Valid;
@@ -24,13 +25,13 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    public ResponseEntity<MemberResponse> createGroups(@Valid @RequestBody MemberDto member) {
+    public ResponseEntity<MemberResponse> createGroups(@Valid @RequestBody MemberCreateDto member) {
         MemberResponse created = memberService.createMember(member);
         return ResponseEntity.ok(created);
     }
 
     @PutMapping("/members/{id}")
-    public ResponseEntity<MemberResponse> updateGroup(@PathVariable long id, @RequestBody MemberDto member) {
+    public ResponseEntity<MemberResponse> updateGroup(@PathVariable long id, @RequestBody MemberEditDto member) {
         MemberResponse updated = memberService.updateMember(id, member);
         return ResponseEntity.ok(updated);
     }

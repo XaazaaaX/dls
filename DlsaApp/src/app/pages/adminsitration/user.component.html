@@ -6,7 +6,7 @@
 
 <div class="card">
     <p-table #dt [value]="users()" [rows]="10" [paginator]="true"
-        [globalFilterFields]="['username', 'role.rolename', 'active']" [(selection)]="selectedProducts"
+        [globalFilterFields]="['username', 'role.rolename', 'active']"
         [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Benutzern"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
         <ng-template #caption>

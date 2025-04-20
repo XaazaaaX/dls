@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -22,10 +22,8 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
-
-import { Sector, SectorDto, SectorService } from '../../services/sector.service';
 import { Group, GroupService } from '../../services/group.service';
-import { Member, MemberDto, MemberService } from '../../services/member.service';
+import { Member, MemberDto, MemberEditDto, MemberService } from '../../services/member.service';
 import { Category, CategoryService } from '../../services/category.service';
 
 
@@ -69,6 +67,7 @@ export class MemberComponent{
     members = signal<Member[]>([]);
     member!: Member;
     memberDto!: MemberDto;
+    memberEditDto!: MemberEditDto;
 
     groups: Group[] = [];
     categories: Category[] = [];
@@ -157,7 +156,10 @@ export class MemberComponent{
         this.member.entryDate ? this.member.entryDate = new Date(this.member.entryDate!) : null;
         this.member.leavingDate ? this.member.leavingDate = new Date(this.member.leavingDate!) : null;
 
+        this.member.refDate = new Date();
+
         this.memberDto = {};
+        this.memberEditDto = {};
 
         this.isEdit = true;
         this.memberDialog = true;
@@ -177,9 +179,10 @@ export class MemberComponent{
         if (this.isEdit) {
 
             
-            if(this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){
+            if(this.member.refDate && this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){
 
-                this.memberDto = {
+                this.memberEditDto = {
+                    refDate: new Date(Date.UTC(this.member.refDate.getFullYear(), this.member.refDate.getMonth(), this.member.refDate.getDate())),
                     memberId: this.member.memberId,
                     surname: this.member.surname,
                     forename: this.member.forename,
@@ -191,7 +194,7 @@ export class MemberComponent{
                     categorieIds: this.selectedCategories
                 }
 
-                this.memberService.updateMember(this.memberDto, this.member.id!).subscribe({
+                this.memberService.updateMember(this.memberEditDto, this.member.id!).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { HttpService } from './http.service';
 
 
 export interface GroupChanges{
@@ -26,27 +27,14 @@ export interface MemberChanges{
 })
 export class HistorieService {
 
-  private apiUrl = 'http://127.0.0.1:5005'; // Ersetze mit deiner API-URL
-
-  constructor(private http: HttpClient, private authService:AuthService) {
-  }
-
-  private getHttpHeader() {
-    let authToken = this.authService.getToken();
-    return {
-      headers: new HttpHeaders({
-        "Content-type": "application/json",
-        Authorization: `Bearer ${authToken}`
-      })
-    };
-  }
+  constructor(private httpService: HttpService) {}
 
   getAllGroupChanges(): Observable<GroupChanges[]> {
-      return this.http.get<GroupChanges[]>(this.apiUrl + "/historie/groups", this.getHttpHeader());
+      return this.httpService.get<GroupChanges[]>("historie/groups");
   }
 
   getAllMemberChanges(): Observable<MemberChanges[]> {
-    return this.http.get<MemberChanges[]>(this.apiUrl + "/historie/members", this.getHttpHeader());
+    return this.httpService.get<MemberChanges[]>("historie/members");
 }
   
 }

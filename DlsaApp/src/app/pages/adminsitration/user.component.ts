@@ -18,7 +18,6 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { Product, ProductService } from '../../services/product.service';
 import { Role, User, UserService } from '../../services/user.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 //import { Product, ProductService } from '../service/product.service';
@@ -61,7 +60,7 @@ interface ExportColumn {
 
     ],
     templateUrl: `./user.component.html`,
-    providers: [MessageService, ProductService, ConfirmationService]
+    providers: [MessageService, ConfirmationService]
 })
 export class UserComponent implements OnInit {
 
@@ -70,14 +69,9 @@ export class UserComponent implements OnInit {
 
     userDialog: boolean = false;
 
-    products = signal<Product[]>([]);
     users = signal<User[]>([]);
 
-    product!: Product;
     user!: User;
-
-    selectedProducts!: Product[] | null;
-    selectedUsers!: User[] | null;
 
     submitted: boolean = false;
 
@@ -118,8 +112,6 @@ export class UserComponent implements OnInit {
     }
 
     openNew() {
-        this.product = {};
-
         this.user = {
             active: true,
             role: {}

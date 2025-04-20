@@ -31,10 +31,19 @@ public class JournalController {
         return ResponseEntity.ok(created);
     }
 
+    /*
     @DeleteMapping("/bookings/{id}")
     public ResponseEntity<BookingResponse> cancelBooking(@PathVariable long id) {
         BookingResponse canceled = journalService.cancelBooking(id);
         return ResponseEntity.ok(canceled);
+    }
+
+     */
+
+    @DeleteMapping("/bookings/{id}")
+    public ResponseEntity<Void> cancelBooking(@PathVariable long id) {
+        journalService.cancelBooking(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/export-csv")

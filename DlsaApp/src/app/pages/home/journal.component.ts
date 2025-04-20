@@ -92,7 +92,7 @@ export class JournalComponent {
     ) { }
 
     ngOnInit() {
-        this.loadbookings();
+        this.loadBookings();
         this.loadMembers();
         this.loadActions();
     }
@@ -104,7 +104,7 @@ export class JournalComponent {
         }));
     }
 
-    loadbookings() {
+    loadBookings() {
         this.journalService.getAllBookings().subscribe({
             next: (data) => {
                 this.bookings.set(data);
@@ -172,7 +172,7 @@ export class JournalComponent {
         this.bookingDialog = true;
         */
         this.confirmationService.confirm({
-            message: 'Soll die folgende Buchung wirklich gelöscht werden? <br/><br/>' +
+            message: 'Soll die folgende Buchung wirklich storniert werden? <br/><br/>' +
                 'Ableistungsdatum: ' + this.formatDate(booking.doneDate!) + '<br/>' +
                 'Mitgliednummer: ' + booking.member?.memberId + '<br/>' +
                 'Aktion: ' + booking.action?.description + '<br/>' +
@@ -193,8 +193,9 @@ export class JournalComponent {
 
                 this.journalService.cancelBooking(booking.id!).subscribe({
                     next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Buchung wurden erfolgreich stroniert!" });
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Buchung wurden erfolgreich storniert!" });
 
+                        /*
                         const currentBookings = this.bookings();
                         const _bookings = currentBookings.map(booking =>
                             booking.id === data.id ? { ...booking, ...data } : booking
@@ -202,6 +203,9 @@ export class JournalComponent {
 
                         this.bookings.set(_bookings);
                         this.booking = {};
+                        */
+
+                        this.loadBookings();
                     },
                     error: (err) => {
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });

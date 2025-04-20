@@ -77,9 +77,7 @@ export class ActionComponent{
         private confirmationService: ConfirmationService,
         private memberService: MemberService,
         private actionService: ActionService
-    ) {
-        
-    }
+    ) {}
 
     ngOnInit() {
         this.loadActions();
@@ -96,10 +94,10 @@ export class ActionComponent{
     loadActions() {
         this.actionService.getAllActions().subscribe({
             next: (data) => {
-                console.log(data);
                 this.actions.set(data);
             },
             error: (err) => {
+                console.log(err);
                 this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
             }
         });
