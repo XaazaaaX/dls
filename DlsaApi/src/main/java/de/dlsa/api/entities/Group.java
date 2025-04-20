@@ -9,12 +9,7 @@ import java.util.Collection;
 
 @Table(name = "Gruppen")
 @Entity
-public class Group {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class Group extends BaseEntity{
 
     @Column(name = "gruppenname", unique = true)
     private String groupName;
@@ -24,15 +19,6 @@ public class Group {
 
     @ManyToMany(mappedBy = "groups")
     private Collection<Member> member = new ArrayList<Member>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public Group setId(Long id){
-        this.id = id;
-        return this;
-    }
 
     public String getGroupName() {
         return groupName;

@@ -15,11 +15,7 @@ import java.util.List;
  */
 @Table(name = "Benutzer")
 @Entity
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, unique = true, name = "benutzername")
     private String username;
@@ -33,15 +29,6 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Role role;
-
-    /**
-     * Getter für das User-Id
-     *
-     * @return Gibt den Wert aus dem Attribut "id" zurück
-     */
-    public Long getId() {
-        return id;
-    }
 
     /**
      * Getter für den Username

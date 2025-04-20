@@ -6,11 +6,7 @@ import java.time.Instant;
 import java.util.Date;
 
 @Entity
-public class GroupChanges {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class GroupChanges extends BaseEntity{
 
     @Column(name = "bezugsdatum")
     private Instant refDate;
@@ -22,15 +18,6 @@ public class GroupChanges {
     private Boolean newValue;
 
     private Long groupId;
-
-    public Long getId() {
-        return id;
-    }
-
-    public GroupChanges setId(Long id){
-        this.id = id;
-        return this;
-    }
 
     public Instant getRefDate() {
         return refDate;

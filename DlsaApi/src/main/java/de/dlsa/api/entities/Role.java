@@ -4,11 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Rollen")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class Role extends BaseEntity {
 
     @Column(name = "rollenname")
     private String rolename;

@@ -9,27 +9,13 @@ import java.util.List;
 
 @Table(name = "Sparten")
 @Entity
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class Category extends BaseEntity {
 
     @Column(name = "spartenname", unique = true)
     private String categoryName;
 
     @ManyToMany(mappedBy = "categories")
     private Collection<Member> member = new ArrayList<Member>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public Category setId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public String getCategoryName() {
         return categoryName;

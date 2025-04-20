@@ -1,0 +1,133 @@
+<div class="card">
+    <p-table #dt [value]="bookings()" [rows]="10" [paginator]="true" [globalFilterFields]="['memberId']"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Buchungen"
+        [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
+
+        <ng-template #caption>
+            <div class="flex flex-wrap items-center justify-between">
+                <h4 class="m-0">Buchungen</h4>
+                <div class="flex flex-wrap items-center justify-between">
+                    <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2"
+                        (onClick)="openNew()" />
+                    <p-iconfield>
+                        <p-inputicon styleClass="pi pi-search" />
+                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
+                    </p-iconfield>
+                </div>
+
+            </div>
+        </ng-template>
+
+
+
+        <ng-template #header>
+            <tr>
+                <th pSortableColumn="doneDate">
+                    Ableistungsdatum
+                    <p-sortIcon field="doneDate" />
+                </th>
+
+                <th pSortableColumn="member.id">
+                    Mitgliedsnummer
+                    <p-sortIcon field="member.id" />
+                </th>
+
+                <th pSortableColumn="countDls">
+                    Anzahl Dls
+                    <p-sortIcon field="countDls" />
+                </th>
+
+                <th>
+                    Bemerkung
+                </th>
+
+                <th>Optionen</th>
+            </tr>
+        </ng-template>
+
+
+        <ng-template #body let-booking>
+            <tr [ngStyle]="this.rowStyle(booking)">
+                <td style="width: auto; min-width: 5rem;">{{ booking.doneDate | date:'dd.MM.yyyy' }}</td>
+
+                <td style="width: auto; min-width: 5rem;">{{ booking.member.id }}</td>
+
+                <td style="width: auto; min-width: 5rem;">{{ booking.countDls }}</td>
+
+                <td style="width: auto; min-width: 5rem;">{{ booking.comment }}</td>
+
+                @if(!booking.canceled) {
+                <td style="width: 10%; min-width: 6rem;">
+                    <p-button icon="pi pi-times" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="cancelBooking(booking)" />
+                </td>
+                } @else {
+                <td style="width: 10%; min-width: 6rem;">
+                    storniert
+                </td>
+                }
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-dialog [(visible)]="bookingDialog" [style]="{ width: '450px' }" header="Buchungsdetails" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+
+            <div>
+                <label for="bookingMember" class="block font-bold mb-3">Mitglied*</label>
+                <p-select id="bookingMember" [options]="fullNameMemberOptions" appendTo="body" [filter]="true"
+                    filterBy="fullname" [(ngModel)]="memberId" optionLabel="fullname" optionValue="id"
+                    placeholder="Auswählen" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !memberId">Mitglied ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="bookingDoneDate" class="block font-bold mb-3">Ableistungsdatum*</label>
+                <p-datepicker id="bookingDoneDate" [(ngModel)]="booking.doneDate" dateFormat="dd.mm.yy" required
+                    fluid />
+                <small class="text-red-500" *ngIf="submitted && !booking.doneDate">Ableistungsdatum ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="bookingAction" class="block font-bold mb-3">Aktion*</label>
+                <p-select id="bookingAction" [options]="actions" appendTo="body" [filter]="true" filterBy="description"
+                    [(ngModel)]="actionId" optionLabel="description" optionValue="id" placeholder="Auswählen" required
+                    fluid />
+                <small class="text-red-500" *ngIf="submitted && !actionId">Altion ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="bookingCountDls" class="block font-bold mb-3">Anzahl Dienstleistungsstunden*</label>
+                <p-inputnumber id="bookingCountDls" [(ngModel)]="booking.countDls" showButtons [min]="0" integer="true" minFractionDigits="0"
+                    fluid></p-inputnumber>
+                <small class="text-red-500" *ngIf="submitted && !booking.countDls">Anzahl Dienstleistungsstunden ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="bookingComment" class="block font-bold mb-3">Bemerkung</label>
+                <textarea pTextarea id="bookingComment" [(ngModel)]="booking.comment" [autoResize]="true" rows="3"
+                    cols="30" fluid></textarea>
+                <small class="text-red-500" *ngIf="submitted && !booking.comment">Bemerkung ist
+                    erforderlich!</small>
+            </div>
+
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Speichern" icon="pi pi-check" (click)="saveBooking()" />
+    </ng-template>
+</p-dialog>
+
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+
+<p-toast />

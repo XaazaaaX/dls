@@ -7,27 +7,13 @@ import java.util.Collection;
 
 @Table(name = "Bereiche")
 @Entity
-public class Sector {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class Sector extends BaseEntity {
 
     @Column(name = "Name", unique = true)
     private String sectorname;
 
     @ManyToMany
     private Collection<Group> groups;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Sector setId(Long id){
-        this.id = id;
-        return this;
-    }
 
     public String getSectorname() {
         return sectorname;

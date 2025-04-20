@@ -37,7 +37,7 @@ export class AppMenu {
                 visible: this.isUser,
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard/home'], visible: this.isUser },
-                    { label: 'Journal', icon: 'pi pi-fw pi-pencil', routerLink: ['/'], visible: this.isUser }
+                    { label: 'Journal', icon: 'pi pi-fw pi-pencil', routerLink: ['/dashboard/journal'], visible: this.isUser }
                 ]
             },
             {

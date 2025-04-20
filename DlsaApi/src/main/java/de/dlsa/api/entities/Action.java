@@ -4,12 +4,7 @@ import jakarta.persistence.*;
 
 @Table(name = "Aktionen")
 @Entity
-public class Action {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class Action extends BaseEntity{
 
     @Column(name = "jahr")
     private String year;
@@ -19,15 +14,6 @@ public class Action {
 
     @ManyToOne
     private Member contact;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Action setId(Long id){
-        this.id = id;
-        return this;
-    }
     public String getYear() {
         return year;
     }

@@ -14,12 +14,8 @@ import java.time.ZoneId;
 
 @Table(name = "Mitglieder")
 @Entity
-public class Member {
+public class Member extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
     @Column(name = "nachname")
     private String surname;
     @Column(name = "vorname")
@@ -60,15 +56,6 @@ public class Member {
     @PreUpdate
     public void preUpdate() {
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Member setId(Long id){
-        this.id = id;
-        return this;
     }
 
     public String getFullName() {

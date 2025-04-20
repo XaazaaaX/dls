@@ -4,12 +4,7 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-public class MemberChanges {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class MemberChanges extends BaseEntity {
 
     private Instant timestamp = Instant.now();
 
@@ -26,15 +21,6 @@ public class MemberChanges {
     private String newValue;
 
     private Long memberId;
-
-    public Long getId() {
-        return id;
-    }
-
-    public MemberChanges setId(Long id){
-        this.id = id;
-        return this;
-    }
 
     public Instant getRefDate() {
         return refDate;

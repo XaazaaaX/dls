@@ -20,48 +20,7 @@ import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
-  template: `
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-
-
-  <!--<div class="bg-white shadow-lg rounded-2xl p-6 w-96">
-    <h2 class="text-xl font-semibold mb-4">Centered Card</h2>
-    <p class="text-gray-600">This card is centered vertically and horizontally.</p>
-  </div>-->
-
-  <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
-    <!--<ng-template #header>
-        <img alt="Card" class="w-full" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" />
-    </ng-template>-->
-    <ng-template #title> LOGIN </ng-template>
-
-
-    <form [formGroup]="loginForm" (ngSubmit)="login()" class="grid grid-cols-1 md:grid-cols-1 gap-4">
-
-      <p-toast />
-
-      <p-floatlabel variant="in">
-            <input pInputText id="over_label_user" formControlName="username" name="username" [fluid]="true" />
-            <label for="over_label_user">Username</label>
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <p-password formControlName="password" name="password" [feedback]="false" [fluid]="true" [toggleMask]="true" inputId="over_label_pw"/>
-        <label for="over_label_pw">Passwort</label>
-      </p-floatlabel>
-
-      <div class="flex mt-1">
-            <p-button label="Login" class="w-full" styleClass="w-full" type="submit" [disabled]="!loginForm.valid" />
-      </div>
-
-    </form>
-</p-card>
-
-
-
-</div>
- 
-  `,
+  templateUrl: `./login.component.html`,
   standalone: true,
   imports: [
     CommonModule, 

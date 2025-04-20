@@ -1,12 +1,15 @@
 package de.dlsa.api.config;
 
 import de.dlsa.api.dtos.ActionDto;
+import de.dlsa.api.dtos.BookingDto;
 import de.dlsa.api.entities.Action;
+import de.dlsa.api.entities.Booking;
 import de.dlsa.api.entities.User;
 import de.dlsa.api.repositories.UserRepository;
 import de.dlsa.api.responses.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -96,10 +99,22 @@ public class ApplicationConfiguration {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        /*modelMapper.typeMap(UserResponse.class, User.class)
-                .addMapping(UserResponse::getRolename, src -> src.getRole().setRolename());
-           */
+/*
+        modelMapper.typeMap(BookingDto.class, Booking.class)
+                .addMappings(mapper -> mapper
+                        .skip(Booking::setId)
+                );
+
+        modelMapper.typeMap(ActionDto.class, Action.class)
+                .addMappings(mapper -> mapper
+                        .skip(Action::setId)
+                );
+
+ */
+
+
 
         return modelMapper;
     }

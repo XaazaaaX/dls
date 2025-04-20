@@ -4,11 +4,7 @@ import jakarta.persistence.*;
 
 @Table(name = "Einstellungen")
 @Entity
-public class Settings {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class Settings extends BaseEntity {
     @Column(name = "stichtag")
     private String dueDate;
     @Column(name = "anzahlDls")
@@ -25,15 +21,6 @@ public class Settings {
     private Boolean clearing = true;
     @Column(name = "granularität")
     private String granularity;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Settings setId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public String getDueDate() {
         return dueDate;
