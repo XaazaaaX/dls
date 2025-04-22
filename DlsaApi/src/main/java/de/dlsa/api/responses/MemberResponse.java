@@ -1,6 +1,7 @@
 package de.dlsa.api.responses;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -9,10 +10,10 @@ public class MemberResponse {
     private String surname;
     private String forename;
     private String memberId;
-    private Instant entryDate;
-    private Instant leavingDate;
+    private LocalDateTime entryDate;
+    private LocalDateTime leavingDate;
     private Boolean active;
-    private Instant birthdate;
+    private LocalDateTime birthdate;
     private Boolean aikz = true;
     private Collection<GroupResponse> groups = new ArrayList<GroupResponse>();
     private Collection<CategoryResponse> categories = new ArrayList<CategoryResponse>();
@@ -53,20 +54,20 @@ public class MemberResponse {
         return this;
     }
 
-    public Instant getEntryDate() {
+    public LocalDateTime getEntryDate() {
         return entryDate;
     }
 
-    public MemberResponse setEntryDate(Instant entryDate) {
+    public MemberResponse setEntryDate(LocalDateTime entryDate) {
         this.entryDate = entryDate;
         return this;
     }
 
-    public Instant getLeavingDate() {
+    public LocalDateTime getLeavingDate() {
         return leavingDate;
     }
 
-    public MemberResponse setLeavingDate(Instant leavingDate) {
+    public MemberResponse setLeavingDate(LocalDateTime leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -98,11 +99,11 @@ public class MemberResponse {
         return this;
     }
 
-    public Instant getBirthdate() {
+    public LocalDateTime getBirthdate() {
         return birthdate;
     }
 
-    public MemberResponse setBirthdate(Instant birthdate) {
+    public MemberResponse setBirthdate(LocalDateTime birthdate) {
         this.birthdate = birthdate;
         return this;
     }

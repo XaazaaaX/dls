@@ -3,13 +3,14 @@ package de.dlsa.api.entities;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 public class GroupChanges extends BaseEntity{
 
     @Column(name = "bezugsdatum")
-    private Instant refDate;
+    private LocalDateTime refDate;
 
     @Column(name = "alterWert")
     private Boolean oldValue;
@@ -19,11 +20,11 @@ public class GroupChanges extends BaseEntity{
 
     private Long groupId;
 
-    public Instant getRefDate() {
+    public LocalDateTime getRefDate() {
         return refDate;
     }
 
-    public GroupChanges setRefDate(Instant refDate) {
+    public GroupChanges setRefDate(LocalDateTime refDate) {
         this.refDate = refDate;
         return this;
     }

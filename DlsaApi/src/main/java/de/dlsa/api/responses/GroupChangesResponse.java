@@ -8,11 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public class GroupChangesResponse {
 
     private Long id;
-    private Instant refDate;
+    private LocalDateTime refDate;
     private Boolean oldValue;
     private Boolean newValue;
     private String groupName;
@@ -26,11 +27,11 @@ public class GroupChangesResponse {
         return this;
     }
 
-    public Instant getRefDate() {
+    public LocalDateTime getRefDate() {
         return refDate;
     }
 
-    public GroupChangesResponse setRefDate(Instant refDate) {
+    public GroupChangesResponse setRefDate(LocalDateTime refDate) {
         this.refDate = refDate;
         return this;
     }

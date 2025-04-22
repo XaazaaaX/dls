@@ -2,7 +2,9 @@ package de.dlsa.api.controllers;
 
 import de.dlsa.api.dtos.BookingDto;
 import de.dlsa.api.responses.BookingResponse;
+import de.dlsa.api.services.CourseOfYearService;
 import de.dlsa.api.services.JournalService;
+import de.dlsa.api.shared.CourseOfYearResult;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,13 @@ import java.util.List;
 public class JournalController {
 
     private final JournalService journalService;
+    private final CourseOfYearService coyService;
 
-    public JournalController(JournalService journalService) {
+    public JournalController(
+            JournalService journalService,
+            CourseOfYearService coyService) {
         this.journalService = journalService;
+        this.coyService = coyService;
     }
 
     @GetMapping("/bookings")
@@ -49,5 +55,16 @@ public class JournalController {
     @GetMapping("/export-csv")
     public ResponseEntity<byte[]> exportCsv() throws IOException {
         return journalService.generateAndExportCsv();
+    }
+
+    @GetMapping("/coy/test")
+    public List<CourseOfYearResult> calculate(@RequestParam int year) {
+        return coyService.calculateForYear(year, false);
+    }
+
+    @GetMapping("/coy/finalize")
+    public ResponseEntity<Void> finalizeYear(@RequestParam int year) {
+        coyService.calculateForYear(year, true);
+        return ResponseEntity.ok().build();
     }
 }

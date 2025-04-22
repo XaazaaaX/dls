@@ -101,6 +101,9 @@ public class ApplicationConfiguration {
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
+        // Konfiguration, die sicherstellt, dass nur null-Werte gemappt werden
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+
 /*
         modelMapper.typeMap(BookingDto.class, Booking.class)
                 .addMappings(mapper -> mapper

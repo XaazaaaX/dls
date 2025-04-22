@@ -5,12 +5,10 @@ import jakarta.persistence.*;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.time.Instant;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.time.Instant;
-import java.time.Period;
-import java.time.ZoneId;
 
 @Table(name = "Mitglieder")
 @Entity
@@ -23,15 +21,18 @@ public class Member extends BaseEntity{
     @Column(name = "mitgliedsnummer")
     private String memberId;
     @Column(name = "eintrittsdatum")
-    private Instant entryDate;
+    private LocalDateTime entryDate;
     @Column(name = "austrittsdatum")
-    private Instant  leavingDate;
+    private LocalDateTime  leavingDate;
     @Column(name = "aktiv")
     private Boolean active = true;
     @Column(name = "geburtsdatum")
-    private Instant  birthdate;
+    private LocalDateTime  birthdate;
 
     private Boolean aikz = true;
+
+    @OneToOne
+    private BasicMember basicMember;
 
     @ManyToMany
     private Collection<Group> groups;
@@ -43,7 +44,8 @@ public class Member extends BaseEntity{
     @PrePersist
     public void prePersist() {
 
-        /*if (this.basicMember == null) {
+        /*
+        if (this.basicMember == null) {
             this.basicMember = new BasicMember()
                     .setActive(this.active)
                     .setEntryDate(this.entryDate)
@@ -98,23 +100,23 @@ public class Member extends BaseEntity{
         return this;
     }
 
-    public Instant  getEntryDate() {
+    public LocalDateTime getEntryDate() {
         return entryDate;
     }
 
-    public Member setEntryDate(Instant  entryDate) {
-        Instant  oldDate = this.entryDate;
+    public Member setEntryDate(LocalDateTime  entryDate) {
+        LocalDateTime oldDate = this.entryDate;
         this.entryDate = entryDate;
         //changes.firePropertyChange(MemberColumn.ENTRYDATE.toString(), oldDate,entryDate);
         return this;
     }
 
-    public Instant  getLeavingDate() {
+    public LocalDateTime getLeavingDate() {
         return leavingDate;
     }
 
-    public Member setLeavingDate(Instant  leavingDate) {
-        Instant  oldDate = this.leavingDate;
+    public Member setLeavingDate(LocalDateTime  leavingDate) {
+        LocalDateTime  oldDate = this.leavingDate;
         this.leavingDate = leavingDate;
         //changes.firePropertyChange(MemberColumn.LEAVINGDATE.toString(),oldDate, leavingDate);
         return this;
@@ -151,29 +153,29 @@ public class Member extends BaseEntity{
         return this;
     }
 
-    public Instant  getBirthdate() {
+    public LocalDateTime getBirthdate() {
         return birthdate;
     }
 
-    public Member setBirthdate(Instant  birthdate) {
+    public Member setBirthdate(LocalDateTime  birthdate) {
         this.birthdate = birthdate;
         return this;
     }
 
-    public int getAge(Instant dueDate) {
-        if (birthdate == null) {
-            return -1;
+    public int getAge(LocalDateTime dueDate) {
+        if (birthdate == null || dueDate == null) {
+            return 0; // or throw an exception, depending on your use case
         }
 
-        /*
-        Years age = Years.yearsBetween(new Instant (birthdate), dueDate);
-        return age.getYears();
-         */
+        return Period.between(birthdate.toLocalDate(), dueDate.toLocalDate()).getYears();
+    }
+    public BasicMember getBasicMember() {
+        return basicMember;
+    }
 
-        // birthdate ist vom Typ java.util.Instant  → in Instant umwandeln
-
-
-        return 0;
+    public Member setBasicMember(BasicMember basicMember) {
+        this.basicMember = basicMember;
+        return this;
     }
 
     public Boolean getAikz() {

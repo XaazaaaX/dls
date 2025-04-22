@@ -2,14 +2,16 @@ package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class MemberChanges extends BaseEntity {
 
-    private Instant timestamp = Instant.now();
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     @Column(name = "bezugsdatum")
-    private Instant refDate;
+    private LocalDateTime refDate;
 
     @Column(name = "spaltenname")
     private String column;
@@ -22,11 +24,11 @@ public class MemberChanges extends BaseEntity {
 
     private Long memberId;
 
-    public Instant getRefDate() {
+    public LocalDateTime getRefDate() {
         return refDate;
     }
 
-    public MemberChanges setRefDate(Instant refDate) {
+    public MemberChanges setRefDate(LocalDateTime refDate) {
         this.refDate = refDate;
         return this;
     }
@@ -67,11 +69,11 @@ public class MemberChanges extends BaseEntity {
         return this;
     }
 
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public MemberChanges setTimestamp(Instant timestamp) {
+    public MemberChanges setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }

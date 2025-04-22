@@ -1,27 +1,23 @@
-/*
+
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
 @Entity
-public class BasicMember {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class BasicMember extends BaseEntity {
 
     @Column(name = "aktiv")
     private Boolean active;
 
     @Column(name = "eintrittsdatum")
-    private Date entryDate;
+    private LocalDateTime entryDate;
 
     @Column(name = "austrittsdatum")
-    private Date leavingDate;
+    private LocalDateTime leavingDate;
 
     @OneToOne
     private Member member;
@@ -35,20 +31,20 @@ public class BasicMember {
         return this;
     }
 
-    public Date getEntryDate() {
+    public LocalDateTime getEntryDate() {
         return entryDate;
     }
 
-    public BasicMember setEntryDate(Date entryDate) {
+    public BasicMember setEntryDate(LocalDateTime entryDate) {
         this.entryDate = entryDate;
         return this;
     }
 
-    public Date getLeavingDate() {
+    public LocalDateTime getLeavingDate() {
         return leavingDate;
     }
 
-    public BasicMember setLeavingDate(Date leavingDate) {
+    public BasicMember setLeavingDate(LocalDateTime leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -62,4 +58,3 @@ public class BasicMember {
         return this;
     }
 }
-*/

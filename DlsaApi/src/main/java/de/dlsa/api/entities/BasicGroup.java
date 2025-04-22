@@ -1,15 +1,9 @@
-/*
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 
 @Entity
-public class BasicGroup {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, name = "id")
-    private Long id;
+public class BasicGroup extends BaseEntity {
 
     @Column(name = "dlsBefreit")
     private Boolean liberate;
@@ -48,4 +42,3 @@ public class BasicGroup {
     }
 
 }
-*/

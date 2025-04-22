@@ -4,12 +4,14 @@ import de.dlsa.api.entities.MemberChanges;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class MemberEditDto {
     @NotNull(message = "Bezugsdatum ist erforderlich")
-    private Instant refDate;
+    private LocalDateTime refDate;
     @NotBlank(message = "Nachname ist erforderlich")
     private String surname;
     @NotBlank(message = "Vorname ist erforderlich")
@@ -17,20 +19,20 @@ public class MemberEditDto {
     @NotBlank(message = "Mitgliedsnummer ist erforderlich")
     private String memberId;
     @NotNull(message = "Eintrittsdatum ist erforderlich")
-    private Instant entryDate;
-    private Instant  leavingDate;
+    private LocalDateTime entryDate;
+    private LocalDateTime  leavingDate;
     private Boolean active;
     @NotNull(message = "Geburtstag ist erforderlich")
-    private Instant  birthdate;
+    private LocalDateTime  birthdate;
     private Boolean aikz = true;
     private Collection<Long> groupIds;
     private Collection<Long> categorieIds;
 
-    public Instant getRefDate() {
+    public LocalDateTime getRefDate() {
         return refDate;
     }
 
-    public MemberEditDto setRefDate(Instant refDate) {
+    public MemberEditDto setRefDate(LocalDateTime refDate) {
         this.refDate = refDate;
         return this;
     }
@@ -61,20 +63,20 @@ public class MemberEditDto {
         return this;
     }
 
-    public Instant  getEntryDate() {
+    public LocalDateTime getEntryDate() {
         return entryDate;
     }
 
-    public MemberEditDto setEntryDate(Instant  entryDate) {
+    public MemberEditDto setEntryDate(LocalDateTime entryDate) {
         this.entryDate = entryDate;
         return this;
     }
 
-    public Instant  getLeavingDate() {
+    public LocalDateTime getLeavingDate() {
         return leavingDate;
     }
 
-    public MemberEditDto setLeavingDate(Instant  leavingDate) {
+    public MemberEditDto setLeavingDate(LocalDateTime leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -106,11 +108,11 @@ public class MemberEditDto {
         return this;
     }
 
-    public Instant  getBirthdate() {
+    public LocalDateTime getBirthdate() {
         return birthdate;
     }
 
-    public MemberEditDto setBirthdate(Instant  birthdate) {
+    public MemberEditDto setBirthdate(LocalDateTime birthdate) {
         this.birthdate = birthdate;
         return this;
     }

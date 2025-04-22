@@ -1,13 +1,12 @@
 package de.dlsa.api.responses;
 
-import de.dlsa.api.entities.MemberChanges;
-
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MemberChangesResponse {
     private Long id;
-    private Instant timestamp;
-    private Instant refDate;
+    private LocalDateTime timestamp;
+    private LocalDateTime refDate;
     private String column;
     private String oldValue;
     private String newValue;
@@ -22,11 +21,11 @@ public class MemberChangesResponse {
         return this;
     }
 
-    public Instant getRefDate() {
+    public LocalDateTime getRefDate() {
         return refDate;
     }
 
-    public MemberChangesResponse setRefDate(Instant refDate) {
+    public MemberChangesResponse setRefDate(LocalDateTime refDate) {
         this.refDate = refDate;
         return this;
     }
@@ -67,11 +66,11 @@ public class MemberChangesResponse {
         return this;
     }
 
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public MemberChangesResponse setTimestamp(Instant timestamp) {
+    public MemberChangesResponse setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }

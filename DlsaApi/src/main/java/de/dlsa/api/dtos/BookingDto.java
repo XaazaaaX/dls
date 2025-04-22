@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BookingDto {
     @NotNull(message = "Dls ist erforderlich")
@@ -12,7 +14,7 @@ public class BookingDto {
     @NotBlank(message = "Bemerkung ist erforderlich")
     private String comment;
     @NotNull(message = "Ableistungsdatum ist erforderlich")
-    private Instant doneDate;
+    private LocalDateTime doneDate;
     @NotNull(message = "Mitglied ist erforderlich")
     private Long memberId;
     @NotNull(message = "Aktion ist erforderlich")
@@ -36,11 +38,11 @@ public class BookingDto {
         return this;
     }
 
-    public Instant getDoneDate() {
+    public LocalDateTime getDoneDate() {
         return doneDate;
     }
 
-    public BookingDto setDoneDate(Instant doneDate) {
+    public BookingDto setDoneDate(LocalDateTime doneDate) {
         this.doneDate = doneDate;
         return this;
     }

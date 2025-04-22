@@ -2,6 +2,8 @@ package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Buchungen")
@@ -11,11 +13,11 @@ public class Booking extends BaseEntity{
     @Column(name = "bemerkung")
     private String comment;
     @Column(name = "ableistungsDatum")
-    private Instant doneDate;
+    private LocalDateTime doneDate;
     @Column(name = "storniert")
     private Boolean canceled = false;
     @Column(name = "buchungsdatum")
-    private Instant bookingDate = Instant.now();
+    private LocalDateTime bookingDate = LocalDateTime.now();
 
     @ManyToOne
     private Member member;
@@ -58,11 +60,11 @@ public class Booking extends BaseEntity{
         return this;
     }
 
-    public Instant getDoneDate() {
+    public LocalDateTime getDoneDate() {
         return doneDate;
     }
 
-    public Booking setDoneDate(Instant doneDate) {
+    public Booking setDoneDate(LocalDateTime doneDate) {
         this.doneDate = doneDate;
         return this;
     }

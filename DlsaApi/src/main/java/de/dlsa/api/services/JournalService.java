@@ -72,7 +72,7 @@ public class JournalService {
             mappedBooking.setAction(action);
         }
 
-        int year = booking.getDoneDate().atZone(ZoneId.systemDefault()).getYear();
+        int year = booking.getDoneDate().getYear();
         yearRepository.findByYear(year)
                 .orElseGet(() -> yearRepository.save(new Year().setYear(year)));
 

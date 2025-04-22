@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Jahreslaeufe")
@@ -12,13 +14,13 @@ public class CourseOfYear extends BaseEntity{
 
     @Column(name = "datei")
     private byte[] file;
-    private Instant timestamp;
+    private LocalDateTime timestamp;
     @Column(name = "anzeigename")
     private String displayName;
     @Column(name = "dateiname")
     private String filename;
     @Column(name = "stichtagsdatum")
-    private Instant dueDate;
+    private LocalDateTime dueDate;
 
     /*
     public CourseOfYear() {
@@ -44,11 +46,11 @@ public class CourseOfYear extends BaseEntity{
         this.file = file;
     }
 
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -68,11 +70,11 @@ public class CourseOfYear extends BaseEntity{
         this.filename = filename;
     }
 
-    public Instant getDueDate() {
+    public LocalDateTime getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Instant dueDate) {
+    public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
     }
 

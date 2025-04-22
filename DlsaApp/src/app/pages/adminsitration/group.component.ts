@@ -148,7 +148,7 @@ export class GroupComponent{
 
                 this.groupService.createGroup(this.group).subscribe({
                     next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Bereich wurde erfolgreich angelegt!" });
+                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Gruppe wurde erfolgreich angelegt!" });
         
                         this.groups.set([...this.groups(), data]);
                         this.groupDialog = false;

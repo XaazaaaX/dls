@@ -1,8 +1,10 @@
 package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.GroupDto;
+import de.dlsa.api.entities.BasicGroup;
 import de.dlsa.api.entities.Group;
 import de.dlsa.api.entities.GroupChanges;
+import de.dlsa.api.repositories.BasicGroupRepository;
 import de.dlsa.api.repositories.GroupChangesRepository;
 import de.dlsa.api.repositories.GroupRepository;
 import de.dlsa.api.responses.GroupResponse;
@@ -10,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,14 +20,17 @@ import java.util.stream.Collectors;
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final BasicGroupRepository basicGroupRepository;
     private final GroupChangesRepository groupChangesRepository;
     private final ModelMapper modelMapper;
 
     public GroupService(
             GroupRepository groupRepository,
+            BasicGroupRepository basicGroupRepository,
             GroupChangesRepository groupChangesRepository,
             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
+        this.basicGroupRepository = basicGroupRepository;
         this.groupChangesRepository = groupChangesRepository;
         this.modelMapper = modelMapper;
     }
@@ -41,9 +47,19 @@ public class GroupService {
 
         Group mappedGroup = modelMapper.map(group, Group.class);
 
-        Group addedGroups = groupRepository.save(mappedGroup);
+        Group addedGroup = groupRepository.save(mappedGroup);
 
-        return modelMapper.map(addedGroups, GroupResponse.class);
+        BasicGroup bGroup = new BasicGroup()
+                .setLiberate(addedGroup.getLiberated())
+                .setGroupName(addedGroup.getGroupName())
+                .setGroup(addedGroup);
+
+        BasicGroup addedBasicGroup = basicGroupRepository.save(bGroup);
+
+        addedGroup.setBasicGroup(addedBasicGroup);
+        Group finalGroup = groupRepository.save(addedGroup);
+
+        return modelMapper.map(finalGroup, GroupResponse.class);
     }
 
     public GroupResponse updateGroup(long id, GroupDto group) {
@@ -62,7 +78,7 @@ public class GroupService {
                     .setGroupId(existing.getId())
                     .setNewValue(group.getLiberated())
                     .setOldValue(existing.getLiberated())
-                    .setRefDate(Instant.now());
+                    .setRefDate(LocalDateTime.now());
 
             groupChangesRepository.save(newGroupChanges);
 

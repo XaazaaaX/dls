@@ -50,6 +50,7 @@ export class HttpService {
   // Fehlerbehandlung
   private handleError(error: HttpErrorResponse) {
     console.log(error);
-    return throwError(() => ({error: {title: "Verbindungsfehler", description: "Es gab einen Fehler bei der API-Anfrage."}}));
+    //return throwError(() => ({error: {title: "Verbindungsfehler", description: "Es gab einen Fehler bei der API-Anfrage."}}));
+    return throwError(() => error);
   }
 }

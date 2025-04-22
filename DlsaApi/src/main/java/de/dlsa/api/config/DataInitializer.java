@@ -1,7 +1,9 @@
 package de.dlsa.api.config;
 
+import de.dlsa.api.dtos.MemberCreateDto;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
+import de.dlsa.api.services.MemberService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -23,19 +25,22 @@ public class DataInitializer implements CommandLineRunner {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberService memberService;
 
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
                            SettingsRepository settingsRepository,
                            MemberRepository memberRepository,
                            CategoryRepository categoryRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           MemberService memberService) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.settingsRepository = settingsRepository;
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
         this.passwordEncoder = passwordEncoder;
+        this.memberService = memberService;
     }
 
     @Override
@@ -112,21 +117,18 @@ public class DataInitializer implements CommandLineRunner {
     private void createMember() {
 
         try {
-            memberRepository.findByMemberId("1111")
-                    .orElseGet(() -> {
+            Member existing = memberRepository.findByMemberId("1111");
 
-                        List<Category> categories = categoryRepository.findAll();
+            if (existing == null){
+                MemberCreateDto newMember = new MemberCreateDto()
+                        .setSurname("Mustermann")
+                        .setForename("Max")
+                        .setMemberId("1111")
+                        .setEntryDate(LocalDateTime.parse("2019-03-27T00:00:00"))
+                        .setBirthdate(LocalDateTime.parse("1990-03-27T00:00:00"));
 
-                        Member newMember = new Member()
-                                .setSurname("Mustermann")
-                                .setForename("Max")
-                                .setMemberId("1111")
-                                .setCategories(categories)
-                                .setEntryDate(Instant.parse("2019-03-27T00:00:00Z"))
-                                .setBirthdate(Instant.parse("2019-03-27T00:00:00Z"));
-
-                        return memberRepository.save(newMember);
-                    });
+                memberService.createMember(newMember);
+            }
 
             System.out.println("Mitglied 1111 wurde initialisiert.");
         } catch (Exception e) {
@@ -134,21 +136,18 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         try {
-            memberRepository.findByMemberId("2222")
-                    .orElseGet(() -> {
+            Member existing = memberRepository.findByMemberId("2222");
 
-                        List<Category> categories = categoryRepository.findAll();
+            if (existing == null){
+                MemberCreateDto newMember = new MemberCreateDto()
+                        .setSurname("Musterfrau")
+                        .setForename("Mina")
+                        .setMemberId("2222")
+                        .setEntryDate(LocalDateTime.parse("2019-03-27T00:00:00"))
+                        .setBirthdate(LocalDateTime.parse("1990-03-27T00:00:00"));
 
-                        Member newMember = new Member()
-                                .setSurname("Musterfrau")
-                                .setForename("Mina")
-                                .setMemberId("2222")
-                                .setCategories(categories)
-                                .setEntryDate(Instant.parse("2019-03-27T00:00:00Z"))
-                                .setBirthdate(Instant.parse("2019-03-27T00:00:00Z"));
-
-                        return memberRepository.save(newMember);
-                    });
+                memberService.createMember(newMember);
+            }
 
             System.out.println("Mitglied 2222 wurde initialisiert.");
         } catch (Exception e) {

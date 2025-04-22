@@ -3,10 +3,7 @@ package de.dlsa.api.services;
 import de.dlsa.api.dtos.MemberCreateDto;
 import de.dlsa.api.dtos.MemberEditDto;
 import de.dlsa.api.entities.*;
-import de.dlsa.api.repositories.CategoryRepository;
-import de.dlsa.api.repositories.GroupRepository;
-import de.dlsa.api.repositories.MemberChangesRepository;
-import de.dlsa.api.repositories.MemberRepository;
+import de.dlsa.api.repositories.*;
 import de.dlsa.api.responses.MemberResponse;
 import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
@@ -23,6 +20,7 @@ public class MemberService {
 
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
+    private final BasicMemberRepository basicMemberRepository;
     private final MemberRepository memberRepository;
     private final MemberChangesRepository memberChangesRepository;
     private final ModelMapper modelMapper;
@@ -30,11 +28,13 @@ public class MemberService {
     public MemberService(
             GroupRepository groupRepository,
             CategoryRepository categoryRepository,
+            BasicMemberRepository basicMemberRepository,
             MemberRepository memberRepository,
             MemberChangesRepository memberChangesRepository,
             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
         this.categoryRepository = categoryRepository;
+        this.basicMemberRepository = basicMemberRepository;
         this.memberRepository = memberRepository;
         this.memberChangesRepository = memberChangesRepository;
         this.modelMapper = modelMapper;
@@ -64,7 +64,18 @@ public class MemberService {
 
         Member addedMember = memberRepository.save(mappedMember);
 
-        return modelMapper.map(addedMember, MemberResponse.class);
+        BasicMember bMember = new BasicMember()
+                .setMember(addedMember)
+                .setActive(addedMember.getActive())
+                .setEntryDate(addedMember.getEntryDate())
+                .setLeavingDate(addedMember.getLeavingDate());
+
+        BasicMember addedBasicMember = basicMemberRepository.save(bMember);
+
+        addedMember.setBasicMember(addedBasicMember);
+        Member finalMember = memberRepository.save(addedMember);
+
+        return modelMapper.map(finalMember, MemberResponse.class);
     }
 
 

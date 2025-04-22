@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class MemberCreateDto {
@@ -14,11 +16,11 @@ public class MemberCreateDto {
     @NotBlank(message = "Mitgliedsnummer ist erforderlich")
     private String memberId;
     @NotNull(message = "Eintrittsdatum ist erforderlich")
-    private Instant entryDate;
-    private Instant  leavingDate;
+    private LocalDateTime entryDate;
+    private LocalDateTime  leavingDate;
     private Boolean active;
     @NotNull(message = "Geburtstag ist erforderlich")
-    private Instant  birthdate;
+    private LocalDateTime  birthdate;
     private Boolean aikz = true;
     private Collection<Long> groupIds;
     private Collection<Long> categorieIds;
@@ -50,20 +52,20 @@ public class MemberCreateDto {
         return this;
     }
 
-    public Instant  getEntryDate() {
+    public LocalDateTime getEntryDate() {
         return entryDate;
     }
 
-    public MemberCreateDto setEntryDate(Instant  entryDate) {
+    public MemberCreateDto setEntryDate(LocalDateTime entryDate) {
         this.entryDate = entryDate;
         return this;
     }
 
-    public Instant  getLeavingDate() {
+    public LocalDateTime getLeavingDate() {
         return leavingDate;
     }
 
-    public MemberCreateDto setLeavingDate(Instant  leavingDate) {
+    public MemberCreateDto setLeavingDate(LocalDateTime leavingDate) {
         this.leavingDate = leavingDate;
         return this;
     }
@@ -95,11 +97,11 @@ public class MemberCreateDto {
         return this;
     }
 
-    public Instant  getBirthdate() {
+    public LocalDateTime getBirthdate() {
         return birthdate;
     }
 
-    public MemberCreateDto setBirthdate(Instant  birthdate) {
+    public MemberCreateDto setBirthdate(LocalDateTime  birthdate) {
         this.birthdate = birthdate;
         return this;
     }

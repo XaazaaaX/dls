@@ -1,14 +1,16 @@
 package de.dlsa.api.responses;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BookingResponse {
     private Long id;
     private double countDls;
     private String comment;
-    private Instant doneDate;
+    private LocalDateTime doneDate;
     private Boolean canceled;
-    private Instant bookingDate;
+    private LocalDateTime bookingDate;
     private MemberResponse member;
     private ActionResponse action;
 
@@ -39,11 +41,11 @@ public class BookingResponse {
         return this;
     }
 
-    public Instant getDoneDate() {
+    public LocalDateTime getDoneDate() {
         return doneDate;
     }
 
-    public BookingResponse setDoneDate(Instant doneDate) {
+    public BookingResponse setDoneDate(LocalDateTime doneDate) {
         this.doneDate = doneDate;
         return this;
     }
@@ -57,11 +59,11 @@ public class BookingResponse {
         return this;
     }
 
-    public Instant getBookingDate() {
+    public LocalDateTime getBookingDate() {
         return bookingDate;
     }
 
-    public BookingResponse setBookingDate(Instant bookingDate) {
+    public BookingResponse setBookingDate(LocalDateTime bookingDate) {
         this.bookingDate = bookingDate;
         return this;
     }

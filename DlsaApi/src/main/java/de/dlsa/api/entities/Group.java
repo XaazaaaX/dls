@@ -17,6 +17,9 @@ public class Group extends BaseEntity{
     @Column(name = "befreit")
     private Boolean liberated = false;
 
+    @OneToOne
+    private BasicGroup basicGroup;
+
     @ManyToMany(mappedBy = "groups")
     private Collection<Member> member = new ArrayList<Member>();
 
@@ -44,6 +47,15 @@ public class Group extends BaseEntity{
 
     public Group setMember(Collection<Member> member) {
         this.member = member;
+        return this;
+    }
+
+    public BasicGroup getBasicGroup() {
+        return basicGroup;
+    }
+
+    public Group setBasicGroup(BasicGroup basicGroup) {
+        this.basicGroup = basicGroup;
         return this;
     }
 }

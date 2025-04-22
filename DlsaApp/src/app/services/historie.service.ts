@@ -16,6 +16,7 @@ export interface GroupChanges{
 export interface MemberChanges{
     id?: number;
     refDate?: Date;
+    timestamp?: Date;
     column?: string
     oldValue?: boolean;
     newValue?: boolean;
