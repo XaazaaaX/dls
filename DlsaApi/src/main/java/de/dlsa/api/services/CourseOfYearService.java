@@ -1,5 +1,6 @@
 package de.dlsa.api.services;
 
+import de.dlsa.api.dtos.BookingDto;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
 import de.dlsa.api.shared.CourseOfYearResult;
@@ -138,6 +139,22 @@ public class CourseOfYearService {
         // Kosten für nicht geleistete DLS
         double memberDebit = getMemberDebit(requiredDls, achievedDls, settings);
 
+        // Kommentare setzen
+        String comment = "";
+        if (member.getAge(toDate.atTime(LocalTime.MAX)) == -1) {
+            comment += "Kein Geburtsdatum vorhanden.";
+        }
+        else if (requiredMonths > 0 && requiredMonths < 12) {
+            if (requiredMonths == 1) {
+                comment += "1 Monat DLS befreit";
+            } else
+                comment += 12 - requiredMonths + " Monate DLS befreit.";
+        } else if (requiredMonths == 0) {
+            comment += "Alle Monat DLS befreit.";
+        } else if (requiredMonths == 12) {
+            comment += "Keinen Monat DLS befreit.";
+        }
+
         CourseOfYearResult result = new CourseOfYearResult();
         result.firstName = member.getForename();
         result.lastName = member.getSurname();
@@ -146,20 +163,39 @@ public class CourseOfYearService {
         result.achievedDls = achievedDls;
         result.costPerDls = settings.getCostDls();
         result.toPay = memberDebit;
+        result.comment = comment;
+
+
+        // Buchungen
+        if (finalize) {
+            // Buchung der benötigten DLS
+            Booking rbooking = new Booking()
+                    .setMember(member)
+                    .setComment("Buchung der benötigten DLS")
+                    .setDoneDate(toDate.atStartOfDay())
+                    .setCountDls(-requiredDls);
+            bookingRepository.save(rbooking);
+
+            // Ausgleichsbuchung, falls Clearing aktiviert ist
+            if (settings.getClearing()) {
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                double diff = requiredDls - achievedDls;
+
+                Booking abooking = new Booking()
+                        .setMember(member)
+                        .setComment("Ausgleichsbuchung Jahreslauf " + LocalDate.now().format(formatter))
+                        .setDoneDate(toDate.atStartOfDay())
+                        .setCountDls(diff);
+                bookingRepository.save(abooking);
+            }
+        }
 
 
         return result;
     }
 
     public int getFullDlsMonths(LocalDate fromDate, LocalDate toDate) {
-        /*if (fromDate == null || toDate == null || fromDate.isAfter(toDate)) {
-            return 0;
-        }
-
-        return (int) ChronoUnit.MONTHS.between(fromDate, toDate);
-
-         */
-
         int monthCount = 0;
 
         // Starte ab dem nächsten Monat, falls fromDate nicht am 1. ist
@@ -256,7 +292,7 @@ public class CourseOfYearService {
             return true;
         }
         // Leaving date is before the due date
-        if ( member.getLeavingDate() != null && member.getLeavingDate().isBefore(fromDate.atStartOfDay()) ) {
+        if ( member.getLeavingDate() != null && member.getLeavingDate().isBefore(currentMonthLastDay.atTime(LocalTime.MAX)) ) {
             return true;
         }
         // Member is part of a group which liberates him at the moment
