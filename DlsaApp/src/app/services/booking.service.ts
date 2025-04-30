@@ -27,20 +27,20 @@ export interface Booking {
 @Injectable({
     providedIn: 'root'
 })
-export class JournalService {
+export class BookingService {
 
     constructor(private httpService: HttpService) {}
 
     getAllBookings(): Observable<Booking[]> {
-        return this.httpService.get<Booking[]>("journal/bookings");
+        return this.httpService.get<Booking[]>("bookings");
     }
 
     createBooking(booking: BookingDto): Observable<Booking> {
-        return this.httpService.post<Booking>("journal/booking", booking);
+        return this.httpService.post<Booking>("booking", booking);
     }
 
     cancelBooking(id: number): Observable<Booking> {
-        return this.httpService.delete<Booking>("journal/bookings/" + id);
+        return this.httpService.delete<Booking>("bookings/" + id);
     } 
 
 }

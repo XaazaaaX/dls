@@ -22,13 +22,16 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
+import { Group, GroupService } from '../../services/group.service';
+import { Category, CategoryService } from '../../services/category.service';
 import { Booking, BookingDto, BookingService } from '../../services/booking.service';
 import { Member, MemberService } from '../../services/member.service';
 import { Action, ActionService } from '../../services/action.service';
+import { CourseOfYear, EvaluationService, Year } from '../../services/evaluation.service';
 
 
 @Component({
-    selector: 'app-journal',
+    selector: 'app-evaluation',
     standalone: true,
     imports: [
         CommonModule,
@@ -55,24 +58,30 @@ import { Action, ActionService } from '../../services/action.service';
         MultiSelectModule,
         DatePickerModule
     ],
-    templateUrl: `./journal.component.html`,
+    templateUrl: `./annualevaluation.component.html`,
     providers: [MessageService, ConfirmationService, DatePipe]
 })
-export class JournalComponent {
+export class AnnualEvaluationComponent {
 
     isEdit: boolean = false;
-    bookingDialog: boolean = false;
+    evaluationDialog: boolean = false;
     submitted: boolean = false;
 
     bookings = signal<Booking[]>([]);
     booking!: Booking;
     bookingDto!: BookingDto;
 
-    actionId?: number;
     memberId?: number;
 
     members: Member[] = [];
     actions: Action[] = [];
+
+    coys = signal<CourseOfYear[]>([]);
+    coy!: CourseOfYear;
+
+    year?: number;
+    preEvaluation?: boolean = true;
+    years: Year[] = [];
 
     selectedGroups!: number[];
     selectedCategories!: number[];
@@ -86,13 +95,13 @@ export class JournalComponent {
         private bookingService: BookingService,
         private memberService: MemberService,
         private actionService: ActionService,
+        private evaluationService: EvaluationService,
         private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
-        this.loadBookings();
-        this.loadMembers();
-        this.loadActions();
+        this.loadYears();
+        this.loadCourseOfYears();
     }
 
     get fullNameMemberOptions() {
@@ -136,6 +145,64 @@ export class JournalComponent {
         });
     }
 
+    loadYears() {
+        this.evaluationService.getAllYears().subscribe({
+            next: (data) => {
+                this.years = data;
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+            }
+        });
+    }
+
+    loadCourseOfYears() {
+        this.evaluationService.getAllEvaluations().subscribe({
+            next: (data) => {
+
+                this.coys.set(data);
+
+
+
+                //results.forEach(result => {
+
+
+
+                    // Um CSV Export zu machen
+                    /*
+                    const blob = new Blob([this.base64ToArrayBuffer(result.file!)], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = result.filename!;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    */
+
+                //});
+
+
+
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+            }
+        });
+    }
+
+    base64ToArrayBuffer(base64: string): ArrayBuffer {
+        const binaryString = atob(base64); // decode base64 to binary string
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+
+        // Convert binary string to ArrayBuffer (Uint8Array)
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        return bytes.buffer;
+    }
+
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
@@ -144,8 +211,10 @@ export class JournalComponent {
         this.booking = {};
         this.bookingDto = {};
         this.submitted = false;
-        this.isEdit = false;
-        this.bookingDialog = true;
+        this.evaluationDialog = true;
+
+        this.year = undefined;
+        this.preEvaluation = true;
     }
 
 
@@ -214,66 +283,60 @@ export class JournalComponent {
     }
 
     hideDialog() {
-        this.bookingDialog = false;
+        this.evaluationDialog = false;
         this.submitted = false;
     }
 
-
-
-    saveBooking() {
+    executeEvaluation() {
         this.submitted = true;
 
-        if (this.booking.countDls && this.booking.comment && this.booking.doneDate && this.memberId && this.actionId) {
+        if (this.year) {
 
-            this.bookingDto = {
-                countDls: this.booking.countDls,
-                comment: this.booking.comment,
-                doneDate: new Date(Date.UTC(this.booking.doneDate.getFullYear(), this.booking.doneDate.getMonth(), this.booking.doneDate.getDate())),
-                memberId: this.memberId,
-                actionId: this.actionId
-            }
+            this.evaluationService.doEvaluation(this.year, !this.preEvaluation).subscribe({
+                next: response => {
 
-            this.bookingService.createBooking(this.bookingDto).subscribe({
-                next: (data) => {
-                    this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Buchung wurde erfolgreich angelegt!" });
+                    console.log(response);
+
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    const filename = this.getFilenameFromHeader(contentDisposition) || `Jahreslauf.csv`;
+
+                    const blob = response.body!;
+                    const url = window.URL.createObjectURL(blob);
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+
+                    window.URL.revokeObjectURL(url);
 
 
-                    // Aktuelle Buchungen holen + neue einfügen
-                    const updatedBookings = [...this.bookings(), data];
-
-                    // Sortieren nach doneDate (null kommt ans Ende)
-                    updatedBookings.sort((a, b) => {
-                        const dateA = a.doneDate ? new Date(a.doneDate).getTime() : Infinity;
-                        const dateB = b.doneDate ? new Date(b.doneDate).getTime() : Infinity;
-                        return dateB - dateA;
-                    });
-
-                    // Setzen mit sortierter Liste
-                    this.bookings.set(updatedBookings);
-
-                    //this.bookings.set([...this.bookings(), data]);
-                    this.bookingDialog = false;
-                    this.booking = {};
-                    this.bookingDto = {};
-                    this.memberId = undefined;
-                    this.actionId = undefined;
+                    this.hideDialog();
                 },
                 error: (err) => {
                     this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
                 }
             });
         }
+    }
 
+    private getFilenameFromHeader(contentDisposition: string | null): string | null {
+        if (!contentDisposition) return null;
+        const matches = /filename="([^"]+)"/.exec(contentDisposition);
+        return matches?.[1] ?? null;
+    }
+
+    downloadCsv(coy: CourseOfYear) {
+        const blob = new Blob([this.base64ToArrayBuffer(coy.file!)], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = coy.filename!;
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 
     formatDate(date: Date): string | null {
         return this.datePipe.transform(date, 'dd.MM.yyyy');
-    }
-
-    rowStyle(booking: Booking) {
-        if (booking.canceled) {
-            return { backgroundColor: 'var(--p-content-hover-background)' };
-        }
-        return;
     }
 }

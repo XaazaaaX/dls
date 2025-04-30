@@ -1,25 +1,32 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.dtos.BookingDto;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
-import de.dlsa.api.shared.CourseOfYearResult;
+import de.dlsa.api.responses.BookingResponse;
+import de.dlsa.api.responses.CourseOfYearResponse;
+import de.dlsa.api.responses.EvaluationResponse;
+import de.dlsa.api.responses.YearResponse;
+import de.dlsa.api.shared.CsvExporter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CourseOfYearService {
+public class EvaluationService {
 
     private final BookingRepository bookingRepository;
     private final GroupRepository groupRepository;
@@ -27,23 +34,24 @@ public class CourseOfYearService {
     private final MemberChangesRepository memberChangesRepository;
     private final SettingsService settingsService;
     private final YearRepository yearRepository;
-    private final CourseOfyearRepository courseOfyearRepository;
+    private final CourseOfYearRepository courseOfyearRepository;
     private final BasicMemberRepository basicMemberRepository;
     private final BasicGroupRepository basicGroupRepository;
     private final GroupChangesRepository groupChangesRepository;
+    private final CsvExporter csvExporter;
     private final ModelMapper modelMapper;
 
-    public CourseOfYearService(GroupRepository groupRepository,
-                               BookingRepository bookingRepository,
-                               MemberRepository memberRepository,
-                               MemberChangesRepository memberChangesRepository,
-                               YearRepository yearRepository,
-                               SettingsService settingsService,
-                               BasicGroupRepository basicGroupRepository,
-                               CourseOfyearRepository courseOfyearRepository,
-                               BasicMemberRepository basicMemberRepository,
-                               GroupChangesRepository groupChangesRepository,
-                               ModelMapper modelMapper) {
+    public EvaluationService(GroupRepository groupRepository,
+                             BookingRepository bookingRepository,
+                             MemberRepository memberRepository,
+                             MemberChangesRepository memberChangesRepository,
+                             YearRepository yearRepository,
+                             SettingsService settingsService,
+                             BasicGroupRepository basicGroupRepository,
+                             CourseOfYearRepository courseOfyearRepository,
+                             BasicMemberRepository basicMemberRepository,
+                             GroupChangesRepository groupChangesRepository,
+                             CsvExporter csvExporter, ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
         this.bookingRepository = bookingRepository;
         this.memberRepository = memberRepository;
@@ -54,13 +62,29 @@ public class CourseOfYearService {
         this.basicMemberRepository = basicMemberRepository;
         this.basicGroupRepository = basicGroupRepository;
         this.groupChangesRepository = groupChangesRepository;
+        this.csvExporter = csvExporter;
         this.modelMapper = modelMapper;
     }
 
-    public List<CourseOfYearResult> calculateForYear(int year, boolean finalize) {
+    public List<YearResponse> getYears() {
+        List<Year> years = yearRepository.findAll();
+        return years.stream()
+                .sorted(Comparator.comparing(Year::getYear).reversed())
+                .map(year -> modelMapper.map(year, YearResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<CourseOfYearResponse> getEvaluations() {
+        List<CourseOfYear> coys = courseOfyearRepository.findAll();
+        return coys.stream()
+                //.sorted(Comparator.comparing(Booking::getDoneDate).reversed())
+                .map(coy -> modelMapper.map(coy, CourseOfYearResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<EvaluationResponse> calculateForYear(int year, boolean finalize) throws IOException {
 
         // Prüfen ob schon ein final gemacht wurde
-
 
         Settings settings = settingsService.getSettings();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -103,17 +127,103 @@ public class CourseOfYearService {
 
         //List<Member> members = memberRepository.findActiveWithAikzTrue();
         List<Member> members = memberRepository.findAll();
-        List<CourseOfYearResult> results = new ArrayList<>();
+        List<EvaluationResponse> results = new ArrayList<>();
 
         for (Member member : members) {
-            CourseOfYearResult result = calculateForMember(member, fromDate, toDate, settings, finalize);
+            EvaluationResponse result = calculateForMember(member, fromDate, toDate, settings, finalize);
             results.add(result);
+        }
+
+        if(finalize){
+
+            CourseOfYear coy = new CourseOfYear()
+                    .setFile(generateCsvBytes(results))
+                    .setTimestamp(LocalDateTime.now())
+                    .setDisplayName("Jahreslauf vom " + toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                    .setDueDate(toDate.atStartOfDay())
+                    .setFilename(toDate + "_Jahreslauf.csv");
+
+            courseOfyearRepository.save(coy);
         }
 
         return results;
     }
 
-    private CourseOfYearResult calculateForMember(Member member, LocalDate fromDate, LocalDate toDate, Settings settings, boolean finalize) {
+    public void calculateForYear(int year, boolean finalize, HttpServletResponse response) throws IOException {
+
+        // Prüfen ob schon ein final gemacht wurde
+
+        Settings settings = settingsService.getSettings();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        yearRepository.findByYear(year).orElseThrow(() -> new RuntimeException("Es liegen keine Buchungen für das übermittelte Jahr vor!"));
+
+        LocalDate lastDueDate = null;
+        LocalDateTime lastDoneTimestamp = courseOfyearRepository.findLastDoneDate();
+        if (lastDoneTimestamp != null) {
+            lastDueDate = lastDoneTimestamp.toLocalDate();
+        }
+
+        LocalDate toDate = LocalDate.parse(settings.getDueDate() + "." + year, formatter);
+        LocalDate fromDate = LocalDate.parse(settings.getDueDate() + "." + year, formatter)
+                .minusYears(1)
+                .plusDays(1);
+
+        // Did the due date change since the last course of year?
+        if (lastDueDate != null && fromDate.isBefore(lastDueDate)) {
+            fromDate = lastDueDate.plusDays(1);
+        }
+
+        // LOG
+        System.out.println("-------------------------------------------");
+        System.out.println("Debug Jahreslauf " + year);
+        System.out.println("Von: " + fromDate.toString());
+        System.out.println("Bis: " + toDate.toString());
+        System.out.println("-------------------------------------------");
+
+        // Date Validation:
+        boolean isPeriodOver = LocalDate.now().isAfter(toDate);
+        boolean isBeforeOrInLastCoy = lastDueDate != null && (toDate.isBefore(lastDueDate) || toDate.isEqual(lastDueDate));
+
+        if (isPeriodOver) {
+            if (isBeforeOrInLastCoy) {
+                throw new RuntimeException("Der angegebene Zeitraum liegt vor oder in einem abgeschlossenem Jahreslauf, bitte das Ergebnis in der Historie verwenden!");
+            }
+        } else {
+            throw new RuntimeException("Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist!");
+        }
+
+        //List<Member> members = memberRepository.findActiveWithAikzTrue();
+        List<Member> members = memberRepository.findAll();
+        List<EvaluationResponse> results = new ArrayList<>();
+
+        for (Member member : members) {
+            EvaluationResponse result = calculateForMember(member, fromDate, toDate, settings, finalize);
+            results.add(result);
+        }
+
+        if(finalize){
+
+            CourseOfYear coy = new CourseOfYear()
+                    .setFile(generateCsvBytes(results))
+                    .setTimestamp(LocalDateTime.now())
+                    .setDisplayName("Jahreslauf vom " + toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                    .setDueDate(toDate.atStartOfDay())
+                    .setFilename(toDate + "_Jahreslauf.csv");
+
+            courseOfyearRepository.save(coy);
+        }
+
+        String filename = toDate + "_Jahreslauf.csv";
+
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+        try (Writer writer = new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8)) {
+            csvExporter.export(results, writer);
+        }
+    }
+
+    private EvaluationResponse calculateForMember(Member member, LocalDate fromDate, LocalDate toDate, Settings settings, boolean finalize) {
 
         int requiredMonths;
 
@@ -155,16 +265,15 @@ public class CourseOfYearService {
             comment += "Keinen Monat DLS befreit.";
         }
 
-        CourseOfYearResult result = new CourseOfYearResult();
-        result.firstName = member.getForename();
-        result.lastName = member.getSurname();
-        result.requiredMonths = requiredMonths;
-        result.requiredDls = requiredDls;
-        result.achievedDls = achievedDls;
-        result.costPerDls = settings.getCostDls();
-        result.toPay = memberDebit;
-        result.comment = comment;
-
+        EvaluationResponse result = new EvaluationResponse()
+                .setFirstName(member.getForename())
+                .setLastName(member.getSurname())
+                .setRequiredMonths(requiredMonths)
+                .setRequiredDls(requiredDls)
+                .setAchievedDls(achievedDls)
+                .setCostPerDls(settings.getCostDls())
+                .setToPay(memberDebit)
+                .setComment(comment);
 
         // Buchungen
         if (finalize) {
@@ -233,7 +342,6 @@ public class CourseOfYearService {
 
         return monthCount;
     }
-
 
     public Member getMemberStateFromDate(Member member, LocalDate date) {
 
@@ -342,6 +450,42 @@ public class CourseOfYearService {
         }
         return Math.round((sum * settings.getCostDls()) * 100.0) / 100.0;
     }
+
+    public byte[] generateCsvBytes(List<EvaluationResponse> results) throws IOException {
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(byteStream, StandardCharsets.UTF_8);
+
+        writer.write('\uFEFF'); // UTF-8 BOM
+        writer.write("Vorname; Nachname; Monate mit DLS-Pflicht; Geleistete DLS; Benötigte DLS; Kosten Pro nicht geleisteter DLS; Zu Zahlen (in Euro); Bemerkung\n");
+
+        for (EvaluationResponse result : results) {
+            writer.write(String.format(
+                    "%s;%s;%d;%.1f;%.1f;%.2f;%.2f;%s\n",
+                    escape(result.getFirstName()),
+                    escape(result.getLastName()),
+                    result.getRequiredMonths(),
+                    result.getRequiredDls(),
+                    result.getAchievedDls(),
+                    result.getCostPerDls(),
+                    result.getToPay(),
+                    escape(result.getComment())
+            ));
+        }
+
+        writer.flush();
+        return byteStream.toByteArray();
+    }
+
+    private static String escape(String value) {
+        if (value == null) return "";
+        // Falls Komma oder Anführungszeichen enthalten: escapen
+        String escaped = value.replace("\"", "\"\"");
+        if (escaped.contains(",") || escaped.contains("\"") || escaped.contains("\n")) {
+            return "\"" + escaped + "\"";
+        }
+        return escaped;
+    }
+
 }
 
 

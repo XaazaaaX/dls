@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';  // Beispiel für einen AuthService
@@ -27,6 +27,18 @@ export class HttpService {
   get<T>(endpoint: string): Observable<T> {
     return this.http.get<T>(`${this.apiUrl}/${endpoint}`, this.getHttpHeader())
       .pipe(catchError(this.handleError));  // Fehlerbehandlung hinzufügen
+  }
+
+  // GET-Anfrage für Blobs (z. B. Dateien)
+  getBlob(endpoint: string): Observable<HttpResponse<Blob>> {
+    let authToken = this.authService.getToken();
+    return this.http.get(`${this.apiUrl}/${endpoint}`, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${authToken}`
+      }),
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(catchError(this.handleError));
   }
 
   // POST-Anfrage

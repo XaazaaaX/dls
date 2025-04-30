@@ -1,32 +1,22 @@
-package de.dlsa.api.entities;
+package de.dlsa.api.responses;
 
+import de.dlsa.api.entities.CourseOfYear;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Jahreslaeufe")
-public class CourseOfYear extends BaseEntity{
-
-    @Column(name = "datei")
+public class CourseOfYearResponse {
     private byte[] file;
     private LocalDateTime timestamp;
-    @Column(name = "anzeigename")
     private String displayName;
-    @Column(name = "dateiname")
     private String filename;
-    @Column(name = "stichtagsdatum")
     private LocalDateTime dueDate;
 
     public byte[] getFile() {
         return file;
     }
 
-    public CourseOfYear setFile(byte[] file) {
+    public CourseOfYearResponse setFile(byte[] file) {
         this.file = file;
         return this;
     }
@@ -35,7 +25,7 @@ public class CourseOfYear extends BaseEntity{
         return timestamp;
     }
 
-    public CourseOfYear setTimestamp(LocalDateTime timestamp) {
+    public CourseOfYearResponse setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -44,7 +34,7 @@ public class CourseOfYear extends BaseEntity{
         return displayName;
     }
 
-    public CourseOfYear setDisplayName(String displayName) {
+    public CourseOfYearResponse setDisplayName(String displayName) {
         this.displayName = displayName;
         return this;
     }
@@ -53,7 +43,7 @@ public class CourseOfYear extends BaseEntity{
         return filename;
     }
 
-    public CourseOfYear setFilename(String filename) {
+    public CourseOfYearResponse setFilename(String filename) {
         this.filename = filename;
         return this;
     }
@@ -62,9 +52,8 @@ public class CourseOfYear extends BaseEntity{
         return dueDate;
     }
 
-    public CourseOfYear setDueDate(LocalDateTime dueDate) {
+    public CourseOfYearResponse setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
         return this;
     }
-
 }

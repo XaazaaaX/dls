@@ -74,7 +74,8 @@ public class SecurityConfig{
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Frontend-Origin erlauben
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Erlaubte HTTP-Methoden
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Erlaubte Header
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Access-Control-Expose-Headers", "Content-Disposition")); // Erlaubte Header
+        configuration.setExposedHeaders(List.of("Content-Disposition"));
         configuration.setAllowCredentials(true); // Wenn Cookies oder Auth-Header genutzt werden
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Auf alle Endpunkte anwenden

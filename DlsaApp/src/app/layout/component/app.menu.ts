@@ -36,7 +36,8 @@ export class AppMenu {
                 label: 'Home',
                 visible: this.isUser,
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard/home'], visible: this.isUser },
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'], visible: this.isUser },
+                    { label: 'Jahresläufe', icon: 'pi pi-fw pi-calendar', routerLink: ['/dashboard/evaluation'], visible: this.isUser },
                     { label: 'Journal', icon: 'pi pi-fw pi-pencil', routerLink: ['/dashboard/journal'], visible: this.isUser }
                 ]
             },
@@ -44,10 +45,9 @@ export class AppMenu {
                 label: 'Verwaltung',
                 visible: this.isGuest,
                 items: [
-                    { label: 'Benutzer', icon: 'pi pi-fw pi-shield', routerLink: ['/dashboard/user'], visible: this.isAdmin },
-                    { label: 'Mitglieder', icon: 'pi pi-fw pi-user', routerLink: ['/dashboard/members'], visible: this.isGuest },
                     { label: 'Funktionsgruppen', icon: 'pi pi-fw pi-users', routerLink: ['/dashboard/groups'], visible: this.isUser },
                     { label: 'Sparten', icon: 'pi pi-fw pi-folder', routerLink: ['/dashboard/categories'], visible: this.isUser },
+                    { label: 'Mitglieder', icon: 'pi pi-fw pi-user', routerLink: ['/dashboard/members'], visible: this.isGuest },
                     { label: 'Bereiche', icon: 'pi pi-fw pi-file', routerLink: ['/dashboard/sectors'], visible: this.isUser },
                     { label: 'Aktionen', icon: 'pi pi-fw pi-play', routerLink: ['/dashboard/actions'], visible: this.isUser },
                 ]
@@ -56,6 +56,7 @@ export class AppMenu {
                 label: 'Sonstiges',
                 visible: this.isGuest,
                 items: [
+                    { label: 'Benutzer', icon: 'pi pi-fw pi-shield', routerLink: ['/dashboard/user'], visible: this.isAdmin },
                     { label: 'Einstellungen', icon: 'pi pi-fw pi-cog', routerLink: ['/dashboard/settings'], visible: this.isAdmin},
                     { label: 'Historie', icon: 'pi pi-fw pi-history', visible: this.isUser,  items: [
                         {

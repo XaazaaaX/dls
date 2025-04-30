@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
     standalone: true,
     selector: 'app-footer',
     template: `<div class="layout-footer">
-        Copyright by Benito Ernst
+        Made by Benito Ernst
     </div>`
 })
 export class AppFooter {}

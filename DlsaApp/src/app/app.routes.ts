@@ -14,6 +14,8 @@ import { MemberComponent } from './pages/adminsitration/member.component';
 import { GroupChangesComponent } from './pages/miscellaneous/grougchanges.component';
 import { MemberChangesComponent } from './pages/miscellaneous/memberchanges.component';
 import { JournalComponent } from './pages/home/journal.component';
+import { AnnualEvaluationComponent } from './pages/home/annualevaluation.component';
+import { DashboardComponent } from './pages/home/dashboard.component';
 
 /*canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast']*/
 
@@ -22,8 +24,10 @@ export const routes = [
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
   {
     path: 'dashboard', component: AppLayout, children: [
-      { path: '', redirectTo: 'user', pathMatch: 'full' as 'full' },
+      //{ path: '', redirectTo: 'user', pathMatch: 'full' as 'full' },
       //{ path: 'home', component: HomeComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } },
+      { path: '', component: DashboardComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
+      { path: 'evaluation', component: AnnualEvaluationComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'journal', component: JournalComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'user', component: UserComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'categories', component: CategoryComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },

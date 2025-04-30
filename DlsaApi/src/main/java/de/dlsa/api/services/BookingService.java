@@ -13,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @Service
-public class JournalService {
+public class BookingService {
 
     private final GroupRepository groupRepository;
     private final BookingRepository bookingRepository;
@@ -32,7 +31,7 @@ public class JournalService {
     private final YearRepository yearRepository;
     private final ModelMapper modelMapper;
 
-    public JournalService(
+    public BookingService(
             ActionRepository actionRepository,
             GroupRepository groupRepository,
             BookingRepository bookingRepository,
@@ -97,85 +96,5 @@ public class JournalService {
                 .setCountDls(existing.getCountDls() * -1);
 
         bookingRepository.save(newBooking);
-
-        //return modelMapper.map(canceledBooking, BookingResponse.class);
-    }
-
-
-
-
-
-
-
-    public ResponseEntity<byte[]> generateAndExportCsv() throws IOException {
-
-
-        handleMemberData();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        String filename = "data.csv";
-        List<String[]> dataLines = Arrays.asList(
-                new String[]{"ID", "Name", "Email"},
-                new String[]{"1", "Alice", "alice@example.com"},
-                new String[]{"2", "Bob", "bob@example.com"}
-        );
-        // 1. CSV-Datei lokal speichern
-        saveCsvToDisk(dataLines, filename);
-
-        // 2. CSV als ByteArray zum Download zurückgeben
-        byte[] csvBytes = convertToByteArray(dataLines);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .body(csvBytes);
-    }
-
-    private void saveCsvToDisk(List<String[]> dataLines, String filename) throws IOException {
-        Path resourcePath = Paths.get("src/main/resources/exports", filename);
-        Files.createDirectories(resourcePath.getParent());
-
-        try (BufferedWriter writer = Files.newBufferedWriter(resourcePath)) {
-            for (String[] line : dataLines) {
-                writer.write(String.join(";", line));
-                writer.newLine();
-            }
-        }
-    }
-
-    private byte[] convertToByteArray(List<String[]> dataLines) throws IOException {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out))) {
-
-            for (String[] line : dataLines) {
-                writer.write(String.join(";", line));
-                writer.newLine();
-            }
-            writer.flush(); // wichtig!
-            return out.toByteArray();
-        }
-    }
-
-    private void handleMemberData(){
-
-
-
-
-
-
     }
 }
