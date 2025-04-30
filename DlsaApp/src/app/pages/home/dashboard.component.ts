@@ -34,6 +34,10 @@ import { FluidModule } from 'primeng/fluid';
 import { ChartModule } from 'primeng/chart';
 import { TreeModule } from 'primeng/tree';
 
+interface RadarSelectOption {
+    name: string;
+    code: string;
+}
 
 @Component({
     selector: 'app-dashboard',
@@ -85,7 +89,6 @@ export class DashboardComponent {
 
     //-----------------
 
-
     memberCount: MemberCount = {};
     topDlsMembers: TopDlsMember[] = [{}];
 
@@ -98,18 +101,17 @@ export class DashboardComponent {
     radarData: any;
     radarOptions: any;
 
+
+
+
+    radarSelectOptions: RadarSelectOption[] | undefined;
+    radarSelected: RadarSelectOption = { name: 'Bereiche', code: 'sector' };
     //------------
 
 
     constructor(
         private messageService: MessageService,
-        private confirmationService: ConfirmationService,
-        private bookingService: BookingService,
-        private memberService: MemberService,
-        private actionService: ActionService,
-        private evaluationService: EvaluationService,
         private statisticsService: StatisticsService,
-        private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
@@ -117,7 +119,17 @@ export class DashboardComponent {
         this.loadAnnualServiceHours();
         this.loadMonthlyServiceHours();
         this.loadTopDlsMember();
-        this.loadSectorsWithDlsFromYear();
+        this.loadSectorsWithDlsFromYear(this.radarSelected.code);
+
+        this.radarSelectOptions = [
+            { name: 'Bereiche', code: 'sector' },
+            { name: 'Funktionsgruppen', code: 'group' },
+            { name: 'Sparten', code: 'category' },
+        ];
+    }
+
+    reloadRadarChart(option: RadarSelectOption){
+        this.loadSectorsWithDlsFromYear(option.code);
     }
 
     loadMembercount() {
@@ -164,8 +176,8 @@ export class DashboardComponent {
         });
     }
 
-    loadSectorsWithDlsFromYear() {
-        this.statisticsService.getSectorsWithDlsFromYear().subscribe({
+    loadSectorsWithDlsFromYear(code: string) {
+        this.statisticsService.getSelectedWithDlsFromYear(code).subscribe({
             next: (data) => {
                 this.setupSectorsWithDlsFromYear(data);
             },

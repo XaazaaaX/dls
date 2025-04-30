@@ -66,7 +66,7 @@ export class StatisticsService {
         return this.httpService.get<TopDlsMember[]>("statistics/topdlsmember");
     }
 
-    getSectorsWithDlsFromYear(): Observable<SectorsWithDlsFromYear> {
-        return this.httpService.get<SectorsWithDlsFromYear>("statistics/sectorswithdlsfromyear");
+    getSelectedWithDlsFromYear(code: string): Observable<SectorsWithDlsFromYear> {
+        return this.httpService.get<SectorsWithDlsFromYear>("statistics/sectorswithdlsfromyear?code=" + code);
     }
 }

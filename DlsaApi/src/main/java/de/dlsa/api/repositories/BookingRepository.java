@@ -65,4 +65,43 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         b2."name"
 """, nativeQuery = true)
     List<Object[]> findSectorsWithDlsFromYear(@Param("year") int year);
+
+    @Query(value = """
+        SELECT
+            g.gruppenname,
+            COALESCE(SUM(b.anzahl_dls), 0) AS dl_summe
+        FROM
+            gruppen g
+        LEFT JOIN
+            mitglieder_groups mg ON mg.groups_id = g.id
+        LEFT JOIN
+            mitglieder m ON m.id = mg.member_id
+        LEFT JOIN
+            buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungs_datum) = :year
+        GROUP BY
+             g.gruppenname
+        ORDER BY
+             g.gruppenname
+""", nativeQuery = true)
+    List<Object[]> findGroupsWithDlsFromYear(@Param("year") int year);
+
+
+    @Query(value = """
+        SELECT
+            s.spartenname,
+            COALESCE(SUM(b.anzahl_dls), 0) AS dl_summe
+        FROM
+            sparten s
+        LEFT JOIN
+            mitglieder_categories mc ON mc.categories_id = s.id
+        LEFT JOIN
+            mitglieder m ON m.id = mc.member_id
+        LEFT JOIN
+            buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungs_datum) = :year
+        GROUP BY
+             s.spartenname
+        ORDER BY
+             s.spartenname
+""", nativeQuery = true)
+    List<Object[]> findCategoriesWithDlsFromYear(@Param("year") int year);
 }

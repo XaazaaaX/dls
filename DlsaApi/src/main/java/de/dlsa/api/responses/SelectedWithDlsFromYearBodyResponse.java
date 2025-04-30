@@ -2,7 +2,7 @@ package de.dlsa.api.responses;
 
 import java.util.List;
 
-public class SectorsWithDlsFromYearBodyResponse {
+public class SelectedWithDlsFromYearBodyResponse {
     private String label;
     private List<Double> data;
 
@@ -10,7 +10,7 @@ public class SectorsWithDlsFromYearBodyResponse {
         return label;
     }
 
-    public SectorsWithDlsFromYearBodyResponse setLabel(String year) {
+    public SelectedWithDlsFromYearBodyResponse setLabel(String year) {
         this.label = year;
         return this;
     }
@@ -19,7 +19,7 @@ public class SectorsWithDlsFromYearBodyResponse {
         return data;
     }
 
-    public SectorsWithDlsFromYearBodyResponse setData(List<Double> data) {
+    public SelectedWithDlsFromYearBodyResponse setData(List<Double> data) {
         this.data = data;
         return this;
     }

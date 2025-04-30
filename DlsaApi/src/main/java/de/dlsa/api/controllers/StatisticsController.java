@@ -5,6 +5,7 @@ import de.dlsa.api.services.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class StatisticsController {
     }
 
     @GetMapping("statistics/sectorswithdlsfromyear")
-    public ResponseEntity<SectorsWithDlsFromYearResponse> getSectorsWithDlsFromYear() {
-        SectorsWithDlsFromYearResponse result = statisticsService.getSectorsWithDlsFromYear();
+    public ResponseEntity<SelectedWithDlsFromYearResponse> getSelectedWithDlsFromYear(@RequestParam String code) {
+        SelectedWithDlsFromYearResponse result = statisticsService.getSelectedWithDlsFromYear(code);
         return ResponseEntity.ok(result);
     }
 }

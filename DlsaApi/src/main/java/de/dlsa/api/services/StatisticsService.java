@@ -1,27 +1,18 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.entities.Sector;
 import de.dlsa.api.entities.Settings;
 import de.dlsa.api.repositories.*;
 import de.dlsa.api.responses.*;
 import de.dlsa.api.shared.CsvExporter;
-import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Year;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
 @Service
 public class StatisticsService {
@@ -175,15 +166,29 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
-    public SectorsWithDlsFromYearResponse getSectorsWithDlsFromYear() {
+    public SelectedWithDlsFromYearResponse getSelectedWithDlsFromYear(String code) {
 
         int currentYear = Year.now().getValue();
 
         Set<String> labels = new HashSet<>();
-        List<SectorsWithDlsFromYearBodyResponse> body = new ArrayList<SectorsWithDlsFromYearBodyResponse>();
+        List<SelectedWithDlsFromYearBodyResponse> body = new ArrayList<>();
+
+
+        List<Object[]> results = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
-            List<Object[]> results = bookingRepository.findSectorsWithDlsFromYear(currentYear - i);
+
+            switch (code) {
+                case "group":
+                    results = bookingRepository.findGroupsWithDlsFromYear(currentYear - i);
+                    break;
+                case "category":
+                    results = bookingRepository.findCategoriesWithDlsFromYear(currentYear - i);
+                    break;
+                default:
+                    results = bookingRepository.findSectorsWithDlsFromYear(currentYear - i);
+                    break;
+            }
 
             List<Double> data = new ArrayList<>();
 
@@ -193,14 +198,14 @@ public class StatisticsService {
                 data.add((Double) row[1]);
             }
 
-            SectorsWithDlsFromYearBodyResponse item = new SectorsWithDlsFromYearBodyResponse()
+            SelectedWithDlsFromYearBodyResponse item = new SelectedWithDlsFromYearBodyResponse()
                     .setLabel(String.valueOf(currentYear - i))
                     .setData(data);
 
             body.add(item);
         }
 
-        return new SectorsWithDlsFromYearResponse()
+        return new SelectedWithDlsFromYearResponse()
                 .setLabels(labels.stream().toList().stream()
                         .sorted()
                         .collect(Collectors.toList()))

@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -22,11 +22,9 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
-import { Group, GroupService } from '../../services/group.service';
-import { Category, CategoryService } from '../../services/category.service';
-import { Booking, BookingDto, BookingService } from '../../services/booking.service';
-import { Member, MemberService } from '../../services/member.service';
-import { Action, ActionService } from '../../services/action.service';
+import { BookingService } from '../../services/booking.service';
+import { MemberService } from '../../services/member.service';
+import { ActionService } from '../../services/action.service';
 import { CourseOfYear, EvaluationService, Year } from '../../services/evaluation.service';
 
 
@@ -67,15 +65,6 @@ export class AnnualEvaluationComponent {
     evaluationDialog: boolean = false;
     submitted: boolean = false;
 
-    bookings = signal<Booking[]>([]);
-    booking!: Booking;
-    bookingDto!: BookingDto;
-
-    memberId?: number;
-
-    members: Member[] = [];
-    actions: Action[] = [];
-
     coys = signal<CourseOfYear[]>([]);
     coy!: CourseOfYear;
 
@@ -83,18 +72,11 @@ export class AnnualEvaluationComponent {
     preEvaluation?: boolean = true;
     years: Year[] = [];
 
-    selectedGroups!: number[];
-    selectedCategories!: number[];
-
     @ViewChild('dt') dt!: Table;
 
 
     constructor(
         private messageService: MessageService,
-        private confirmationService: ConfirmationService,
-        private bookingService: BookingService,
-        private memberService: MemberService,
-        private actionService: ActionService,
         private evaluationService: EvaluationService,
         private datePipe: DatePipe
     ) { }
@@ -102,47 +84,6 @@ export class AnnualEvaluationComponent {
     ngOnInit() {
         this.loadYears();
         this.loadCourseOfYears();
-    }
-
-    get fullNameMemberOptions() {
-        return this.members.map(member => ({
-            id: member.id,
-            fullname: member.surname + ", " + member.forename
-        }));
-    }
-
-    loadBookings() {
-        this.bookingService.getAllBookings().subscribe({
-            next: (data) => {
-                this.bookings.set(data);
-                console.log(data);
-            },
-            error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-            }
-        });
-    }
-
-    loadMembers() {
-        this.memberService.getAllMembers().subscribe({
-            next: (data) => {
-                this.members = data;
-            },
-            error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-            }
-        });
-    }
-
-    loadActions() {
-        this.actionService.getAllActions().subscribe({
-            next: (data) => {
-                this.actions = data;
-            },
-            error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-            }
-        });
     }
 
     loadYears() {
@@ -159,30 +100,7 @@ export class AnnualEvaluationComponent {
     loadCourseOfYears() {
         this.evaluationService.getAllEvaluations().subscribe({
             next: (data) => {
-
                 this.coys.set(data);
-
-
-
-                //results.forEach(result => {
-
-
-
-                    // Um CSV Export zu machen
-                    /*
-                    const blob = new Blob([this.base64ToArrayBuffer(result.file!)], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = result.filename!;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    */
-
-                //});
-
-
-
             },
             error: (err) => {
                 this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
@@ -208,78 +126,11 @@ export class AnnualEvaluationComponent {
     }
 
     openNew() {
-        this.booking = {};
-        this.bookingDto = {};
         this.submitted = false;
         this.evaluationDialog = true;
 
         this.year = undefined;
         this.preEvaluation = true;
-    }
-
-
-    cancelBooking(booking: Booking) {
-        /*this.booking = { ...booking };
-
-        this.selectedGroups = this.booking.groups!
-        .map(group => group.id)
-        .filter(id => id !== undefined) as number[];
-
-        this.selectedCategories = this.booking.categories!
-        .map(category => category.id)
-        .filter(id => id !== undefined) as number[];
-
-        this.booking.birthdate ? this.booking.birthdate = new Date(this.booking.birthdate!) : null;
-        this.booking.entryDate ? this.booking.entryDate = new Date(this.booking.entryDate!) : null;
-        this.booking.leavingDate ? this.booking.leavingDate = new Date(this.booking.leavingDate!) : null;
-
-        this.bookingDto = {};
-
-        this.isEdit = true;
-        this.bookingDialog = true;
-        */
-        this.confirmationService.confirm({
-            message: 'Soll die folgende Buchung wirklich storniert werden? <br/><br/>' +
-                'Ableistungsdatum: ' + this.formatDate(booking.doneDate!) + '<br/>' +
-                'Mitgliednummer: ' + booking.member?.memberId + '<br/>' +
-                'Aktion: ' + booking.action?.description + '<br/>' +
-                'Anzahl Dls: ' + booking.countDls + '<br/>' +
-                'Bemerkung: ' + booking.comment + '<br/>',
-            header: 'Bestätigen',
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                icon: 'pi pi-times',
-                label: 'Nein',
-                outlined: true,
-            },
-            acceptButtonProps: {
-                icon: 'pi pi-check',
-                label: 'Ja',
-            },
-            accept: () => {
-
-                this.bookingService.cancelBooking(booking.id!).subscribe({
-                    next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Buchung wurden erfolgreich storniert!" });
-
-                        /*
-                        const currentBookings = this.bookings();
-                        const _bookings = currentBookings.map(booking =>
-                            booking.id === data.id ? { ...booking, ...data } : booking
-                        );
-
-                        this.bookings.set(_bookings);
-                        this.booking = {};
-                        */
-
-                        this.loadBookings();
-                    },
-                    error: (err) => {
-                        this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                    }
-                });
-            }
-        });
     }
 
     hideDialog() {
