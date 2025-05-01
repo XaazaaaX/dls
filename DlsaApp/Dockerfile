@@ -7,5 +7,5 @@ RUN npm run build -- --configuration production
 
 # 2. Build-Ergebnis mit Nginx bereitstellen
 FROM nginx:alpine
-COPY --from=build /app/dist/dlsaApp /usr/share/nginx/html
+COPY --from=build /app/dist/dlsa-app /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
