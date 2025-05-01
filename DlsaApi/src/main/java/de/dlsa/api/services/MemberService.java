@@ -1,18 +1,25 @@
 package de.dlsa.api.services;
 
+import de.dlsa.api.dtos.CategoryDto;
+import de.dlsa.api.dtos.GroupDto;
 import de.dlsa.api.dtos.MemberCreateDto;
 import de.dlsa.api.dtos.MemberEditDto;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
+import de.dlsa.api.responses.CategoryResponse;
+import de.dlsa.api.responses.GroupResponse;
 import de.dlsa.api.responses.MemberResponse;
 import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +30,8 @@ public class MemberService {
     private final BasicMemberRepository basicMemberRepository;
     private final MemberRepository memberRepository;
     private final MemberChangesRepository memberChangesRepository;
+    private final GroupService groupService;
+    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
 
     public MemberService(
@@ -31,12 +40,16 @@ public class MemberService {
             BasicMemberRepository basicMemberRepository,
             MemberRepository memberRepository,
             MemberChangesRepository memberChangesRepository,
+            CategoryService categoryService,
+            GroupService groupService,
             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
         this.categoryRepository = categoryRepository;
         this.basicMemberRepository = basicMemberRepository;
         this.memberRepository = memberRepository;
         this.memberChangesRepository = memberChangesRepository;
+        this.groupService = groupService;
+        this.categoryService = categoryService;
         this.modelMapper = modelMapper;
     }
 
@@ -76,6 +89,110 @@ public class MemberService {
         Member finalMember = memberRepository.save(addedMember);
 
         return modelMapper.map(finalMember, MemberResponse.class);
+    }
+
+    public List<MemberResponse> uploadMember(MultipartFile file) {
+
+        List<MemberResponse> responseList = new ArrayList<>();
+
+        if (file.isEmpty()) {
+            throw new RuntimeException("Keine Datei hochgeladen.");
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            String headerLine = reader.readLine(); // Erste Zeile (Header)
+            if (headerLine == null) {
+                throw new RuntimeException("Datei enthält keinen Header.");
+            }
+
+            // Dynamische Zuordnung der Spaltenindizes
+            String[] headers = headerLine.split(";");
+            Map<String, Integer> columnIndexMap = new HashMap<>();
+            for (int i = 0; i < headers.length; i++) {
+                columnIndexMap.put(headers[i].trim().toLowerCase(), i);
+            }
+
+            // Prüfung: Pflichtfelder vorhanden?
+            if (!columnIndexMap.containsKey("vorname") || !columnIndexMap.containsKey("nachname") || !columnIndexMap.containsKey("geburtstag") || !columnIndexMap.containsKey("mitgliedsnummer") || !columnIndexMap.containsKey("eintritt")) {
+                throw new RuntimeException("Pflichtfelder 'vorname' oder 'nachname' fehlen.");
+            }
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) continue; // Leere Zeilen überspringen
+
+                String[] fields = line.split(";", -1); // auch leere Felder erfassen
+
+                String firstName = fields[columnIndexMap.get("vorname")].trim();
+                String lastName = fields[columnIndexMap.get("nachname")].trim();
+                LocalDateTime birthdate = LocalDate.parse(fields[columnIndexMap.get("geburtstag")].trim(), formatter).atStartOfDay();
+                String memberId = fields[columnIndexMap.get("mitgliedsnummer")].trim();
+                LocalDateTime entrydate = LocalDate.parse(fields[columnIndexMap.get("eintritt")].trim(), formatter).atStartOfDay();
+
+                // Gruppen verarbeiten
+                List<Long> groupIds = new ArrayList<>();
+                if (columnIndexMap.containsKey("gruppen")) {
+                    String groupField = fields[columnIndexMap.get("gruppen")];
+                    String[] groupNames = groupField.split(",");
+                    for (String groupName : groupNames) {
+                        String trimmed = groupName.trim();
+                        if (!trimmed.isEmpty()) {
+                            Group group = groupRepository.findByGroupName(trimmed)
+                                    .orElseGet(() -> {
+                                        GroupResponse newGroup = groupService.createGroup(new GroupDto()
+                                                .setGroupName(trimmed)
+                                                .setLiberated(false));
+
+                                        return groupRepository.findById(newGroup.getId()).orElseThrow(() -> new RuntimeException("Gruppe wurde nicht gefunden!"));
+                                    });
+                            groupIds.add(group.getId());
+                        }
+                    }
+                }
+
+                // Sparten verarbeiten
+                List<Long> categoryIds = new ArrayList<>();
+                if (columnIndexMap.containsKey("sparten")) {
+                    String categoryField = fields[columnIndexMap.get("sparten")];
+                    String[] categoryNames = categoryField.split(",");
+                    for (String catName : categoryNames) {
+                        String trimmed = catName.trim();
+                        if (!trimmed.isEmpty()) {
+                            Category category = categoryRepository.findByCategoryName(trimmed)
+                                    .orElseGet(() -> {
+                                        CategoryResponse newCategory = categoryService.createCategory(new CategoryDto()
+                                                .setCategoryName(trimmed));
+
+                                        return categoryRepository.findById(newCategory.getId()).orElseThrow(() -> new RuntimeException("Sparte wurde nicht gefunden!"));
+                                    });
+                            categoryIds.add(category.getId());
+                        }
+                    }
+                }
+
+                MemberCreateDto newMember = new MemberCreateDto()
+                        .setSurname(lastName)
+                        .setForename(firstName)
+                        .setMemberId(memberId)
+                        .setEntryDate(entrydate)
+                        .setBirthdate(birthdate)
+                        .setGroupIds(groupIds)
+                        .setCategorieIds(categoryIds);
+
+                try {
+                    MemberResponse finalMember = createMember(newMember);
+                    responseList.add(finalMember);
+                } catch (Exception e){
+                    System.out.println("Member: " + newMember.getMemberId() + " konnte nicht hinzugefügt werden!");
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler beim Lesen der Datei: " + e.getMessage(), e);
+        }
+
+        return responseList;
     }
 
 

@@ -47,6 +47,16 @@ export class HttpService {
       .pipe(catchError(this.handleError));
   }
 
+  // POST-Anfrage für Multipart
+  postMultipart<T>(endpoint: string, body: any): Observable<T> {
+    let authToken = this.authService.getToken();
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, body, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${authToken}`
+      })
+    }).pipe(catchError(this.handleError));
+  }
+
   // PUT-Anfrage
   put<T>(endpoint: string, body: any): Observable<T> {
     return this.http.put<T>(`${this.apiUrl}/${endpoint}`, body, this.getHttpHeader())

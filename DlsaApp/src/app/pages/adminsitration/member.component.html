@@ -10,6 +10,8 @@
                 <div class="flex flex-wrap items-center justify-between">
                     <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2"
                         (onClick)="openNew()" />
+                    <p-button label="Import" icon="pi pi-upload" severity="secondary" class="mr-2"
+                        (onClick)="openNewUpload()" />
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
                         <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
@@ -67,7 +69,6 @@
         </ng-template>
     </p-table>
 </div>
-
 
 <p-dialog [(visible)]="memberDialog" [style]="{ width: '450px' }" header="Mitgliedsdetails" [modal]="true">
     <ng-template #content>
@@ -161,6 +162,22 @@
     <ng-template #footer>
         <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
         <p-button label="Speichern" icon="pi pi-check" (click)="saveMember()" />
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog [(visible)]="memberUploadDialog" [style]="{ width: '450px' }" header="Mitglieder Upload" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            
+            <p-fileupload #fu mode="basic" chooseLabel="Auswählen" chooseIcon="pi pi-upload" accept=".csv" maxFileSize="1000000" (onSelect)="onFileChange($event)" />
+
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideUploadDialog()" />
+        <p-button label="Hochladen" icon="pi pi-check" [disabled]="!selectedFile" (click)="upload()" />
     </ng-template>
 </p-dialog>
 

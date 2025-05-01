@@ -25,6 +25,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { Group, GroupService } from '../../services/group.service';
 import { Member, MemberDto, MemberEditDto, MemberService } from '../../services/member.service';
 import { Category, CategoryService } from '../../services/category.service';
+import { FileUploadModule } from 'primeng/fileupload';
 
 
 @Component({
@@ -53,7 +54,8 @@ import { Category, CategoryService } from '../../services/category.service';
         ReactiveFormsModule,
         PickListModule,
         MultiSelectModule,
-        DatePickerModule
+        DatePickerModule,
+        FileUploadModule
     ],
     templateUrl: `./member.component.html`,
     providers: [MessageService, ConfirmationService]
@@ -62,6 +64,7 @@ export class MemberComponent{
 
     isEdit: boolean = false;
     memberDialog: boolean = false;
+    memberUploadDialog: boolean = false;
     submitted: boolean = false;
 
     members = signal<Member[]>([]);
@@ -74,6 +77,8 @@ export class MemberComponent{
 
     selectedGroups!: number[];
     selectedCategories!: number[];
+
+    selectedFile: File | null = null;
 
     @ViewChild('dt') dt!: Table;
 
@@ -90,6 +95,33 @@ export class MemberComponent{
         this.loadMembers();
         this.loadGroups();
         this.loadCategories();
+    }
+
+    onFileChange(event: any): void {
+        const file = event.files?.[0];
+        if (file) {
+            this.selectedFile = file;
+        }
+    }
+
+    upload(): void {
+        if (this.selectedFile) {
+            this.memberService.uploadMember(this.selectedFile).subscribe({
+                next: (data) => {
+
+                    let countAddedMembers = data.length
+                    this.messageService.add({ severity: 'success', summary: "Info", detail: countAddedMembers + " Mitglieder wurden erfolgreich angelegt!" });
+    
+                    if (data.length > 0) {
+                        this.members.set([...this.members(), ...data]);
+                    }
+                    this.memberUploadDialog = false;
+                },
+                error: (err) => {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                }
+            });
+        }
     }
 
     loadMembers() {
@@ -135,13 +167,23 @@ export class MemberComponent{
 
     openNew() {
         this.member = {};
+        this.selectedGroups = [];
+        this.selectedCategories = [];
         this.memberDto = {};
         this.submitted = false;
         this.isEdit = false;
         this.memberDialog = true;
     }
+    openNewUpload() {
+        this.selectedFile = null;
+        this.memberUploadDialog = true;
+    }
 
     editMember(member: Member) {
+
+        this.selectedGroups = [];
+        this.selectedCategories = [];
+
         this.member = { ...member };
 
         this.selectedGroups = this.member.groups!
@@ -169,9 +211,12 @@ export class MemberComponent{
         this.memberDialog = false;
         this.submitted = false;
     }
+
+    hideUploadDialog() {
+        this.memberUploadDialog = false;
+        this.selectedFile = null;
+    }
         
-
-
     saveMember() {
         
         this.submitted = true;

@@ -18,7 +18,7 @@ public class Member extends BaseEntity{
     private String surname;
     @Column(name = "vorname")
     private String forename;
-    @Column(name = "mitgliedsnummer")
+    @Column(name = "mitgliedsnummer", unique = true)
     private String memberId;
     @Column(name = "eintrittsdatum")
     private LocalDateTime entryDate;

@@ -51,7 +51,7 @@ export interface Member {
 })
 export class MemberService {
 
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: HttpService) { }
 
     getAllMembers(): Observable<Member[]> {
         return this.httpService.get<Member[]>("members");
@@ -63,5 +63,11 @@ export class MemberService {
 
     updateMember(member: MemberDto, id: number): Observable<Member> {
         return this.httpService.put<Member>("members/" + id, member);
+    }
+
+    uploadMember(file: File): Observable<any> {
+        const formData: FormData = new FormData();
+        formData.append('file', file);
+        return this.httpService.postMultipart<Member>("member/upload", formData);
     }
 }
