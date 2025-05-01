@@ -3,7 +3,7 @@ name: Build and Dockerize Angular App
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-angular-docker:
