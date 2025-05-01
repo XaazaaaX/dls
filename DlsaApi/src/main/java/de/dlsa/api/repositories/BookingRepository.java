@@ -18,7 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT YEAR(b.doneDate), SUM(b.countDls) " +
             "FROM Booking b " +
-            "WHERE YEAR(b.doneDate) >= :startYear " +
+            "WHERE YEAR(b.doneDate) >= :startYear AND b.action IS NOT NULL " +
             "GROUP BY YEAR(b.doneDate) " +
             "ORDER BY YEAR(b.doneDate)")
     List<Object[]> findServiceHoursPerYearFrom(@Param("startYear") int startYear);
@@ -26,15 +26,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT EXTRACT(YEAR FROM b.doneDate) AS year, EXTRACT(MONTH FROM b.doneDate) AS month, SUM(b.countDls) AS totalDls " +
             "FROM Booking b " +
             "WHERE b.doneDate BETWEEN :startDate AND :endDate " +
+            "AND b.action IS NOT NULL " +
             "GROUP BY EXTRACT(YEAR FROM b.doneDate), EXTRACT(MONTH FROM b.doneDate) " +
             "ORDER BY EXTRACT(YEAR FROM b.doneDate) DESC, EXTRACT(MONTH FROM b.doneDate)")
     List<Object[]> findMonthlyServiceHours(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query(
             value = """
-        SELECT m.vorname, m.nachname, SUM(b.anzahl_dls) AS total
+        SELECT m.vorname, m.nachname, SUM(b.anzahldls) AS total
         FROM buchungen b
         JOIN mitglieder m ON m.id = b.member_id
+        WHERE b.campaign_id IS NOT NULL
         GROUP BY m.vorname, m.nachname
         ORDER BY total DESC
         LIMIT 5
@@ -46,19 +48,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
     SELECT
         b2."name",
-        COALESCE(SUM(b.anzahl_dls), 0) AS dl_summe
+        COALESCE(SUM(b.anzahldls), 0) AS dl_summe
     FROM
         bereiche b2
     LEFT JOIN
-        bereiche_groups bg ON bg.sector_id = b2.id
+        bereiche_gruppen bg ON bg.sector_id = b2.id
     LEFT JOIN
         gruppen g ON g.id = bg.groups_id
     LEFT JOIN
-        mitglieder_groups mg ON mg.groups_id = g.id
+        mitglieder_gruppen mg ON mg.groups_id = g.id
     LEFT JOIN
         mitglieder m ON m.id = mg.member_id
     LEFT JOIN
-        buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungs_datum) = :year
+        buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungsdatum) = :year AND b.campaign_id IS NOT NULL
     GROUP BY
         b2."name"
     ORDER BY
@@ -69,19 +71,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
         SELECT
             g.gruppenname,
-            COALESCE(SUM(b.anzahl_dls), 0) AS dl_summe
+            COALESCE(SUM(b.anzahldls), 0) AS dl_summe
         FROM
             gruppen g
         LEFT JOIN
-            mitglieder_groups mg ON mg.groups_id = g.id
+            mitglieder_gruppen mg ON mg.groups_id = g.id
         LEFT JOIN
             mitglieder m ON m.id = mg.member_id
         LEFT JOIN
-            buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungs_datum) = :year
+            buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungsdatum) = :year and b.campaign_id is not null
         GROUP BY
-             g.gruppenname
+            g.gruppenname
         ORDER BY
-             g.gruppenname
+            g.gruppenname
 """, nativeQuery = true)
     List<Object[]> findGroupsWithDlsFromYear(@Param("year") int year);
 
@@ -89,15 +91,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
         SELECT
             s.spartenname,
-            COALESCE(SUM(b.anzahl_dls), 0) AS dl_summe
+            COALESCE(SUM(b.anzahldls), 0) AS dl_summe
         FROM
             sparten s
         LEFT JOIN
-            mitglieder_categories mc ON mc.categories_id = s.id
+            mitglieder_sparten mc ON mc.categories_id = s.id
         LEFT JOIN
             mitglieder m ON m.id = mc.member_id
         LEFT JOIN
-            buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungs_datum) = :year
+            buchungen b ON b.member_id = m.id AND EXTRACT(YEAR FROM b.ableistungsdatum) = :year AND b.campaign_id IS NOT NULL
         GROUP BY
              s.spartenname
         ORDER BY

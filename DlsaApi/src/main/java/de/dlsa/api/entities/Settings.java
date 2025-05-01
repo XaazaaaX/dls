@@ -7,13 +7,13 @@ import jakarta.persistence.*;
 public class Settings extends BaseEntity {
     @Column(name = "stichtag")
     private String dueDate;
-    @Column(name = "anzahlDls")
+    @Column(name = "anzahldls")
     private Double countDls;
-    @Column(name = "kostenDls")
+    @Column(name = "kostendls")
     private Double costDls;
-    @Column(name = "alterVon")
+    @Column(name = "altervon")
     private Integer ageFrom;
-    @Column(name = "alterBis")
+    @Column(name = "alterbis")
     private Integer ageTo;
     @Column(name = "buchungsmethode")
     private String bookingMethod;

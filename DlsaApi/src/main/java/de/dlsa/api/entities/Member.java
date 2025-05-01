@@ -35,9 +35,11 @@ public class Member extends BaseEntity{
     private BasicMember basicMember;
 
     @ManyToMany
+    @JoinTable(name = "mitglieder_gruppen")
     private Collection<Group> groups;
 
     @ManyToMany
+    @JoinTable(name = "mitglieder_sparten")
     private Collection<Category> categories;
 
 

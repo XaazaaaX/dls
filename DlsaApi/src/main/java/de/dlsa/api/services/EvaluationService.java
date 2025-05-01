@@ -203,6 +203,9 @@ public class EvaluationService {
 
         if(finalize){
 
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            OutputStreamWriter writer = new OutputStreamWriter(byteStream, StandardCharsets.UTF_8);
+
             CourseOfYear coy = new CourseOfYear()
                     .setFile(generateCsvBytes(results))
                     .setTimestamp(LocalDateTime.now())
@@ -456,7 +459,7 @@ public class EvaluationService {
         OutputStreamWriter writer = new OutputStreamWriter(byteStream, StandardCharsets.UTF_8);
 
         writer.write('\uFEFF'); // UTF-8 BOM
-        writer.write("Vorname; Nachname; Monate mit DLS-Pflicht; Geleistete DLS; Benötigte DLS; Kosten Pro nicht geleisteter DLS; Zu Zahlen (in Euro); Bemerkung\n");
+        writer.write("Vorname; Nachname; Monate mit DLS-Pflicht; Benötigte DLS; Geleistete DLS; Kosten Pro nicht geleisteter DLS; Zu Zahlen (in Euro); Bemerkung\n");
 
         for (EvaluationResponse result : results) {
             writer.write(String.format(

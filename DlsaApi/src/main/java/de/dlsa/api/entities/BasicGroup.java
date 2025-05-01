@@ -2,6 +2,7 @@ package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 
+@Table(name = "basicgroup")
 @Entity
 public class BasicGroup extends BaseEntity {
 

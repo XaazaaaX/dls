@@ -223,7 +223,7 @@ export class JournalComponent {
     saveBooking() {
         this.submitted = true;
 
-        if (this.booking.countDls && this.booking.comment && this.booking.doneDate && this.memberId && this.actionId) {
+        if (this.booking.countDls && this.booking.doneDate && this.memberId && this.actionId) {
 
             this.bookingDto = {
                 countDls: this.booking.countDls,

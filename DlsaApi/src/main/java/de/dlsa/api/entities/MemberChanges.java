@@ -6,8 +6,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "memberchanges")
 public class MemberChanges extends BaseEntity {
 
+    @Column(name = "timestamp")
     private LocalDateTime timestamp = LocalDateTime.now();
 
     @Column(name = "bezugsdatum")
@@ -16,12 +18,13 @@ public class MemberChanges extends BaseEntity {
     @Column(name = "spaltenname")
     private String column;
 
-    @Column(name = "alterWert")
+    @Column(name = "alterwert")
     private String oldValue;
 
-    @Column(name = "neuerWert")
+    @Column(name = "neuerwert")
     private String newValue;
 
+    @Column(name = "memberid")
     private Long memberId;
 
     public LocalDateTime getRefDate() {

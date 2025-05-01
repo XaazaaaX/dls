@@ -54,7 +54,6 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-
     public BookingResponse createBooking(BookingDto booking) {
 
         Booking mappedBooking = modelMapper.map(booking, Booking.class);

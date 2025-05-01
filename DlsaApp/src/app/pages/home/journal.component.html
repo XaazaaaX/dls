@@ -110,8 +110,6 @@
                 <label for="bookingComment" class="block font-bold mb-3">Bemerkung</label>
                 <textarea pTextarea id="bookingComment" [(ngModel)]="booking.comment" [autoResize]="true" rows="3"
                     cols="30" fluid></textarea>
-                <small class="text-red-500" *ngIf="submitted && !booking.comment">Bemerkung ist
-                    erforderlich!</small>
             </div>
 
         </div>

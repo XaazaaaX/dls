@@ -19,7 +19,7 @@ public class CsvExporter {
         writer.write('\uFEFF');
 
         // Header
-        writer.write("Vorname; Nachname; Monate mit DLS-Pflicht; Geleistete DLS; Benötigte DLS; Kosten Pro nicht geleisteter DLS; Zu Zahlen (in Euro); Bemerkung\n");
+        writer.write("Vorname; Nachname; Monate mit DLS-Pflicht; Benötigte DLS; Geleistete DLS; Kosten Pro nicht geleisteter DLS; Zu Zahlen (in Euro); Bemerkung\n");
 
         for (EvaluationResponse result : results) {
             writer.write(String.format(

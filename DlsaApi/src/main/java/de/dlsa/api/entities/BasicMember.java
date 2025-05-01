@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-
+@Table(name = "basicmember")
 @Entity
 public class BasicMember extends BaseEntity {
 

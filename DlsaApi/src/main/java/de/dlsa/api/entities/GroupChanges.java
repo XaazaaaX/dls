@@ -7,17 +7,19 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
+@Table(name = "groupchanges")
 public class GroupChanges extends BaseEntity{
 
     @Column(name = "bezugsdatum")
     private LocalDateTime refDate;
 
-    @Column(name = "alterWert")
+    @Column(name = "alterwert")
     private Boolean oldValue;
 
-    @Column(name = "neuerWert")
+    @Column(name = "neuerwert")
     private Boolean newValue;
 
+    @Column(name = "groupid")
     private Long groupId;
 
     public LocalDateTime getRefDate() {

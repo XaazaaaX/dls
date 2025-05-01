@@ -13,7 +13,6 @@ import java.util.List;
 
 @RequestMapping("/settings")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 public class SettingsController {
 
     private final SettingsService settingsService;

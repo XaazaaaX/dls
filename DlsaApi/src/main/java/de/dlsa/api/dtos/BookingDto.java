@@ -11,7 +11,6 @@ public class BookingDto {
     @NotNull(message = "Dls ist erforderlich")
     @Min(value = 0, message = "DlS darf minimal 0 sein")
     private double countDls;
-    @NotBlank(message = "Bemerkung ist erforderlich")
     private String comment;
     @NotNull(message = "Ableistungsdatum ist erforderlich")
     private LocalDateTime doneDate;

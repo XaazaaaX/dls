@@ -1,5 +1,6 @@
 package de.dlsa.api.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,6 +31,18 @@ public class SecurityConfig{
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
+    @Value("${cors.allowed-methods}")
+    private String allowedMethods;
+
+    @Value("${cors.allowed-headers}")
+    private String allowedHeaders;
+
+    @Value("${cors.exposed-headers}")
+    private String exposedHeaders;
 
     /**
      * Konstruktor
@@ -72,10 +85,10 @@ public class SecurityConfig{
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Frontend-Origin erlauben
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Erlaubte HTTP-Methoden
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Access-Control-Expose-Headers", "Content-Disposition")); // Erlaubte Header
-        configuration.setExposedHeaders(List.of("Content-Disposition"));
+        configuration.setAllowedOrigins(List.of(allowedOrigins.split(","))); // Frontend-Origin erlauben
+        configuration.setAllowedMethods(List.of(allowedMethods.split(","))); // Erlaubte HTTP-Methoden
+        configuration.setAllowedHeaders(List.of(allowedHeaders.split(","))); // Erlaubte Header
+        configuration.setExposedHeaders(List.of(exposedHeaders.split(",")));
         configuration.setAllowCredentials(true); // Wenn Cookies oder Auth-Header genutzt werden
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Auf alle Endpunkte anwenden

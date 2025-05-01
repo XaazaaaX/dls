@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "Buchungen")
 public class Booking extends BaseEntity{
-    @Column(name = "anzahlDls")
-    private double countDls;
+    @Column(name = "anzahldls")
+    private Double countDls;
     @Column(name = "bemerkung")
     private String comment;
-    @Column(name = "ableistungsDatum")
+    @Column(name = "ableistungsdatum")
     private LocalDateTime doneDate;
     @Column(name = "storniert")
     private Boolean canceled = false;
@@ -46,7 +46,7 @@ public class Booking extends BaseEntity{
         return countDls;
     }
 
-    public Booking setCountDls(double countDls) {
+    public Booking setCountDls(Double countDls) {
         this.countDls = countDls;
         return this;
     }
