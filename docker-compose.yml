@@ -22,6 +22,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/dlsa
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: pass
+      CORS_ALLOWED_ORIGINS: http://localhost
     ports:
       - "5004:8080"  # API auf Port 8080 zugänglich
       - "5005:5005"
