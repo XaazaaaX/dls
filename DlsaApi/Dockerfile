@@ -8,5 +8,6 @@ RUN mvn clean install -DskipTests
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 EXPOSE 8080
+EXPOSE 5005
 COPY --from=build /build/target/DlsaApi-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # PostgreSQL-Datenbank
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: dlsa
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"  # Zugänglich auf Port 5432
+    networks:
+      - dlsa-network
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Persistenz
+
+  # Spring Boot API
+  dlsa-api:
+    image: ben0531/dlsa-api:latest
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/dlsa
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+    ports:
+      - "5004:8080"  # API auf Port 8080 zugänglich
+      - "5005:5005"
+    depends_on:
+      - db
+    networks:
+      - dlsa-network
+
+  # Angular App
+  dlsa-app:
+    image: ben0531/dlsa-app:latest
+    ports:
+      - "80:80"  # App wird auf Port 80 verfügbar gemacht
+    depends_on:
+      - dlsa-api
+    networks:
+      - dlsa-network
+
+  # pgAdmin - PostgreSQL-Viewer
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"  # Zugriff auf pgAdmin über Port 5050
+    depends_on:
+      - db
+    networks:
+      - dlsa-network
+
+networks:
+  dlsa-network:
+    driver: bridge
+
+volumes:
+  db-data: {}  # Persistente Daten für PostgreSQL
