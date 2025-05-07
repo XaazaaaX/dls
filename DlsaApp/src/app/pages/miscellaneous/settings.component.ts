@@ -135,20 +135,6 @@ import { ToastModule } from 'primeng/toast';
 
                 </div>
 
-
-
-
-
-
-
-                <div class="card flex flex-col gap-4">
-                    <div class="font-semibold text-xl">Spaltenzuordnung</div>
-
-                    
-
-
-                </div>
-
                 <p-toast />
 `,
     styles: ``

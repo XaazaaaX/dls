@@ -6,7 +6,6 @@ on:
       - main
 
 jobs:
-  # Angular App Docker Build
   build-angular:
     runs-on: ubuntu-latest
     steps:
@@ -40,10 +39,9 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/dlsa-app:latest ./DlsaApp
           docker push ${{ secrets.DOCKER_USERNAME }}/dlsa-app:latest
 
-  # Spring Boot API Docker Build
   build-api:
     runs-on: ubuntu-latest
-    needs: build-angular  # nur wenn Angular zuerst gebaut werden soll
+    needs: build-angular
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
