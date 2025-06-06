@@ -46,6 +46,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run API Tests
+        run: ./mvnw test
+        working-directory: DlsaApi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
