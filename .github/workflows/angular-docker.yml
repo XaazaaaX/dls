@@ -57,7 +57,7 @@ jobs:
         working-directory: DlsaApi
 
       - name: Run API Tests
-        run: ./mvnw test
+        run: mvnw test
         working-directory: DlsaApi
 
       - name: Set up Docker Buildx
