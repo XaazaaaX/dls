@@ -13,7 +13,7 @@ public class Sector extends BaseEntity {
     private String sectorname;
 
     @ManyToMany
-    @JoinTable(name = "bereiche_gruppen")
+    @JoinTable(name = "bereiche_gruppen", joinColumns = @JoinColumn(name = "bereich_id"))
     private Collection<Group> groups;
 
     public String getSectorname() {
