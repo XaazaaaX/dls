@@ -52,7 +52,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     FROM
         bereiche b2
     LEFT JOIN
-        bereiche_gruppen bg ON bg.sector_id = b2.id
+        bereiche_gruppen bg ON bg.bereiche_id = b2.id
     LEFT JOIN
         gruppen g ON g.id = bg.groups_id
     LEFT JOIN
