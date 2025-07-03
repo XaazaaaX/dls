@@ -54,7 +54,7 @@ import { GroupChanges, HistorieService } from '../../services/historie.service';
     templateUrl: `./groupchanges.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class GroupChangesComponent{
+export class GroupChangesComponent {
 
     groupChanges = signal<GroupChanges[]>([]);
 
@@ -64,7 +64,7 @@ export class GroupChangesComponent{
         private messageService: MessageService,
         private hsitorieService: HistorieService
     ) {
-        
+
     }
 
     ngOnInit() {
@@ -78,12 +78,16 @@ export class GroupChangesComponent{
                 this.groupChanges.set(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
 
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
-    } 
+    }
 }

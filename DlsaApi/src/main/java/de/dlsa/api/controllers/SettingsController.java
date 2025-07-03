@@ -7,6 +7,7 @@ import de.dlsa.api.responses.UserResponse;
 import de.dlsa.api.services.SettingsService;
 import de.dlsa.api.services.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +23,13 @@ public class SettingsController {
     }
 
     //GET /api/users
+    @PreAuthorize("hasAuthority('Administrator')")
     @GetMapping
     public ResponseEntity<Settings> getSettings() {
         return ResponseEntity.ok(settingsService.getSettings());
     }
 
+    @PreAuthorize("hasAuthority('Administrator')")
     @PutMapping("/{id}")
     public ResponseEntity<Settings> updateUser(@PathVariable long id, @RequestBody Settings settings) {
         Settings updated = settingsService.updateSettings(id, settings);

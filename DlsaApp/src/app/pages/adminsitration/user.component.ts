@@ -83,7 +83,7 @@ export class UserComponent implements OnInit {
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         private userService: UserService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.loadUserData();
@@ -96,7 +96,11 @@ export class UserComponent implements OnInit {
                 console.log(this.users);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
 
@@ -152,7 +156,7 @@ export class UserComponent implements OnInit {
                 this.userService.deleteUser(user.id).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich gelöscht!" });
-                        
+
                         this.users.set(this.users().filter((val) => val.id !== user.id));
                         this.user = {
                             role: {}
@@ -172,19 +176,19 @@ export class UserComponent implements OnInit {
 
         if (this.isEdit) {
 
-            if(this.user.username && this.user.role.rolename){
+            if (this.user.username && this.user.role.rolename) {
                 this.userService.updateUser(this.user).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
                         const currentUsers = this.users();
-                        const _users = currentUsers.map(user => 
-                        user.id === data.id ? { ...user, ...data } : user
+                        const _users = currentUsers.map(user =>
+                            user.id === data.id ? { ...user, ...data } : user
                         );
-                        
+
                         // Aktualisiere das signal mit den neuen Benutzerdaten
                         this.users.set(_users);
-        
+
                         //this.users.set([...this.users(), ...data]);
                         this.userDialog = false;
                         this.user = {
@@ -199,11 +203,11 @@ export class UserComponent implements OnInit {
 
         } else {
 
-            if(this.user.username && this.user.password && this.user.role.rolename){
+            if (this.user.username && this.user.password && this.user.role.rolename) {
                 this.userService.createUser(this.user).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich angelegt!" });
-        
+
                         this.users.set([...this.users(), data]);
                         this.userDialog = false;
                         this.user = {

@@ -71,8 +71,9 @@ export class AppMenu {
                             routerLink: ['/dashboard/groupchanges'],
                             visible: this.isUser
                         }
-                    ]},
-                    { label: 'Dokumentation', icon: 'pi pi-fw pi-book', routerLink: ['/dashboard/documentation'], visible: this.isGuest },
+                    ]}
+                    //]},
+                    //{ label: 'Dokumentation', icon: 'pi pi-fw pi-book', routerLink: ['/dashboard/documentation'], visible: this.isGuest },
                 ]
             },
         ];

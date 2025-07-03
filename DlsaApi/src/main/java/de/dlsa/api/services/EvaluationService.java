@@ -1,6 +1,7 @@
 package de.dlsa.api.services;
 
 import de.dlsa.api.entities.*;
+import de.dlsa.api.exceptions.CoyFailedException;
 import de.dlsa.api.repositories.*;
 import de.dlsa.api.responses.BookingResponse;
 import de.dlsa.api.responses.CourseOfYearResponse;
@@ -82,138 +83,154 @@ public class EvaluationService {
                 .collect(Collectors.toList());
     }
 
-    public List<EvaluationResponse> calculateForYear(int year, boolean finalize) throws IOException {
+    // Hauptfunktion Jahreslauf (ohne CSV-Export)
+    public List<EvaluationResponse> runCoy(int year, boolean finalize) throws IOException, CoyFailedException {
 
-        // Prüfen ob schon ein final gemacht wurde
+        // Check if any booking exists
+        validateYear(year);
 
+        // get lastDueDate from last coy-run
+        LocalDate lastDueDate = getLastDueDate();
+
+        // load settings
         Settings settings = settingsService.getSettings();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        yearRepository.findByYear(year).orElseThrow(() -> new RuntimeException("Es liegen keine Buchungen für das übermittelte Jahr vor!"));
 
-        LocalDate lastDueDate = null;
-        LocalDateTime lastDoneTimestamp = courseOfyearRepository.findLastDoneDate();
-        if (lastDoneTimestamp != null) {
-            lastDueDate = lastDoneTimestamp.toLocalDate();
-        }
+        // set fromdate and duedate
+        LocalDate toDate = getToDate(year, settings);
+        LocalDate fromDate = getFromDate(year, settings, lastDueDate);
 
-        LocalDate toDate = LocalDate.parse(settings.getDueDate() + "." + year, formatter);
-        LocalDate fromDate = LocalDate.parse(settings.getDueDate() + "." + year, formatter)
-                .minusYears(1)
-                .plusDays(1);
+        // Log
+        logFromToDates(year, fromDate, toDate);
 
-        // Did the due date change since the last course of year?
-        if (lastDueDate != null && fromDate.isBefore(lastDueDate)) {
-            fromDate = lastDueDate.plusDays(1);
-        }
-
-        // LOG
-        System.out.println("-------------------------------------------");
-        System.out.println("Debug Jahreslauf " + year);
-        System.out.println("Von: " + fromDate.toString());
-        System.out.println("Bis: " + toDate.toString());
-        System.out.println("-------------------------------------------");
-
-        // Date Validation:
-        boolean isPeriodOver = LocalDate.now().isAfter(toDate);
-        boolean isBeforeOrInLastCoy = lastDueDate != null && (toDate.isBefore(lastDueDate) || toDate.isEqual(lastDueDate));
-
-        if (isPeriodOver) {
-            if (isBeforeOrInLastCoy) {
-                throw new RuntimeException("Der angegebene Zeitraum liegt vor oder in einem abgeschlossenem Jahreslauf, bitte das Ergebnis in der Historie verwenden!");
+        // Timespan Validation
+        if (isPeriodOver(toDate)) {
+            if (isBeforeOrInLastCoy(lastDueDate, toDate)) {
+                throw new CoyFailedException("Der angegebene Zeitraum liegt vor oder in einem abgeschlossenem Jahreslauf, bitte das Ergebnis in der Historie verwenden!");
             }
         } else {
-            throw new RuntimeException("Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist!");
+            throw new CoyFailedException("Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist!");
         }
 
-        //List<Member> members = memberRepository.findActiveWithAikzTrue();
+
+        // Calculate for active and aikz member
         List<Member> members = memberRepository.findAll();
-        List<EvaluationResponse> results = new ArrayList<>();
+        List<EvaluationResponse> results = calculateForMemberList(members, fromDate, toDate, settings, finalize);
 
-        for (Member member : members) {
-            EvaluationResponse result = calculateForMember(member, fromDate, toDate, settings, finalize);
-            results.add(result);
-        }
 
-        if(finalize){
-
-            CourseOfYear coy = new CourseOfYear()
-                    .setFile(generateCsvBytes(results))
-                    .setTimestamp(LocalDateTime.now())
-                    .setDisplayName("Jahreslauf vom " + toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                    .setDueDate(toDate.atStartOfDay())
-                    .setFilename(toDate + "_Jahreslauf.csv");
-
-            courseOfyearRepository.save(coy);
+        // Save Coy
+        if (finalize) {
+            saveCourseOfYear(results, toDate);
         }
 
         return results;
     }
 
-    public void calculateForYear(int year, boolean finalize, HttpServletResponse response) throws IOException {
-
-        // Prüfen ob schon ein final gemacht wurde
-
-        Settings settings = settingsService.getSettings();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private void validateYear(int year) {
         yearRepository.findByYear(year).orElseThrow(() -> new RuntimeException("Es liegen keine Buchungen für das übermittelte Jahr vor!"));
+    }
 
-        LocalDate lastDueDate = null;
+    private LocalDate getLastDueDate() {
         LocalDateTime lastDoneTimestamp = courseOfyearRepository.findLastDoneDate();
         if (lastDoneTimestamp != null) {
-            lastDueDate = lastDoneTimestamp.toLocalDate();
+            return lastDoneTimestamp.toLocalDate();
         }
 
-        LocalDate toDate = LocalDate.parse(settings.getDueDate() + "." + year, formatter);
+        return null;
+    }
+
+    private LocalDate getToDate(int year, Settings settings) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return LocalDate.parse(settings.getDueDate() + "." + year, formatter);
+    }
+
+    private LocalDate getFromDate(int year, Settings settings, LocalDate lastDueDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
         LocalDate fromDate = LocalDate.parse(settings.getDueDate() + "." + year, formatter)
                 .minusYears(1)
                 .plusDays(1);
 
         // Did the due date change since the last course of year?
         if (lastDueDate != null && fromDate.isBefore(lastDueDate)) {
-            fromDate = lastDueDate.plusDays(1);
+            return lastDueDate.plusDays(1);
         }
 
-        // LOG
+        return fromDate;
+    }
+
+    private void logFromToDates(int year, LocalDate from, LocalDate to) {
         System.out.println("-------------------------------------------");
         System.out.println("Debug Jahreslauf " + year);
-        System.out.println("Von: " + fromDate.toString());
-        System.out.println("Bis: " + toDate.toString());
+        System.out.println("Von: " + from.toString());
+        System.out.println("Bis: " + to.toString());
         System.out.println("-------------------------------------------");
+    }
 
-        // Date Validation:
-        boolean isPeriodOver = LocalDate.now().isAfter(toDate);
-        boolean isBeforeOrInLastCoy = lastDueDate != null && (toDate.isBefore(lastDueDate) || toDate.isEqual(lastDueDate));
+    private boolean isPeriodOver(LocalDate toDate) {
+        return LocalDate.now().isAfter(toDate);
+    }
 
-        if (isPeriodOver) {
-            if (isBeforeOrInLastCoy) {
-                throw new RuntimeException("Der angegebene Zeitraum liegt vor oder in einem abgeschlossenem Jahreslauf, bitte das Ergebnis in der Historie verwenden!");
-            }
-        } else {
-            throw new RuntimeException("Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist!");
-        }
+    private boolean isBeforeOrInLastCoy(LocalDate lastDueDate, LocalDate toDate) {
+        return lastDueDate != null && (toDate.isBefore(lastDueDate) || toDate.isEqual(lastDueDate));
+    }
 
-        //List<Member> members = memberRepository.findActiveWithAikzTrue();
-        List<Member> members = memberRepository.findAll();
+    private List<EvaluationResponse> calculateForMemberList(List<Member> members, LocalDate fromDate, LocalDate toDate, Settings settings, boolean finalize) {
+
         List<EvaluationResponse> results = new ArrayList<>();
-
         for (Member member : members) {
             EvaluationResponse result = calculateForMember(member, fromDate, toDate, settings, finalize);
             results.add(result);
         }
+        return results;
+    }
 
-        if(finalize){
+    private void saveCourseOfYear(List<EvaluationResponse> results, LocalDate toDate) throws IOException {
+        CourseOfYear coy = new CourseOfYear()
+                .setFile(generateCsvBytes(results))
+                .setTimestamp(LocalDateTime.now())
+                .setDisplayName("Jahreslauf vom " + toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                .setDueDate(toDate.atStartOfDay())
+                .setFilename(toDate + "_Jahreslauf.csv");
 
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            OutputStreamWriter writer = new OutputStreamWriter(byteStream, StandardCharsets.UTF_8);
+        courseOfyearRepository.save(coy);
+    }
 
-            CourseOfYear coy = new CourseOfYear()
-                    .setFile(generateCsvBytes(results))
-                    .setTimestamp(LocalDateTime.now())
-                    .setDisplayName("Jahreslauf vom " + toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                    .setDueDate(toDate.atStartOfDay())
-                    .setFilename(toDate + "_Jahreslauf.csv");
+    public void runCoy(int year, boolean finalize, HttpServletResponse response) throws IOException, CoyFailedException {
 
-            courseOfyearRepository.save(coy);
+        // Check if any booking exists
+        validateYear(year);
+
+        // get lastDueDate from last coy-run
+        LocalDate lastDueDate = getLastDueDate();
+
+        // load settings
+        Settings settings = settingsService.getSettings();
+
+        // set fromdate and duedate
+        LocalDate toDate = getToDate(year, settings);
+        LocalDate fromDate = getFromDate(year, settings, lastDueDate);
+
+        // Log
+        logFromToDates(year, fromDate, toDate);
+
+        // Timespan Validation
+        if (isPeriodOver(toDate)) {
+            if (isBeforeOrInLastCoy(lastDueDate, toDate)) {
+                throw new CoyFailedException("Der angegebene Zeitraum liegt vor oder in einem abgeschlossenem Jahreslauf, bitte das Ergebnis in der Historie verwenden!");
+            }
+        } else {
+            throw new CoyFailedException("Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist!");
+        }
+
+
+        // Calculate for active and aikz member
+        List<Member> members = memberRepository.findAll();
+        List<EvaluationResponse> results = calculateForMemberList(members, fromDate, toDate, settings, finalize);
+
+
+        // Save Coy
+        if (finalize) {
+            saveCourseOfYear(results, toDate);
         }
 
         String filename = toDate + "_Jahreslauf.csv";

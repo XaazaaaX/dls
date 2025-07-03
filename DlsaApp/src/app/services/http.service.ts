@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse, HttpResponse } from '@angul
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';  // Beispiel für einen AuthService
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,7 @@ export class HttpService {
       headers: new HttpHeaders({
         Authorization: `Bearer ${authToken}`
       }),
-      responseType: 'blob',
+      responseType: 'blob' as 'blob',
       observe: 'response'
     }).pipe(catchError(this.handleError));
   }
@@ -71,8 +72,6 @@ export class HttpService {
 
   // Fehlerbehandlung
   private handleError(error: HttpErrorResponse) {
-    console.log(error);
-    //return throwError(() => ({error: {title: "Verbindungsfehler", description: "Es gab einen Fehler bei der API-Anfrage."}}));
     return throwError(() => error);
   }
 }

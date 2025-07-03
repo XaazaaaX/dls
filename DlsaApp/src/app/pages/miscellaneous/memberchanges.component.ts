@@ -57,7 +57,7 @@ import { BooleanToJaNeinPipe } from '../../pipelines/boolean-to-ja-nein.pipe';
     templateUrl: `./memberchanges.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class MemberChangesComponent{
+export class MemberChangesComponent {
 
     memberChanges = signal<MemberChanges[]>([]);
 
@@ -66,7 +66,7 @@ export class MemberChangesComponent{
     constructor(
         private messageService: MessageService,
         private hsitorieService: HistorieService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.loadMemberChanges();
@@ -79,12 +79,16 @@ export class MemberChangesComponent{
                 this.memberChanges.set(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
 
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
-    } 
+    }
 }

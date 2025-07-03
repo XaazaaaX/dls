@@ -109,7 +109,11 @@ export class JournalComponent {
                 console.log(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }

@@ -5,6 +5,7 @@ import de.dlsa.api.responses.BookingResponse;
 import de.dlsa.api.services.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -18,17 +19,20 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
     @GetMapping("/bookings")
     public ResponseEntity<List<BookingResponse>> getBookings() {
         return ResponseEntity.ok(bookingService.getBookings());
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
     @PostMapping("/booking")
     public ResponseEntity<BookingResponse> createBooking(@Valid @RequestBody BookingDto booking) {
         BookingResponse created = bookingService.createBooking(booking);
         return ResponseEntity.ok(created);
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
     @DeleteMapping("/bookings/{id}")
     public ResponseEntity<Void> cancelBooking(@PathVariable long id) {
         bookingService.cancelBooking(id);

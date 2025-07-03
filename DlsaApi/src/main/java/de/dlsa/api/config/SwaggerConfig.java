@@ -28,8 +28,8 @@ public class SwaggerConfig {
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("Dlsa Game - Rest API")
-                        .description("Some custom description of API.")
+                .info(new Info().title("DLSV- Rest API")
+                        .description("")
                         .version("1.0"));
     }
 

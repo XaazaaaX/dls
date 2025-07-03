@@ -51,7 +51,7 @@ import { Category, CategoryService } from '../../services/category.service';
     templateUrl: `./category.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class CategoryComponent{
+export class CategoryComponent {
 
     isEdit: boolean = false;
     categoryDialog: boolean = false;
@@ -69,7 +69,7 @@ export class CategoryComponent{
         private confirmationService: ConfirmationService,
         private categoryService: CategoryService
     ) {
-        
+
     }
 
     ngOnInit() {
@@ -82,7 +82,11 @@ export class CategoryComponent{
                 this.categories.set(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
@@ -111,23 +115,23 @@ export class CategoryComponent{
 
     saveCategory() {
 
-        
+
         this.submitted = true;
 
         if (this.isEdit) {
-            
-            if(this.category.categoryName){
+
+            if (this.category.categoryName) {
                 this.categoryService.updateCategory(this.category).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
                         const currentCategory = this.categories();
-                        const _categories = currentCategory.map(category => 
+                        const _categories = currentCategory.map(category =>
                             category.id === data.id ? { ...category, ...data } : category
                         );
-                        
+
                         this.categories.set(_categories);
-        
+
                         this.categoryDialog = false;
                         this.category = {};
                     },
@@ -139,11 +143,11 @@ export class CategoryComponent{
 
         } else {
 
-            if(this.category.categoryName){
+            if (this.category.categoryName) {
                 this.categoryService.createCategory(this.category).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Sparte wurde erfolgreich angelegt!" });
-        
+
                         this.categories.set([...this.categories(), data]);
                         this.categoryDialog = false;
                         this.category = {};
@@ -154,10 +158,10 @@ export class CategoryComponent{
                 });
             }
         }
-            
+
     }
 
 
 
-    
+
 }

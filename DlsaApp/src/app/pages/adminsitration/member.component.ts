@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -60,7 +60,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     templateUrl: `./member.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class MemberComponent{
+export class MemberComponent {
 
     isEdit: boolean = false;
     memberDialog: boolean = false;
@@ -89,7 +89,7 @@ export class MemberComponent{
         private memberService: MemberService,
         private categoryService: CategoryService,
         private groupService: GroupService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.loadMembers();
@@ -111,7 +111,7 @@ export class MemberComponent{
 
                     let countAddedMembers = data.length
                     this.messageService.add({ severity: 'success', summary: "Info", detail: countAddedMembers + " Mitglieder wurden erfolgreich angelegt!" });
-    
+
                     if (data.length > 0) {
                         this.members.set([...this.members(), ...data]);
                     }
@@ -131,7 +131,11 @@ export class MemberComponent{
                 console.log(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
@@ -160,7 +164,7 @@ export class MemberComponent{
         });
     }
 
-    
+
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
@@ -187,12 +191,12 @@ export class MemberComponent{
         this.member = { ...member };
 
         this.selectedGroups = this.member.groups!
-        .map(group => group.id)
-        .filter(id => id !== undefined) as number[];
+            .map(group => group.id)
+            .filter(id => id !== undefined) as number[];
 
         this.selectedCategories = this.member.categories!
-        .map(category => category.id)
-        .filter(id => id !== undefined) as number[];
+            .map(category => category.id)
+            .filter(id => id !== undefined) as number[];
 
         this.member.birthdate ? this.member.birthdate = new Date(this.member.birthdate!) : null;
         this.member.entryDate ? this.member.entryDate = new Date(this.member.entryDate!) : null;
@@ -216,15 +220,15 @@ export class MemberComponent{
         this.memberUploadDialog = false;
         this.selectedFile = null;
     }
-        
+
     saveMember() {
-        
+
         this.submitted = true;
 
         if (this.isEdit) {
 
-            
-            if(this.member.refDate && this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){
+
+            if (this.member.refDate && this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate) {
 
                 this.memberEditDto = {
                     refDate: new Date(Date.UTC(this.member.refDate.getFullYear(), this.member.refDate.getMonth(), this.member.refDate.getDate())),
@@ -244,12 +248,12 @@ export class MemberComponent{
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
                         const currentMember = this.members();
-                        const _members = currentMember.map(member => 
+                        const _members = currentMember.map(member =>
                             member.id === data.id ? { ...member, ...data } : member
                         );
-                        
+
                         this.members.set(_members);
-        
+
                         this.memberDialog = false;
                         this.member = {};
                         this.memberDto = {};
@@ -261,7 +265,7 @@ export class MemberComponent{
             }
         } else {
 
-            if(this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate){
+            if (this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate) {
 
                 this.memberDto = {
                     memberId: this.member.memberId,
@@ -277,7 +281,7 @@ export class MemberComponent{
                 this.memberService.createMember(this.memberDto).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Das Mitglied wurde erfolgreich angelegt!" });
-        
+
                         this.members.set([...this.members(), data]);
                         this.memberDialog = false;
                         this.member = {};
@@ -289,6 +293,6 @@ export class MemberComponent{
                 });
             }
         }
-        
+
     }
 }

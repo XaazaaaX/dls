@@ -28,6 +28,7 @@ public class UserController {
     }
 
     // POST /api/users
+    @PreAuthorize("hasAuthority('Administrator')")
     @PostMapping("/user")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserDto user) {
         UserResponse created = userService.createUser(user);
@@ -36,6 +37,7 @@ public class UserController {
 
 
     // PUT /api/users/{id}
+    @PreAuthorize("hasAuthority('Administrator')")
     @PutMapping("/users/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable long id, @RequestBody UserDto userDetails) {
         UserResponse updated = userService.updateUser(id, userDetails);
@@ -43,6 +45,7 @@ public class UserController {
     }
 
     // DELETE /api/users/{id}
+    @PreAuthorize("hasAuthority('Administrator')")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);

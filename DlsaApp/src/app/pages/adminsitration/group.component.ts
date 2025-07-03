@@ -56,7 +56,7 @@ import { Group, GroupService } from '../../services/group.service';
     templateUrl: `./group.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class GroupComponent{
+export class GroupComponent {
 
     isEdit: boolean = false;
     groupDialog: boolean = false;
@@ -74,7 +74,7 @@ export class GroupComponent{
         private confirmationService: ConfirmationService,
         private sectorService: SectorService,
         private groupService: GroupService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.loadGroups();
@@ -87,18 +87,22 @@ export class GroupComponent{
                 console.log(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
 
-    
+
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
     openNew() {
-        this.group = {liberated:false};
+        this.group = { liberated: false };
         this.submitted = false;
         this.groupDialog = true;
         this.isEdit = false;
@@ -114,26 +118,26 @@ export class GroupComponent{
         this.groupDialog = false;
         this.submitted = false;
     }
-        
+
     saveGroup() {
         this.submitted = true;
 
         if (this.isEdit) {
 
-            
-            if(this.group.groupName){
+
+            if (this.group.groupName) {
 
                 this.groupService.updateGroup(this.group).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
                         const currentGroup = this.groups();
-                        const _groups = currentGroup.map(group => 
+                        const _groups = currentGroup.map(group =>
                             group.id === data.id ? { ...group, ...data } : group
                         );
-                        
+
                         this.groups.set(_groups);
-        
+
                         this.groupDialog = false;
                         this.group = {};
                     },
@@ -144,17 +148,19 @@ export class GroupComponent{
             }
         } else {
 
-            if(this.group.groupName){
+            if (this.group.groupName) {
 
                 this.groupService.createGroup(this.group).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Gruppe wurde erfolgreich angelegt!" });
-        
+
                         this.groups.set([...this.groups(), data]);
                         this.groupDialog = false;
                         this.group = {};
                     },
                     error: (err) => {
+                        console.log("err");
+                        console.log(err);
                         this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
                     }
                 });

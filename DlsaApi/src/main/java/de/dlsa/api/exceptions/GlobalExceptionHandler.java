@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "Der JWT ist abgelaufen!");
+            errorDetail.setProperty("description", "Der JWT ist abgelaufen! Bitte melden Sie sich erneut an!");
         }
 
         if (errorDetail == null) {

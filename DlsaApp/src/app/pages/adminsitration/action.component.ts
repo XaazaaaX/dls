@@ -55,7 +55,7 @@ import { Member, MemberService } from '../../services/member.service';
     templateUrl: `./action.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class ActionComponent{
+export class ActionComponent {
 
     isEdit: boolean = false;
     actionDialog: boolean = false;
@@ -77,7 +77,7 @@ export class ActionComponent{
         private confirmationService: ConfirmationService,
         private memberService: MemberService,
         private actionService: ActionService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.loadActions();
@@ -98,7 +98,11 @@ export class ActionComponent{
             },
             error: (err) => {
                 console.log(err);
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
@@ -114,7 +118,7 @@ export class ActionComponent{
         });
     }
 
-    
+
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
@@ -142,7 +146,7 @@ export class ActionComponent{
         this.actionDialog = false;
         this.submitted = false;
     }
-        
+
 
 
     saveAction() {
@@ -150,9 +154,9 @@ export class ActionComponent{
         this.submitted = true;
 
         if (this.isEdit) {
-            
-            
-            if(this.action.year && this.action.description && this.contactId){
+
+
+            if (this.action.year && this.action.description && this.contactId) {
 
                 this.actionDto = {
                     year: this.action.year,
@@ -166,12 +170,12 @@ export class ActionComponent{
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
                         const currentAction = this.actions();
-                        const _actions = currentAction.map(action => 
+                        const _actions = currentAction.map(action =>
                             action.id === data.id ? { ...action, ...data } : action
                         );
-                        
+
                         this.actions.set(_actions);
-        
+
                         this.actionDialog = false;
                         this.action = {};
                         this.actionDto = {};
@@ -184,7 +188,7 @@ export class ActionComponent{
 
         } else {
 
-            if(this.action.year && this.action.description && this.contactId){
+            if (this.action.year && this.action.description && this.contactId) {
 
                 this.actionDto = {
                     year: this.action.year,
@@ -196,7 +200,7 @@ export class ActionComponent{
                 this.actionService.createActions(this.actionDto).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Aktion wurde erfolgreich angelegt!" });
-        
+
                         this.actions.set([...this.actions(), data]);
                         this.actionDialog = false;
                         this.action = {};
@@ -209,8 +213,8 @@ export class ActionComponent{
             }
         }
     }
-   
 
 
-    
+
+
 }

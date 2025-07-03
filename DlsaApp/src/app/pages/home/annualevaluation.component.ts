@@ -103,7 +103,11 @@ export class AnnualEvaluationComponent {
                 this.coys.set(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                  } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                  }
             }
         });
     }
@@ -163,9 +167,11 @@ export class AnnualEvaluationComponent {
 
 
                     this.hideDialog();
+
+                    this.loadCourseOfYears();
                 },
                 error: (err) => {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                    this.messageService.add({ severity: 'warn', summary: "Hinweis!", detail: "Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist! Falls der angegebene Zeitraum vor oder in einem abgeschlossenem Jahreslauf liegt, bitte das Ergebnis in der Tabelle verwenden!" });
                 }
             });
         }

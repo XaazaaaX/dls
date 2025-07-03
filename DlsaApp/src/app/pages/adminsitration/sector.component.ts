@@ -55,7 +55,7 @@ import { Group, GroupService } from '../../services/group.service';
     templateUrl: `./sector.component.html`,
     providers: [MessageService, ConfirmationService]
 })
-export class SectorComponent{
+export class SectorComponent {
 
     isEdit: boolean = false;
     sectorDialog: boolean = false;
@@ -77,7 +77,7 @@ export class SectorComponent{
         private confirmationService: ConfirmationService,
         private sectorService: SectorService,
         private groupService: GroupService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.loadSectors();
@@ -90,7 +90,11 @@ export class SectorComponent{
                 this.sectors.set(data);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                if (err.error.description) {
+                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                } else {
+                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+                }
             }
         });
     }
@@ -123,8 +127,8 @@ export class SectorComponent{
         this.sector = { ...sector };
 
         this.selectedGroups = this.sector.groups!
-        .map(group => group.id)
-        .filter(id => id !== undefined) as number[];
+            .map(group => group.id)
+            .filter(id => id !== undefined) as number[];
 
         this.sectorDto = {};
 
@@ -136,7 +140,7 @@ export class SectorComponent{
         this.sectorDialog = false;
         this.submitted = false;
     }
-        
+
 
 
     saveSector() {
@@ -144,7 +148,7 @@ export class SectorComponent{
 
         if (this.isEdit) {
 
-            if(this.sector.sectorname){
+            if (this.sector.sectorname) {
 
                 this.sectorDto.sectorname = this.sector.sectorname;
                 this.sectorDto.groupIds = this.selectedGroups;
@@ -155,12 +159,12 @@ export class SectorComponent{
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
 
                         const currentSector = this.sectors();
-                        const _sectors = currentSector.map(sector => 
+                        const _sectors = currentSector.map(sector =>
                             sector.id === data.id ? { ...sector, ...data } : sector
                         );
-                        
+
                         this.sectors.set(_sectors);
-        
+
                         this.sectorDialog = false;
                         this.sector = {};
                         this.sectorDto = {};
@@ -172,7 +176,7 @@ export class SectorComponent{
             }
         } else {
 
-            if(this.sector.sectorname){
+            if (this.sector.sectorname) {
 
                 this.sectorDto.sectorname = this.sector.sectorname;
                 this.sectorDto.groupIds = this.selectedGroups;
@@ -180,7 +184,7 @@ export class SectorComponent{
                 this.sectorService.createSectors(this.sectorDto).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Bereich wurde erfolgreich angelegt!" });
-        
+
                         this.sectors.set([...this.sectors(), data]);
                         this.sectorDialog = false;
                         this.sector = {};

@@ -45,10 +45,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        createRoles();
-        createUser();
-        createSettings();
-        createMember();
+        //createRoles();
+        //createUser();
+        //createSettings();
+        //createMember();
     }
 
     private void createRoles(){
