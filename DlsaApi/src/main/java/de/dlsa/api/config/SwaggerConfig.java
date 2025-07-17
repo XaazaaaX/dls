@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * Klasse zur Konfiguration der Swagger UI
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version  05/2025
  */
 @Configuration
 public class SwaggerConfig {

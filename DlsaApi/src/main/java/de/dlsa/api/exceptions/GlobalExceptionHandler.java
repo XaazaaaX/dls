@@ -2,8 +2,6 @@ package de.dlsa.api.exceptions;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,25 +14,25 @@ import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-
 /**
- * Klasse zur Behandlung von global auftretenden Exceptions
+ * Globale Fehlerbehandlung für die gesamte REST-API.
+ * Diese Klasse fängt definierte Exceptiontypen ab und liefert passende HTTP-Antworten im ProblemDetail-Format.
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version 01/2024
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     /**
-     * Behandelt ausgewählte Exceptions
+     * Universeller Fallback für sicherheits- und datenbankbezogene Fehler.
+     * Gibt eine ProblemDetail-Antwort mit passendem HTTP-Status und Beschreibung zurück.
      *
-     * @param exception Geworfene Exception
-     * @return Details über die Exception
+     * @param exception Die aufgetretene Ausnahme
+     * @return Objekt mit strukturierten Fehlerdetails
      */
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {
@@ -43,14 +41,12 @@ public class GlobalExceptionHandler {
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
             errorDetail.setProperty("description", "Der Benutzername oder das Passwort ist falsch!");
-
             return errorDetail;
         }
 
         if (exception instanceof DataIntegrityViolationException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
             errorDetail.setProperty("description", "Diese Bezeichnung wird bereits verwendet!");
-
             return errorDetail;
         }
 
@@ -74,6 +70,7 @@ public class GlobalExceptionHandler {
             errorDetail.setProperty("description", "Der JWT ist abgelaufen! Bitte melden Sie sich erneut an!");
         }
 
+        // Fallback bei allen anderen nicht behandelten Fehlern
         if (errorDetail == null) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
             errorDetail.setProperty("description", "Unbekannter interner Serverfehler!");
@@ -83,21 +80,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Spezielle Behandlung für Validierungsfehler
+     * Behandlung für Validierungsfehler von JWT.
+     * Gibt eine zusammengefasste Liste aller Validierungsfehler als HTTP 400 zurück.
      *
-     * @param exception Die ausgelöste Validierungsausnahme
-     * @return Validierungsfehlerdetails
+     * @param exception Ausnahme mit Feldfehlern
+     * @return ProblemDetail mit Liste der Fehlerbeschreibungen
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException exception) {
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
 
-        // Erstelle eine detaillierte Fehlermeldung direkt in der Beschreibung
         String errorDescriptions = fieldErrors.stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; "));
 
-        // ProblemDetail-Objekt erstellen, um die Fehler darzustellen
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(400), "Validierungsfehler");
         errorDetail.setProperty("description", errorDescriptions);
 

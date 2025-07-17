@@ -1,8 +1,8 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -22,12 +22,6 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
-import { Group, GroupService } from '../../services/group.service';
-import { Category, CategoryService } from '../../services/category.service';
-import { Booking, BookingDto, BookingService } from '../../services/booking.service';
-import { Member, MemberService } from '../../services/member.service';
-import { Action, ActionService } from '../../services/action.service';
-import { CourseOfYear, EvaluationService, Year } from '../../services/evaluation.service';
 import { MenuModule } from 'primeng/menu';
 import { AnnualServiceHours, MemberCount, MonthlyServiceHours, SectorsWithDlsFromYear, StatisticsService, TopDlsMember } from '../../services/statistics.service';
 import { FluidModule } from 'primeng/fluid';
@@ -87,8 +81,6 @@ export class DashboardComponent {
     ];
 
 
-    //-----------------
-
     memberCount: MemberCount = {};
     topDlsMembers: TopDlsMember[] = [{}];
 
@@ -101,12 +93,8 @@ export class DashboardComponent {
     radarData: any;
     radarOptions: any;
 
-
-
-
     radarSelectOptions: RadarSelectOption[] | undefined;
     radarSelected: RadarSelectOption = { name: 'Bereiche', code: 'sector' };
-    //------------
 
 
     constructor(

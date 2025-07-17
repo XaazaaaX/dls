@@ -1,8 +1,7 @@
 <div class="card">
-    <p-table #dt [value]="groupChanges()" [rows]="10" [paginator]="true"
-        [globalFilterFields]="['groupName', 'refDate']" [rowHover]="true" dataKey="id"
-        currentPageReportTemplate="{first} bis {last} von {totalRecords} Änderungen" [showCurrentPageReport]="true"
-        [rowsPerPageOptions]="[10, 20, 30]">
+    <p-table #dt [value]="groupChanges()" [rows]="10" [paginator]="true" [globalFilterFields]="['groupName', 'refDate']"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Änderungen"
+        [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
         <ng-template #caption>
             <div class="flex flex-wrap items-center justify-between">
@@ -49,16 +48,16 @@
                 <td style="width: auto; min-width: 5rem;">{{ groupChanges.groupName }}</td>
                 <td style="width: auto; min-width: 5rem;">
                     @if(groupChanges.newValue) {
-                        Ja
+                    Ja
                     } @else {
-                        Nein
+                    Nein
                     }
                 </td>
                 <td style="width: auto; min-width: 5rem;">
                     @if(groupChanges.oldValue) {
-                        Ja
+                    Ja
                     } @else {
-                        Nein
+                    Nein
                     }
                 </td>
                 <td style="width: auto; min-width: 5rem;">{{ groupChanges.refDate | date:'dd.MM.yyyy HH:mm:ss' }}</td>

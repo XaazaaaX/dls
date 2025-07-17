@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * Weiterverarbeitung der Anfragen aus dem AuthController
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version  05/2025
  */
 @Service
 public class AuthenticationService {

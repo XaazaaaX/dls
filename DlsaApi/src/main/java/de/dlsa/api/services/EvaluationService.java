@@ -3,7 +3,6 @@ package de.dlsa.api.services;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.exceptions.CoyFailedException;
 import de.dlsa.api.repositories.*;
-import de.dlsa.api.responses.BookingResponse;
 import de.dlsa.api.responses.CourseOfYearResponse;
 import de.dlsa.api.responses.EvaluationResponse;
 import de.dlsa.api.responses.YearResponse;
@@ -26,6 +25,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * Service für die Durchführung des Jahreslaufs (Course of Year, COY) zur Berechnung
+ * der Dienstleistungsstunden (DLS) für Mitglieder sowie zur optionalen Verbuchung
+ * der Soll-/Ist-Differenz und Erstellung eines CSV-Exports.
+ *
+ * Die Berechnung berücksichtigt individuelle Befreiungen (Alter, Gruppenstatus, Aktivität etc.),
+ * verwaltet historische Veränderungen an Gruppen-/Mitgliedsdaten und speichert abgeschlossene
+ * Jahresläufe dauerhaft.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Service
 public class EvaluationService {
 
@@ -125,7 +137,7 @@ public class EvaluationService {
         return results;
     }
 
-    private void validateYear(int year) {
+    public void validateYear(int year) {
         yearRepository.findByYear(year).orElseThrow(() -> new RuntimeException("Es liegen keine Buchungen für das übermittelte Jahr vor!"));
     }
 
@@ -166,11 +178,11 @@ public class EvaluationService {
         System.out.println("-------------------------------------------");
     }
 
-    private boolean isPeriodOver(LocalDate toDate) {
+    public boolean isPeriodOver(LocalDate toDate) {
         return LocalDate.now().isAfter(toDate);
     }
 
-    private boolean isBeforeOrInLastCoy(LocalDate lastDueDate, LocalDate toDate) {
+    public boolean isBeforeOrInLastCoy(LocalDate lastDueDate, LocalDate toDate) {
         return lastDueDate != null && (toDate.isBefore(lastDueDate) || toDate.isEqual(lastDueDate));
     }
 
@@ -243,7 +255,7 @@ public class EvaluationService {
         }
     }
 
-    private EvaluationResponse calculateForMember(Member member, LocalDate fromDate, LocalDate toDate, Settings settings, boolean finalize) {
+    public EvaluationResponse calculateForMember(Member member, LocalDate fromDate, LocalDate toDate, Settings settings, boolean finalize) {
 
         int requiredMonths;
 

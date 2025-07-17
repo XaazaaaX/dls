@@ -1,21 +1,37 @@
 package de.dlsa.api.entities;
 
-import de.dlsa.api.responses.CategoryResponse;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-@Table(name = "Sparten")
+/**
+ * Entität zur Repräsentation einer Sparte (z. B. "Fußball", "Tennis", "Verwaltung").
+ * Eine Sparte kann mehreren Mitgliedern zugeordnet sein, und ein Mitglied kann mehreren Sparten angehören.
+ *
+ * Die Beziehung ist Many-to-Many und wird auf der Member-Seite aktiv verwaltet.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Entity
+@Table(name = "Sparten")
 public class Category extends BaseEntity {
 
+    /**
+     * Name der Sparte.
+     * Muss eindeutig sein (unique).
+     */
     @Column(name = "spartenname", unique = true)
     private String categoryName;
 
+    /**
+     * Mitglieder, die dieser Sparte zugeordnet sind.
+     * Die Verwaltung erfolgt über die `categories`-Liste in der Member-Klasse (inverse Seite).
+     */
     @ManyToMany(mappedBy = "categories")
-    private Collection<Member> member = new ArrayList<Member>();
+    private Collection<Member> member = new ArrayList<>();
+
+    // ===== Getter & Setter (Fluent API) =====
 
     public String getCategoryName() {
         return categoryName;
@@ -34,5 +50,4 @@ public class Category extends BaseEntity {
         this.member = member;
         return this;
     }
-
 }

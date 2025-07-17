@@ -1,16 +1,42 @@
 package de.dlsa.api.responses;
 
-import de.dlsa.api.entities.CourseOfYear;
-import jakarta.persistence.Column;
-
 import java.time.LocalDateTime;
 
+/**
+ * Repräsentiert die Antwortstruktur für einen Jahreslauf.
+ * Wird typischerweise vom Backend an das Frontend gesendet.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 public class CourseOfYearResponse {
+
+    /**
+     * Die eigentliche Datei im Binärformat.
+     */
     private byte[] file;
+
+    /**
+     * Zeitpunkt der Erstellung bzw. Verarbeitung.
+     */
     private LocalDateTime timestamp;
+
+    /**
+     * Anzeigename für den Benutzer (z. B. „Abrechnung 2024“).
+     */
     private String displayName;
+
+    /**
+     * Der technische Dateiname, unter dem das Dokument gespeichert ist.
+     */
     private String filename;
+
+    /**
+     * Das Stichtagsdatum, z. B. Ende des Abrechnungszeitraums.
+     */
     private LocalDateTime dueDate;
+
+    // --- Getter & Fluent Setter ---
 
     public byte[] getFile() {
         return file;

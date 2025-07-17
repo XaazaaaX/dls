@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';

@@ -1,8 +1,8 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -154,25 +154,6 @@ export class JournalComponent {
 
 
     cancelBooking(booking: Booking) {
-        /*this.booking = { ...booking };
-
-        this.selectedGroups = this.booking.groups!
-        .map(group => group.id)
-        .filter(id => id !== undefined) as number[];
-
-        this.selectedCategories = this.booking.categories!
-        .map(category => category.id)
-        .filter(id => id !== undefined) as number[];
-
-        this.booking.birthdate ? this.booking.birthdate = new Date(this.booking.birthdate!) : null;
-        this.booking.entryDate ? this.booking.entryDate = new Date(this.booking.entryDate!) : null;
-        this.booking.leavingDate ? this.booking.leavingDate = new Date(this.booking.leavingDate!) : null;
-
-        this.bookingDto = {};
-
-        this.isEdit = true;
-        this.bookingDialog = true;
-        */
         this.confirmationService.confirm({
             message: 'Soll die folgende Buchung wirklich storniert werden? <br/><br/>' +
                 'Ableistungsdatum: ' + this.formatDate(booking.doneDate!) + '<br/>' +
@@ -196,16 +177,6 @@ export class JournalComponent {
                 this.bookingService.cancelBooking(booking.id!).subscribe({
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Buchung wurden erfolgreich storniert!" });
-
-                        /*
-                        const currentBookings = this.bookings();
-                        const _bookings = currentBookings.map(booking =>
-                            booking.id === data.id ? { ...booking, ...data } : booking
-                        );
-
-                        this.bookings.set(_bookings);
-                        this.booking = {};
-                        */
 
                         this.loadBookings();
                     },
@@ -254,8 +225,6 @@ export class JournalComponent {
 
                     // Setzen mit sortierter Liste
                     this.bookings.set(updatedBookings);
-
-                    //this.bookings.set([...this.bookings(), data]);
                     this.bookingDialog = false;
                     this.booking = {};
                     this.bookingDto = {};

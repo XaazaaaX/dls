@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -20,10 +20,8 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InputMaskModule } from 'primeng/inputmask';
-
 import { Action, ActionDto, ActionService } from '../../services/action.service';
 import { Member, MemberService } from '../../services/member.service';
-//import { Product, ProductService } from '../service/product.service';
 
 @Component({
     selector: 'app-action',

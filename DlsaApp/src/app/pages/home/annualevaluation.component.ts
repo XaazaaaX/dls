@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -22,9 +22,6 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DatePickerModule } from 'primeng/datepicker';
-import { BookingService } from '../../services/booking.service';
-import { MemberService } from '../../services/member.service';
-import { ActionService } from '../../services/action.service';
 import { CourseOfYear, EvaluationService, Year } from '../../services/evaluation.service';
 
 

@@ -1,22 +1,51 @@
 package de.dlsa.api.responses;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Repräsentiert die Antwortstruktur für ein Mitglied.
+ * Enthält persönliche Daten sowie zugeordnete Gruppen und Sparten.
+ *
+ * @version 05/2025
+ */
 public class MemberResponse {
+
+    /** Eindeutige Identifikationsnummer des Mitglieds. */
     private Long id;
+
+    /** Nachname des Mitglieds. */
     private String surname;
+
+    /** Vorname des Mitglieds. */
     private String forename;
+
+    /** Mitgliedsnummer. */
     private String memberId;
+
+    /** Eintrittsdatum des Mitglieds. */
     private LocalDateTime entryDate;
+
+    /** Austrittsdatum des Mitglieds. */
     private LocalDateTime leavingDate;
+
+    /** Aktivitätsstatus (true = aktiv, false = passiv). */
     private Boolean active;
+
+    /** Geburtsdatum des Mitglieds. */
     private LocalDateTime birthdate;
+
+    /** Kennzeichnung, ob das Mitglied zur DLS-Abrechnung zählt. */
     private Boolean aikz = true;
-    private Collection<GroupResponse> groups = new ArrayList<GroupResponse>();
-    private Collection<CategoryResponse> categories = new ArrayList<CategoryResponse>();
+
+    /** Zugeordnete Gruppen des Mitglieds. */
+    private Collection<GroupResponse> groups = new ArrayList<>();
+
+    /** Zugeordnete Sparten des Mitglieds. */
+    private Collection<CategoryResponse> categories = new ArrayList<>();
+
+    // --- Getter & Fluent Setter ---
 
     public Long getId() {
         return id;
@@ -81,24 +110,6 @@ public class MemberResponse {
         return this;
     }
 
-    public Collection<GroupResponse> getGroups() {
-        return groups;
-    }
-
-    public MemberResponse setGroups(Collection<GroupResponse> groups) {
-        this.groups = groups;
-        return this;
-    }
-
-    public Collection<CategoryResponse> getCategories() {
-        return categories;
-    }
-
-    public MemberResponse setCategories(Collection<CategoryResponse> categories) {
-        this.categories = categories;
-        return this;
-    }
-
     public LocalDateTime getBirthdate() {
         return birthdate;
     }
@@ -114,6 +125,24 @@ public class MemberResponse {
 
     public MemberResponse setAikz(Boolean aikz) {
         this.aikz = aikz;
+        return this;
+    }
+
+    public Collection<GroupResponse> getGroups() {
+        return groups;
+    }
+
+    public MemberResponse setGroups(Collection<GroupResponse> groups) {
+        this.groups = groups;
+        return this;
+    }
+
+    public Collection<CategoryResponse> getCategories() {
+        return categories;
+    }
+
+    public MemberResponse setCategories(Collection<CategoryResponse> categories) {
+        this.categories = categories;
         return this;
     }
 }

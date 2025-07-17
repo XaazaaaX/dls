@@ -1,8 +1,8 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -21,8 +21,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
-
-import { Sector, SectorDto, SectorService } from '../../services/sector.service';
+import { SectorService } from '../../services/sector.service';
 import { Group, GroupService } from '../../services/group.service';
 
 
@@ -71,8 +70,6 @@ export class GroupComponent {
 
     constructor(
         private messageService: MessageService,
-        private confirmationService: ConfirmationService,
-        private sectorService: SectorService,
         private groupService: GroupService
     ) { }
 

@@ -1,18 +1,61 @@
 package de.dlsa.api.responses;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Response-Klasse zur Repräsentation einer DLS-Buchung.
+ * Wird verwendet, um Informationen über erbrachte Leistungen
+ * in strukturierter Form an das Frontend zurückzugeben.
+ *
+ * Beinhaltet sowohl Basisdaten (Anzahl, Datum, Kommentar),
+ * als auch verknüpfte Entitäten wie {@link MemberResponse} und {@link ActionResponse}.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 public class BookingResponse {
+
+    /**
+     * Eindeutige ID der Buchung.
+     */
     private Long id;
+
+    /**
+     * Anzahl erbrachter Dienstleistungsstunden.
+     */
     private double countDls;
+
+    /**
+     * Optionaler Freitext-Kommentar.
+     */
     private String comment;
+
+    /**
+     * Datum, an dem die Leistung erbracht wurde.
+     */
     private LocalDateTime doneDate;
+
+    /**
+     * Gibt an, ob die Buchung storniert wurde.
+     */
     private Boolean canceled;
+
+    /**
+     * Zeitpunkt der Erfassung der Buchung.
+     */
     private LocalDateTime bookingDate;
+
+    /**
+     * Verknüpftes Mitglied, das die Leistung erbracht hat.
+     */
     private MemberResponse member;
+
+    /**
+     * Verknüpfte Aktion bzw. Kampagne.
+     */
     private ActionResponse action;
+
+    // --- Getter & Setter (mit Fluent-API) ---
 
     public Long getId() {
         return id;

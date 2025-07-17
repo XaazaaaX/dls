@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
  * Klasse zur Übertragung der Logindaten vom Client zum Server
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version  05/2025
  */
 public class LoginUserDto {
     @NotBlank(message = "Benutzername ist erforderlich")

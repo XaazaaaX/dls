@@ -20,12 +20,9 @@ import { DashboardComponent } from './pages/home/dashboard.component';
 /*canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast']*/
 
 export const routes = [
-  /*{ path: '', redirectTo: '/dashboard', pathMatch: 'full' as 'full' },*/
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
   {
     path: 'dashboard', component: AppLayout, children: [
-      //{ path: '', redirectTo: 'user', pathMatch: 'full' as 'full' },
-      //{ path: 'home', component: HomeComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } },
       { path: '', component: DashboardComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } },
       { path: 'evaluation', component: AnnualEvaluationComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer'] } },
       { path: 'journal', component: JournalComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer'] } },
@@ -37,11 +34,8 @@ export const routes = [
       { path: 'actions', component: ActionComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer'] } },
       { path: 'settings', component: SettingsComponent, canActivate: [RoleGuard], data: { roles: ['Administrator'] } },
       { path: 'groupchanges', component: GroupChangesComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer'] } },
-      { path: 'memberchanges', component: MemberChangesComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer'] } },
-      //{ path: 'documentation', component: DocumentationComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer', 'Gast'] } }
+      { path: 'memberchanges', component: MemberChangesComponent, canActivate: [RoleGuard], data: { roles: ['Administrator', 'Benutzer'] } }
     ]
   },
-  //{path: 'protected', component: DashboardComponent, canActivate: [RoleGuard], data: { roles: ['Admin'] }},
-  //{path: '**', component: PageNotFoundComponent},
   { path: '**', redirectTo: '/dashboard' }
 ];

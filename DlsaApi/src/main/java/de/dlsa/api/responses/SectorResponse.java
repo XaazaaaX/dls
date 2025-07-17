@@ -1,22 +1,31 @@
 package de.dlsa.api.responses;
 
-import de.dlsa.api.entities.Group;
-import de.dlsa.api.entities.Sector;
-import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Repräsentiert einen Bereich (Sektor) mit zugehörigen Gruppen.
+ *
+ * @version 05/2025
+ */
 public class SectorResponse {
+
+    /** Eindeutige ID des Bereichs. */
     private Long id;
+
+    /** Name des Bereichs. */
     private String sectorname;
-    private Collection<GroupResponse> groups = new ArrayList<GroupResponse>();
+
+    /** Zugeordnete Gruppen des Bereichs. */
+    private Collection<GroupResponse> groups = new ArrayList<>();
+
+    // --- Getter & Fluent Setter ---
 
     public Long getId() {
         return id;
     }
 
-    public SectorResponse setId(Long id){
+    public SectorResponse setId(Long id) {
         this.id = id;
         return this;
     }

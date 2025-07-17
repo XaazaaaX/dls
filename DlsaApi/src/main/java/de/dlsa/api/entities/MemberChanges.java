@@ -1,31 +1,61 @@
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Entität zur Protokollierung von Änderungen an Mitgliedsdaten.
+ * Speichert, welche Spalte (Feld) eines Mitglieds geändert wurde, inklusive alter und neuer Werte,
+ * Änderungszeitpunkt und zugehöriger Mitglieds-ID.
+ *
+ * Diese Klasse unterstützt eine revisionssichere Nachvollziehbarkeit historischer Zustände.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Entity
 @Table(name = "memberchanges")
 public class MemberChanges extends BaseEntity {
 
+    /**
+     * Zeitstempel, wann die Änderung erfasst wurde.
+     * Standardmäßig beim Objektbau mit dem aktuellen Zeitpunkt vorbelegt.
+     */
     @Column(name = "timestamp")
     private LocalDateTime timestamp = LocalDateTime.now();
 
+    /**
+     * Bezugsdatum, das die inhaltliche Gültigkeit der Änderung beschreibt (z. B. Stichtag).
+     */
     @Column(name = "bezugsdatum")
     private LocalDateTime refDate;
 
+    /**
+     * Name der geänderten Spalte (z. B. "active", "entryDate").
+     */
     @Column(name = "spaltenname")
     private String column;
 
+    /**
+     * Alter (vorheriger) Wert als String.
+     */
     @Column(name = "alterwert")
     private String oldValue;
 
+    /**
+     * Neuer (nach der Änderung gespeicherter) Wert als String.
+     */
     @Column(name = "neuerwert")
     private String newValue;
 
+    /**
+     * ID des betroffenen Mitglieds.
+     * Hinweis: keine direkte Entity-Relation (z. B. @ManyToOne), da rein für Audit-Zwecke.
+     */
     @Column(name = "memberid")
     private Long memberId;
+
+    // ===== Getter & Setter (Fluent API) =====
 
     public LocalDateTime getRefDate() {
         return refDate;

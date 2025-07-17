@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Verarbeitung von Anfragen für die Registrierung oder Anmeldung eines Users
+ * Verarbeitung von Anfragen für die Registrierung oder Authentifizierung eines Users
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version  05/2025
  */
 @RequestMapping("/auth")
 @RestController
@@ -27,19 +27,6 @@ public class AuthController {
     public AuthController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
-
-    /**
-     * Endpunkt zum Authentifizierung eines Users
-     *
-     * @param registerUserDto Enthält die relevanten Userinformationen für die Registrierung (RegisterUserDto)
-     * @return Rückgabe eines gültigen JWT zur Nutzung der geschützten Endpunkte der API
-     */
-    /*
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterUserDto registerUserDto) {
-        return ResponseEntity.ok(authenticationService.register(registerUserDto));
-    }
-     */
 
     /**
      * Endpunkt zur Registrierung eines Users

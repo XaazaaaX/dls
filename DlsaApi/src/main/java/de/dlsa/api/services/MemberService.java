@@ -1,18 +1,14 @@
 package de.dlsa.api.services;
 
-import de.dlsa.api.dtos.CategoryDto;
-import de.dlsa.api.dtos.GroupDto;
-import de.dlsa.api.dtos.MemberCreateDto;
-import de.dlsa.api.dtos.MemberEditDto;
+import de.dlsa.api.dtos.*;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
-import de.dlsa.api.responses.CategoryResponse;
-import de.dlsa.api.responses.GroupResponse;
-import de.dlsa.api.responses.MemberResponse;
+import de.dlsa.api.responses.*;
 import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +18,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service zur Verwaltung von Mitgliedsdaten, inklusive Erstellung, Bearbeitung
+ * und Massenimport über CSV-Dateien. Außerdem werden Änderungen an relevanten
+ * Attributen als Historie gespeichert.
+ */
 @Service
 public class MemberService {
 
@@ -34,6 +35,9 @@ public class MemberService {
     private final CategoryService categoryService;
     private final ModelMapper modelMapper;
 
+    /**
+     * Konstruktor zur Initialisierung des MemberService.
+     */
     public MemberService(
             GroupRepository groupRepository,
             CategoryRepository categoryRepository,
@@ -53,6 +57,11 @@ public class MemberService {
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Gibt eine sortierte Liste aller Mitglieder zurück.
+     *
+     * @return Liste von {@link MemberResponse}
+     */
     public List<MemberResponse> getMembers() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
@@ -61,8 +70,13 @@ public class MemberService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Erstellt ein neues Mitglied anhand eines {@link MemberCreateDto}-Objekts.
+     *
+     * @param member DTO mit den Daten des neuen Mitglieds
+     * @return Das erstellte Mitglied als {@link MemberResponse}
+     */
     public MemberResponse createMember(MemberCreateDto member) {
-
         Member mappedMember = modelMapper.map(member, Member.class);
 
         if (member.getGroupIds() != null) {
@@ -84,15 +98,21 @@ public class MemberService {
                 .setLeavingDate(addedMember.getLeavingDate());
 
         BasicMember addedBasicMember = basicMemberRepository.save(bMember);
-
         addedMember.setBasicMember(addedBasicMember);
+
         Member finalMember = memberRepository.save(addedMember);
 
         return modelMapper.map(finalMember, MemberResponse.class);
     }
 
+    /**
+     * Importiert mehrere Mitglieder aus einer CSV-Datei und erstellt sie im System.
+     * Nicht vorhandene Gruppen oder Sparten werden automatisch erstellt.
+     *
+     * @param file CSV-Datei im Multipart-Format
+     * @return Liste der erfolgreich erstellten Mitglieder
+     */
     public List<MemberResponse> uploadMember(MultipartFile file) {
-
         List<MemberResponse> responseList = new ArrayList<>();
 
         if (file.isEmpty()) {
@@ -101,28 +121,29 @@ public class MemberService {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            String headerLine = reader.readLine(); // Erste Zeile (Header)
+
+            String headerLine = reader.readLine(); // Header-Zeile
             if (headerLine == null) {
                 throw new RuntimeException("Datei enthält keinen Header.");
             }
 
-            // Dynamische Zuordnung der Spaltenindizes
             String[] headers = headerLine.split(";");
             Map<String, Integer> columnIndexMap = new HashMap<>();
             for (int i = 0; i < headers.length; i++) {
                 columnIndexMap.put(headers[i].trim().toLowerCase(), i);
             }
 
-            // Prüfung: Pflichtfelder vorhanden?
-            if (!columnIndexMap.containsKey("vorname") || !columnIndexMap.containsKey("nachname") || !columnIndexMap.containsKey("geburtstag") || !columnIndexMap.containsKey("mitgliedsnummer") || !columnIndexMap.containsKey("eintritt")) {
-                throw new RuntimeException("Pflichtfelder 'vorname' oder 'nachname' fehlen.");
+            if (!columnIndexMap.containsKey("vorname") || !columnIndexMap.containsKey("nachname") ||
+                    !columnIndexMap.containsKey("geburtstag") || !columnIndexMap.containsKey("mitgliedsnummer") ||
+                    !columnIndexMap.containsKey("eintritt")) {
+                throw new RuntimeException("Pflichtfelder fehlen: vorname, nachname, geburtstag, mitgliedsnummer, eintritt");
             }
 
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty()) continue; // Leere Zeilen überspringen
+                if (line.trim().isEmpty()) continue;
 
-                String[] fields = line.split(";", -1); // auch leere Felder erfassen
+                String[] fields = line.split(";", -1);
 
                 String firstName = fields[columnIndexMap.get("vorname")].trim();
                 String lastName = fields[columnIndexMap.get("nachname")].trim();
@@ -130,11 +151,9 @@ public class MemberService {
                 String memberId = fields[columnIndexMap.get("mitgliedsnummer")].trim();
                 LocalDateTime entrydate = LocalDate.parse(fields[columnIndexMap.get("eintritt")].trim(), formatter).atStartOfDay();
 
-                // Gruppen verarbeiten
                 List<Long> groupIds = new ArrayList<>();
                 if (columnIndexMap.containsKey("gruppen")) {
-                    String groupField = fields[columnIndexMap.get("gruppen")];
-                    String[] groupNames = groupField.split(",");
+                    String[] groupNames = fields[columnIndexMap.get("gruppen")].split(",");
                     for (String groupName : groupNames) {
                         String trimmed = groupName.trim();
                         if (!trimmed.isEmpty()) {
@@ -143,19 +162,16 @@ public class MemberService {
                                         GroupResponse newGroup = groupService.createGroup(new GroupDto()
                                                 .setGroupName(trimmed)
                                                 .setLiberated(false));
-
-                                        return groupRepository.findById(newGroup.getId()).orElseThrow(() -> new RuntimeException("Gruppe wurde nicht gefunden!"));
+                                        return groupRepository.findById(newGroup.getId()).orElseThrow();
                                     });
                             groupIds.add(group.getId());
                         }
                     }
                 }
 
-                // Sparten verarbeiten
                 List<Long> categoryIds = new ArrayList<>();
                 if (columnIndexMap.containsKey("sparten")) {
-                    String categoryField = fields[columnIndexMap.get("sparten")];
-                    String[] categoryNames = categoryField.split(",");
+                    String[] categoryNames = fields[columnIndexMap.get("sparten")].split(",");
                     for (String catName : categoryNames) {
                         String trimmed = catName.trim();
                         if (!trimmed.isEmpty()) {
@@ -163,8 +179,7 @@ public class MemberService {
                                     .orElseGet(() -> {
                                         CategoryResponse newCategory = categoryService.createCategory(new CategoryDto()
                                                 .setCategoryName(trimmed));
-
-                                        return categoryRepository.findById(newCategory.getId()).orElseThrow(() -> new RuntimeException("Sparte wurde nicht gefunden!"));
+                                        return categoryRepository.findById(newCategory.getId()).orElseThrow();
                                     });
                             categoryIds.add(category.getId());
                         }
@@ -183,11 +198,10 @@ public class MemberService {
                 try {
                     MemberResponse finalMember = createMember(newMember);
                     responseList.add(finalMember);
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("Member: " + newMember.getMemberId() + " konnte nicht hinzugefügt werden!");
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Fehler beim Lesen der Datei: " + e.getMessage(), e);
         }
@@ -195,98 +209,65 @@ public class MemberService {
         return responseList;
     }
 
-
+    /**
+     * Aktualisiert ein Mitglied anhand der übergebenen Daten.
+     * Änderungen an bestimmten Feldern werden in der Änderungsverfolgung gespeichert.
+     *
+     * @param id     Die ID des zu aktualisierenden Mitglieds
+     * @param member Die neuen Werte
+     * @return Das aktualisierte Mitglied als {@link MemberResponse}
+     */
     public MemberResponse updateMember(long id, MemberEditDto member) {
-
         Member existing = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mitglied wurde nicht gefunden!"));
 
-
-        if (member.getMemberId() != null) {
-            existing.setMemberId(member.getMemberId());
-        }
-
-        if (member.getForename() != null) {
-            existing.setForename(member.getForename() );
-        }
-
-        if (member.getSurname() != null) {
-            existing.setSurname(member.getSurname());
-        }
-
-        if (member.getBirthdate() != null) {
-            existing.setBirthdate(member.getBirthdate());
-        }
+        if (member.getMemberId() != null) existing.setMemberId(member.getMemberId());
+        if (member.getForename() != null) existing.setForename(member.getForename());
+        if (member.getSurname() != null) existing.setSurname(member.getSurname());
+        if (member.getBirthdate() != null) existing.setBirthdate(member.getBirthdate());
 
         if (member.getEntryDate() != null && !member.getEntryDate().equals(existing.getEntryDate())) {
-
-            MemberChanges newMemberChanges = new MemberChanges()
+            memberChangesRepository.save(new MemberChanges()
                     .setMemberId(existing.getId())
                     .setRefDate(member.getRefDate())
                     .setColumn(MemberColumn.ENTRYDATE.name())
                     .setNewValue(member.getEntryDate().toString())
-                    .setOldValue(existing.getEntryDate().toString());
-
-                memberChangesRepository.save(newMemberChanges);
-
-                existing.setEntryDate(member.getEntryDate());
+                    .setOldValue(existing.getEntryDate().toString()));
+            existing.setEntryDate(member.getEntryDate());
         }
 
-        if (member.getLeavingDate() != null && !member.getLeavingDate().equals(existing.getLeavingDate())) {
-
-            MemberChanges newMemberChanges = new MemberChanges()
+        if (member.getLeavingDate() != null && !Objects.equals(member.getLeavingDate(), existing.getLeavingDate())) {
+            memberChangesRepository.save(new MemberChanges()
                     .setMemberId(existing.getId())
                     .setRefDate(member.getRefDate())
                     .setColumn(MemberColumn.LEAVINGDATE.name())
-                    .setNewValue(member.getLeavingDate() != null ? member.getLeavingDate().toString()  : "")
-                    .setOldValue(existing.getLeavingDate() != null ? existing.getLeavingDate().toString() : "");
-
-            memberChangesRepository.save(newMemberChanges);
-
+                    .setNewValue(Optional.ofNullable(member.getLeavingDate()).map(LocalDateTime::toString).orElse(""))
+                    .setOldValue(Optional.ofNullable(existing.getLeavingDate()).map(LocalDateTime::toString).orElse("")));
             existing.setLeavingDate(member.getLeavingDate());
         }
 
-        if (member.getActive() != null && member.getActive() != existing.getActive()) {
-
-            MemberChanges newMemberChanges = new MemberChanges()
+        if (member.getActive() != null && !member.getActive().equals(existing.getActive())) {
+            memberChangesRepository.save(new MemberChanges()
                     .setMemberId(existing.getId())
                     .setRefDate(member.getRefDate())
                     .setColumn(MemberColumn.ACTIVE.name())
                     .setNewValue(member.getActive().toString())
-                    .setOldValue(existing.getActive().toString());
-
-            memberChangesRepository.save(newMemberChanges);
-
+                    .setOldValue(existing.getActive().toString()));
             existing.setActive(member.getActive());
         }
 
         if (member.getGroupIds() != null) {
-
             Collection<Group> memberGroups = groupRepository.findAllById(member.getGroupIds());
+            Set<Long> existingGroupIds = existing.getGroups().stream().map(Group::getId).collect(Collectors.toSet());
+            Set<Long> newGroupIds = memberGroups.stream().map(Group::getId).collect(Collectors.toSet());
 
-            Set<Long> existingGroupIds = existing.getGroups().stream()
-                    .map(Group::getId)
-                    .collect(Collectors.toSet());
-
-            Set<Long> memberGroupIds = memberGroups.stream()
-                    .map(Group::getId)
-                    .collect(Collectors.toSet());
-
-            if (!existingGroupIds.equals(memberGroupIds)){
-
-                MemberChanges newMemberChanges = new MemberChanges()
+            if (!existingGroupIds.equals(newGroupIds)) {
+                memberChangesRepository.save(new MemberChanges()
                         .setMemberId(existing.getId())
                         .setRefDate(member.getRefDate())
                         .setColumn(MemberColumn.GROUP.name())
-                        .setNewValue(memberGroupIds.stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(" ")))
-                        .setOldValue(existingGroupIds.stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(" ")));
-
-                memberChangesRepository.save(newMemberChanges);
-
+                        .setNewValue(newGroupIds.stream().map(String::valueOf).collect(Collectors.joining(" ")))
+                        .setOldValue(existingGroupIds.stream().map(String::valueOf).collect(Collectors.joining(" "))));
                 existing.setGroups(memberGroups);
             }
         }
@@ -295,10 +276,7 @@ public class MemberService {
             existing.setCategories(categoryRepository.findAllById(member.getCategorieIds()));
         }
 
-        Member updatedMember =  memberRepository.save(existing);
-
+        Member updatedMember = memberRepository.save(existing);
         return modelMapper.map(updatedMember, MemberResponse.class);
-
     }
-
 }

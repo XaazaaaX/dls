@@ -1,22 +1,43 @@
 package de.dlsa.api.responses;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Antwortstruktur zur Darstellung von Änderungen an einem Mitglied.
+ * Enthält Änderungszeitpunkt, betroffene Spalte und alte sowie neue Werte.
+ *
+ * @version 05/2025
+ */
 public class MemberChangesResponse {
+
+    /** Eindeutige ID der Änderung. */
     private Long id;
+
+    /** Zeitstempel der Änderung. */
     private LocalDateTime timestamp;
+
+    /** Bezugsdatum, zu dem die Änderung wirksam wurde. */
     private LocalDateTime refDate;
+
+    /** Name der betroffenen Spalte (z. B. „entryDate“). */
     private String column;
+
+    /** Alter Wert der geänderten Spalte. */
     private String oldValue;
+
+    /** Neuer Wert der geänderten Spalte. */
     private String newValue;
+
+    /** Vollständiger Name des betroffenen Mitglieds. */
     private String memberName;
+
+    // --- Getter & Fluent Setter ---
 
     public Long getId() {
         return id;
     }
 
-    public MemberChangesResponse setId(Long id){
+    public MemberChangesResponse setId(Long id) {
         this.id = id;
         return this;
     }

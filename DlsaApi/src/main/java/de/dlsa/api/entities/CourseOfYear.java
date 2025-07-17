@@ -3,24 +3,50 @@ package de.dlsa.api.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Repräsentiert einen Jahreslauf (z. B. ein Abschlussbericht oder Abrechnungslauf für ein Vereinsjahr).
+ * Enthält Metadaten zur Datei, Erfassungszeitpunkt und ein Stichtagsdatum.
+ * Die Datei selbst wird als Byte-Array direkt in der Datenbank gespeichert.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Entity
 @Table(name = "Jahreslaeufe")
-public class CourseOfYear extends BaseEntity{
+public class CourseOfYear extends BaseEntity {
 
+    /**
+     * Binärinhalt der Datei.
+     */
     @Column(name = "datei")
     private byte[] file;
+
+    /**
+     * Zeitstempel der Erstellung oder Speicherung dieses Jahreslaufs.
+     */
     private LocalDateTime timestamp;
+
+    /**
+     * Anzeigename für die Datei
+     */
     @Column(name = "anzeigename")
     private String displayName;
+
+    /**
+     * Ursprünglicher Dateiname beim Hochladen
+     */
     @Column(name = "dateiname")
     private String filename;
+
+    /**
+     * Stichtagsdatum, auf das sich der Jahreslauf bezieht (z. B. 31.12.2024).
+     */
     @Column(name = "stichtagsdatum")
     private LocalDateTime dueDate;
+
+    // ===== Getter & Setter (Fluent API) =====
 
     public byte[] getFile() {
         return file;
@@ -66,5 +92,4 @@ public class CourseOfYear extends BaseEntity{
         this.dueDate = dueDate;
         return this;
     }
-
 }

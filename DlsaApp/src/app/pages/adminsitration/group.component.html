@@ -1,6 +1,6 @@
 <div class="card">
-    <p-table #dt [value]="groups()" [rows]="10" [paginator]="true" [globalFilterFields]="['groupName', 'liberated']" [rowHover]="true"
-        dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Bereichen"
+    <p-table #dt [value]="groups()" [rows]="10" [paginator]="true" [globalFilterFields]="['groupName', 'liberated']"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Gruppen"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
         <ng-template #caption>
@@ -68,8 +68,7 @@
 
             <div>
                 <label for="groupName" class="block font-bold mb-3">Bezeichnung*</label>
-                <input type="text" pInputText id="groupName" [(ngModel)]="group.groupName" required autofocus
-                    fluid />
+                <input type="text" pInputText id="groupName" [(ngModel)]="group.groupName" required autofocus fluid />
                 <small class="text-red-500" *ngIf="submitted && !group.groupName">Bezeichnung ist
                     erforderlich!</small>
             </div>

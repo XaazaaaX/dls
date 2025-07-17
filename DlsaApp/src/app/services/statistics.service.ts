@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
-import { HttpResponse } from '@angular/common/http';
 
 export interface MemberCount {
     allMembers?: number;

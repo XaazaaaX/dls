@@ -8,10 +8,16 @@ import de.dlsa.api.repositories.SectorRepository;
 import de.dlsa.api.responses.SectorResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Serviceklasse für die Verwaltung von Bereichen (Sectors).
+ * Diese Klasse bietet Funktionen zum Abrufen, Erstellen und Aktualisieren von Bereichen,
+ * einschließlich der Zuordnung zu Gruppen.
+ */
 @Service
 public class SectorService {
 
@@ -19,6 +25,13 @@ public class SectorService {
     private final GroupRepository groupRepository;
     private final ModelMapper modelMapper;
 
+    /**
+     * Konstruktor zur Initialisierung der Abhängigkeiten.
+     *
+     * @param sectorRepository  Repository für Bereichsdaten
+     * @param groupRepository   Repository für Gruppendaten
+     * @param modelMapper       ModelMapper zur DTO-Konvertierung
+     */
     public SectorService(
             SectorRepository sectorRepository,
             GroupRepository groupRepository,
@@ -28,6 +41,11 @@ public class SectorService {
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Ruft alle gespeicherten Bereiche (Sectors) ab, sortiert nach ID.
+     *
+     * @return Liste von {@link SectorResponse}-Objekten
+     */
     public List<SectorResponse> getSectors() {
         List<Sector> sectors = sectorRepository.findAll();
         return sectors.stream()
@@ -36,6 +54,12 @@ public class SectorService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Erstellt einen neuen Bereich und ordnet ihm (optional) Gruppen zu.
+     *
+     * @param sector Ein {@link SectorDto} mit den Daten des neuen Bereichs
+     * @return Das erstellte {@link SectorResponse}-Objekt
+     */
     public SectorResponse createSector(SectorDto sector) {
 
         Sector mappedSector = modelMapper.map(sector, Sector.class);
@@ -50,6 +74,13 @@ public class SectorService {
         return modelMapper.map(addedSector, SectorResponse.class);
     }
 
+    /**
+     * Aktualisiert einen bestehenden Bereich anhand der übergebenen Daten.
+     *
+     * @param id     ID des zu aktualisierenden Bereichs
+     * @param sector {@link SectorDto} mit neuen Werten
+     * @return Das aktualisierte {@link SectorResponse}-Objekt
+     */
     public SectorResponse updateSector(long id, SectorDto sector) {
 
         Sector existing = sectorRepository.findById(id)
@@ -63,10 +94,8 @@ public class SectorService {
             existing.setGroups(groupRepository.findAllById(sector.getGroupIds()));
         }
 
-        Sector updatedSector =  sectorRepository.save(existing);
+        Sector updatedSector = sectorRepository.save(existing);
 
         return modelMapper.map(updatedSector, SectorResponse.class);
     }
-
-
 }

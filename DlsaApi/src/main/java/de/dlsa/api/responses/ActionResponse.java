@@ -1,13 +1,36 @@
 package de.dlsa.api.responses;
 
+/**
+ * Response-Klasse zur Darstellung einer Aktion (Action).
+ * Wird verwendet, um Aktionsdaten (z. B. für die Anzeige im Frontend) strukturiert bereitzustellen.
+ * Enthält grundlegende Informationen sowie die zugehörige Kontaktperson als {@link MemberResponse}.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 public class ActionResponse {
+
+    /**
+     * Eindeutige ID der Aktion.
+     */
     private Long id;
 
+    /**
+     * Jahr, in dem die Aktion stattfindet.
+     */
     private String year;
 
+    /**
+     * Beschreibung der Aktion.
+     */
     private String description;
 
+    /**
+     * Verknüpfte Kontaktperson für die Aktion.
+     */
     private MemberResponse contact;
+
+    // --- Getter & Setter (mit Fluent API) ---
 
     public Long getId() {
         return id;

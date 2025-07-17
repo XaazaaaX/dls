@@ -19,15 +19,16 @@ import java.util.List;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 /**
- * Klasse zur Konfiguration der Api Sicherheit
+ * Konfiguriert die Sicherheit der API-Endpunkte mittels Spring Security.
+ * Beinhaltet JWT-Authentifizierung, CORS und rollenbasierte Autorisierung.
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version 05/2025
  */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -45,10 +46,10 @@ public class SecurityConfig{
     private String exposedHeaders;
 
     /**
-     * Konstruktor
+     * Konstruktor zum Injizieren der Sicherheitskomponenten.
      *
-     * @param jwtAuthenticationFilter Filter zum abfangen des JWT
-     * @param authenticationProvider Manager des Usercontexts
+     * @param jwtAuthenticationFilter Filter zur Validierung von JWTs.
+     * @param authenticationProvider Authentifizierungsmanager für Benutzeranfragen.
      */
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -59,11 +60,15 @@ public class SecurityConfig{
     }
 
     /**
-     * Legt den öffentlichen Zugriff auf bestimmte Ressourcen Fest. Jeglicher anderer Zugang wird einer Authentifizierung vorrausgesetzt
+     * Konfiguriert die Sicherheitskette:
+     * - CORS-Konfiguration
+     * - Deaktivierung von CSRF
+     * - Zugriffskontrolle auf Endpunkte
+     * - JWT-basierte Authentifizierung
      *
-     * @param http Request
-     * @throws Exception
-     * @return Liefert eine konfigurierte SecurityFilterChain an die Anwendung
+     * @param http HttpSecurity-Objekt zur Konfiguration
+     * @return SecurityFilterChain, die von Spring Boot verwendet wird
+     * @throws Exception bei Konfigurationsfehlern
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -82,17 +87,21 @@ public class SecurityConfig{
         return http.build();
     }
 
+    /**
+     * Definiert die CORS-Konfiguration zur Freigabe von HTTP-Anfragen aus anderen Ursprüngen (z. B. Frontend).
+     *
+     * @return CorsConfigurationSource für die Filterkette
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(","))); // Frontend-Origin erlauben
-        configuration.setAllowedMethods(List.of(allowedMethods.split(","))); // Erlaubte HTTP-Methoden
-        configuration.setAllowedHeaders(List.of(allowedHeaders.split(","))); // Erlaubte Header
+        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        configuration.setAllowedMethods(List.of(allowedMethods.split(",")));
+        configuration.setAllowedHeaders(List.of(allowedHeaders.split(",")));
         configuration.setExposedHeaders(List.of(exposedHeaders.split(",")));
-        configuration.setAllowCredentials(true); // Wenn Cookies oder Auth-Header genutzt werden
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Auf alle Endpunkte anwenden
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }

@@ -1,48 +1,70 @@
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Repräsentiert eine Buchungseinheit (z. B. eine erledigte Dienstleistung).
+ * Jede Buchung ist eindeutig einem Mitglied und einer Aktion (Kampagne) zugeordnet.
+ *
+ * Felder umfassen u. a. Anzahl der DLS, Datum der Ableistung, Kommentare, Status und Erfassungszeitpunkt.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Entity
 @Table(name = "Buchungen")
-public class Booking extends BaseEntity{
-    @Column(name = "anzahldls")
+public class Booking extends BaseEntity {
+
+    /**
+     * Anzahl der geleisteten DLS-Stunden (Pflichtfeld).
+     */
+    @Column(name = "anzahldls", nullable = false)
     private Double countDls;
+
+    /**
+     * Freitext-Kommentar zur Buchung (optional).
+     */
     @Column(name = "bemerkung")
     private String comment;
+
+    /**
+     * Datum, an dem die DLS-Leistung tatsächlich erbracht wurde (z. B. Einsatztermin).
+     */
     @Column(name = "ableistungsdatum")
     private LocalDateTime doneDate;
-    @Column(name = "storniert")
+
+    /**
+     * Kennzeichnung, ob diese Buchung storniert wurde (Standard: false).
+     */
+    @Column(name = "storniert", nullable = false)
     private Boolean canceled = false;
-    @Column(name = "buchungsdatum")
+
+    /**
+     * Zeitpunkt der Erfassung (Standard: {@code LocalDateTime.now()} bei Erstellung).
+     */
+    @Column(name = "buchungsdatum", nullable = false)
     private LocalDateTime bookingDate = LocalDateTime.now();
 
-    @ManyToOne
+    /**
+     * Referenz auf das zugehörige Mitglied.
+     * Pflichtfeld – ohne Mitglied ist eine Buchung nicht gültig.
+     */
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private Member member;
 
-    @ManyToOne
-    @JoinColumn(name = "campaign_id", referencedColumnName = "id")
+    /**
+     * Referenz auf die zugehörige Aktion (z. B. Projekt oder Arbeitsdienst).
+     * Pflichtfeld.
+     */
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "campaign_id", referencedColumnName = "id", nullable = false)
     private Action action;
 
-    /*
-    public Booking() {
+    // ===== Getter & Setter (Fluent API) =====
 
-    }
-
-    public Booking(double countDls, String comment, Date doneDate,
-                   Member member, Campaign campaign) {
-        super();
-        this.countDls = countDls;
-        this.comment = comment;
-        this.doneDate = doneDate;
-        this.member = member;
-        this.campaign = campaign;
-    }
-    */
-
-    public double getCountDls() {
+    public Double getCountDls() {
         return countDls;
     }
 
@@ -75,6 +97,15 @@ public class Booking extends BaseEntity{
 
     public Booking setCanceled(Boolean canceled) {
         this.canceled = canceled;
+        return this;
+    }
+
+    public LocalDateTime getBookingDate() {
+        return bookingDate;
+    }
+
+    public Booking setBookingDate(LocalDateTime bookingDate) {
+        this.bookingDate = bookingDate;
         return this;
     }
 

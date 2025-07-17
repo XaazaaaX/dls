@@ -61,8 +61,7 @@
             <div>
                 <label for="bookingAction" class="block font-bold mb-3">Jahr*</label>
                 <p-select id="bookingAction" [options]="years" appendTo="body" [filter]="true" filterBy="description"
-                    [(ngModel)]="year" optionLabel="year" optionValue="year" placeholder="Auswählen" required
-                    fluid />
+                    [(ngModel)]="year" optionLabel="year" optionValue="year" placeholder="Auswählen" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !year">Jahr ist
                     erforderlich!</small>
             </div>

@@ -14,9 +14,14 @@ import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Serviceklasse zur Bereitstellung statistischer Auswertungen über Dienstleistungsstunden,
+ * Mitgliederverteilung und Gruppierungen über verschiedene Zeiträume hinweg.
+ */
 @Service
 public class StatisticsService {
 
+    // Repositories und Hilfsklassen
     private final BookingRepository bookingRepository;
     private final GroupRepository groupRepository;
     private final MemberRepository memberRepository;
@@ -31,6 +36,9 @@ public class StatisticsService {
     private final CsvExporter csvExporter;
     private final ModelMapper modelMapper;
 
+    /**
+     * Konstruktor zur Initialisierung des {@link StatisticsService}.
+     */
     public StatisticsService(GroupRepository groupRepository,
                              BookingRepository bookingRepository,
                              MemberRepository memberRepository,
@@ -42,7 +50,8 @@ public class StatisticsService {
                              BasicMemberRepository basicMemberRepository,
                              GroupChangesRepository groupChangesRepository,
                              SectorRepository sectorRepository,
-                             CsvExporter csvExporter, ModelMapper modelMapper) {
+                             CsvExporter csvExporter,
+                             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
         this.bookingRepository = bookingRepository;
         this.memberRepository = memberRepository;
@@ -58,12 +67,14 @@ public class StatisticsService {
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Zählt Mitglieder insgesamt, aktiv, passiv und im DLS-pflichtigen Alter.
+     *
+     * @return {@link MemberCountResponse} mit den vier Kennzahlen
+     */
     public MemberCountResponse getMemberCount() {
-
         long allMembers = memberRepository.countAllMembers();
-
         long activeMembers = memberRepository.countActiveMembers();
-
         long passiveMembers = memberRepository.countPassiveMembers();
 
         Settings settings = settingsService.getSettings();
@@ -78,18 +89,20 @@ public class StatisticsService {
                 .setDlsRequiredMembers(dlsRequiredMembers);
     }
 
+    /**
+     * Liefert eine Statistik der jährlich geleisteten Dienstleistungsstunden der letzten 10 Jahre.
+     *
+     * @return {@link AnnualServiceHoursResponse} mit Labels (Jahre) und Summen der Stunden
+     */
     public AnnualServiceHoursResponse getAnnualServiceHours() {
-
         int currentYear = Year.now().getValue();
         int startYear = currentYear - 9;
 
-        // Initialize with zero for each year
         Map<Integer, Double> yearToHours = new LinkedHashMap<>();
         for (int year = startYear; year <= currentYear; year++) {
             yearToHours.put(year, 0.0);
         }
 
-        // Get actual data from DB
         List<Object[]> results = bookingRepository.findServiceHoursPerYearFrom(startYear);
         for (Object[] row : results) {
             Integer year = (Integer) row[0];
@@ -97,7 +110,6 @@ public class StatisticsService {
             yearToHours.put(year, sum);
         }
 
-        // Convert to labels and data
         List<String> labels = yearToHours.keySet().stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
@@ -109,11 +121,15 @@ public class StatisticsService {
                 .setData(data);
     }
 
+    /**
+     * Gibt eine Monatsübersicht der Dienstleistungsstunden für die letzten drei Jahre.
+     *
+     * @return Liste von {@link MonthlyServiceHoursResponse}, je Jahr eine Zeile
+     */
     public List<MonthlyServiceHoursResponse> getMonthlyServiceHours() {
         int currentYear = Year.now().getValue();
-        int startYear = currentYear - 2; // 3 Jahre: inkl. currentYear
+        int startYear = currentYear - 2;
 
-        // Initialisiere Map: year -> month -> hours
         Map<Integer, Map<Integer, Double>> yearMonthToHours = new LinkedHashMap<>();
         for (int year = startYear; year <= currentYear; year++) {
             Map<Integer, Double> monthToHours = new LinkedHashMap<>();
@@ -123,12 +139,10 @@ public class StatisticsService {
             yearMonthToHours.put(year, monthToHours);
         }
 
-        // Hole Daten aus DB
         LocalDateTime startDate = LocalDate.of(startYear, 1, 1).atStartOfDay();
         LocalDateTime endDate = LocalDate.of(currentYear, 12, 31).atTime(LocalTime.MAX);
         List<Object[]> results = bookingRepository.findMonthlyServiceHours(startDate, endDate);
 
-        // Ergebnisse einspeisen
         for (Object[] row : results) {
             Integer year = ((Number) row[0]).intValue();
             Integer month = ((Number) row[1]).intValue();
@@ -136,10 +150,7 @@ public class StatisticsService {
             yearMonthToHours.get(year).put(month, totalDls);
         }
 
-        // Rückgabe vorbereiten
         List<MonthlyServiceHoursResponse> responses = new ArrayList<>();
-
-        // Absteigend sortiert (neueste Linie zuerst)
         for (int year = currentYear; year >= startYear; year--) {
             MonthlyServiceHoursResponse response = new MonthlyServiceHoursResponse();
             response.setLabel(String.valueOf(year));
@@ -154,6 +165,11 @@ public class StatisticsService {
         return responses;
     }
 
+    /**
+     * Liefert die Top 5 Mitglieder mit den meisten DLS-Stunden insgesamt.
+     *
+     * @return Liste von {@link TopDlsMemberResponse} mit Namen und geleisteten Stunden
+     */
     public List<TopDlsMemberResponse> getTopDlsMember() {
         List<Object[]> results = bookingRepository.findTop5DlsMembers();
 
@@ -166,18 +182,19 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Zeigt die geleisteten DLS-Stunden über drei Jahre für Gruppen, Sparten oder Bereiche.
+     *
+     * @param code Auswahlparameter: "group", "category" oder beliebig (default: sector)
+     * @return {@link SelectedWithDlsFromYearResponse} mit Labels und DLS-Werten pro Jahr
+     */
     public SelectedWithDlsFromYearResponse getSelectedWithDlsFromYear(String code) {
-
         int currentYear = Year.now().getValue();
-
         Set<String> labels = new HashSet<>();
         List<SelectedWithDlsFromYearBodyResponse> body = new ArrayList<>();
-
-
-        List<Object[]> results = new ArrayList<>();
+        List<Object[]> results;
 
         for (int i = 0; i < 3; i++) {
-
             switch (code) {
                 case "group":
                     results = bookingRepository.findGroupsWithDlsFromYear(currentYear - i);
@@ -191,9 +208,7 @@ public class StatisticsService {
             }
 
             List<Double> data = new ArrayList<>();
-
             for (Object[] row : results) {
-
                 labels.add((String) row[0]);
                 data.add((Double) row[1]);
             }
@@ -206,12 +221,7 @@ public class StatisticsService {
         }
 
         return new SelectedWithDlsFromYearResponse()
-                .setLabels(labels.stream().toList().stream()
-                        .sorted()
-                        .collect(Collectors.toList()))
+                .setLabels(labels.stream().sorted().collect(Collectors.toList()))
                 .setBody(body);
     }
-
 }
-
-

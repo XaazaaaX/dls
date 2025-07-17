@@ -5,12 +5,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 /**
- * Interface zur Erweiterung der User Query-Methoden des JpaRepositories
+ * Repository zur Verwaltung von {@link User}-Entitäten.
+ * Stellt Funktionen für CRUD-Operationen und benutzerdefinierte Abfragen bereit.
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version 05/2025
  */
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    /**
+     * Sucht einen Benutzer anhand des Benutzernamens.
+     *
+     * @param username Benutzername des gesuchten Users
+     * @return Optional mit Benutzer, falls vorhanden
+     */
     Optional<User> findByUsername(String username);
 
 }

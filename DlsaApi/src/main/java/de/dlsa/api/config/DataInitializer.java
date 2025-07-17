@@ -8,14 +8,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Initialisiert Test- bzw. Standarddaten beim Start der Anwendung.
+ * Die Methoden können einzeln über die `run()`-Methode aktiviert werden.
+ *
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -27,6 +31,9 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
 
+    /**
+     * Konstruktor zur Initialisierung aller benötigten Komponenten.
+     */
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
                            SettingsRepository settingsRepository,
@@ -43,15 +50,22 @@ public class DataInitializer implements CommandLineRunner {
         this.memberService = memberService;
     }
 
+    /**
+     * Einstiegspunkt für Dateninitialisierung beim Anwendungsstart.
+     * Derzeit sind alle Initialisierungen deaktiviert.
+     */
     @Override
     public void run(String... args) {
-        //createRoles();
+        createRoles();
         //createUser();
         //createSettings();
         //createMember();
     }
 
-    private void createRoles(){
+    /**
+     * Erstellt Standardrollen, falls diese noch nicht existieren.
+     */
+    private void createRoles() {
         List<String> standardRoles = List.of("Administrator", "Benutzer", "Gast");
 
         for (String roleName : standardRoles) {
@@ -66,8 +80,10 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Rollen wurden initialisiert.");
     }
 
+    /**
+     * Erstellt Standardnutzer mit festen Rollen und Passwort "admin", falls noch nicht vorhanden.
+     */
     private void createUser() {
-        // Map mit username → rolename
         Map<String, String> standardUsers = Map.of(
                 "admin", "Administrator",
                 "max", "Benutzer",
@@ -95,8 +111,10 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("User wurden initialisiert.");
     }
 
+    /**
+     * Erstellt Standardeinstellungen, wenn keine existieren.
+     */
     private void createSettings() {
-
         settingsRepository.findOnlySettings()
                 .orElseGet(() -> {
                     Settings newSettings = new Settings()
@@ -114,12 +132,14 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Einstellungen wurden initialisiert.");
     }
 
+    /**
+     * Erstellt zwei Beispiel-Mitglieder mit festen IDs, sofern diese noch nicht vorhanden sind.
+     */
     private void createMember() {
-
         try {
             Member existing = memberRepository.findByMemberId("1111");
 
-            if (existing == null){
+            if (existing == null) {
                 MemberCreateDto newMember = new MemberCreateDto()
                         .setSurname("Mustermann")
                         .setForename("Max")
@@ -138,7 +158,7 @@ public class DataInitializer implements CommandLineRunner {
         try {
             Member existing = memberRepository.findByMemberId("2222");
 
-            if (existing == null){
+            if (existing == null) {
                 MemberCreateDto newMember = new MemberCreateDto()
                         .setSurname("Musterfrau")
                         .setForename("Mina")

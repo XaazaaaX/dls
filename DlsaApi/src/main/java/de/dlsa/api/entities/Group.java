@@ -1,27 +1,48 @@
 package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Table(name = "Gruppen")
+/**
+ * Repräsentiert eine organisatorische Gruppe innerhalb des Vereins (z. B. "Jugend", "Vorstand").
+ * Eine Gruppe kann mehreren Mitgliedern zugeordnet sein und steht ggf. in Verbindung mit einer {@link BasicGroup}.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Entity
-public class Group extends BaseEntity{
+@Table(name = "Gruppen")
+public class Group extends BaseEntity {
 
+    /**
+     * Eindeutiger Name der Gruppe.
+     */
     @Column(name = "gruppenname", unique = true)
     private String groupName;
 
+    /**
+     * Gibt an, ob die Gruppe pauschal von DLS befreit ist.
+     * Standardwert ist false.
+     */
     @Column(name = "befreit")
     private Boolean liberated = false;
 
+    /**
+     * 1:1-Verknüpfung zur zugehörigen {@link BasicGroup}.
+     * Diese enthält ggf. weiterführende Metadaten zur Gruppe.
+     */
     @OneToOne
     private BasicGroup basicGroup;
 
+    /**
+     * Liste der Mitglieder, die dieser Gruppe zugeordnet sind.
+     * Diese Seite ist die inverse Seite der Many-to-Many-Beziehung.
+     */
     @ManyToMany(mappedBy = "groups")
-    private Collection<Member> member = new ArrayList<Member>();
+    private Collection<Member> member = new ArrayList<>();
+
+    // ===== Getter & Setter (Fluent API) =====
 
     public String getGroupName() {
         return groupName;

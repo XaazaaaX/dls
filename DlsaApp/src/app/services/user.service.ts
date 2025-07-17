@@ -1,14 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
-
-
-interface UserRequest {
-  username: string;
-  password: string;
-}
 
 export interface Role {
   rolename?: string;

@@ -23,24 +23,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Klasse zum Auslesen der im HttpHeader übersendeten JWT
+ * Filter zur Verarbeitung von JWTs, die im Authorization-Header eines HTTP-Requests mitgesendet werden.
+ * Wird nur einmal pro Anfrage aufgerufen.
+ *
+ * Verantwortlich für:
+ * - Extraktion des JWT-Tokens
+ * - Validierung des Tokens
+ * - Setzen des Authentifizierungs-Kontexts in Spring Security
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version 01/2024
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final HandlerExceptionResolver handlerExceptionResolver;
 
+    private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     /**
-     * Konstruktor
+     * Konstruktor zur Initialisierung des Filters mit benötigten Komponenten.
      *
-     * @param jwtService Instanz zur Verwaltung von JWT
-     * @param userDetailsService Userverwaltung
-     * @param handlerExceptionResolver Exceptionhandler
+     * @param jwtService Dienst zum Parsen und Validieren von JWT-Tokens
+     * @param userDetailsService Spring-Service zur Benutzerabfrage
+     * @param handlerExceptionResolver globaler Exception-Handler für Spring Security
      */
     public JwtAuthenticationFilter(
             JwtService jwtService,
@@ -52,15 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-
     /**
-     * Methode zur Behandlung von JWT im Request Header
+     * Verarbeitet die eingehenden HTTP-Anfragen und prüft,
+     * ob ein gültiger JWT vorhanden ist und ob der Benutzer authentifiziert werden kann.
      *
-     * @param request Http Request
-     * @param response Http Response
-     * @param filterChain SecurityFilterChain
-     * @throws ServletException
-     * @throws IOException
+     * @param request eingehender HTTP-Request
+     * @param response HTTP-Antwortobjekt
+     * @param filterChain Filterkette zur Weitergabe der Anfrage
+     * @throws ServletException wenn ein Servletfehler auftritt
+     * @throws IOException bei I/O-Problemen
      */
     @Override
     protected void doFilterInternal(
@@ -68,44 +74,53 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
+        // JWT aus dem Header extrahieren
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Kein gültiger Authorization-Header -> weiter mit der Filterkette
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            final String jwt = authHeader.substring(7);
+            // JWT-Token auslesen
+            final String jwt = authHeader.substring(7); // "Bearer " entfernen
             final String username = jwtService.extractUsername(jwt);
 
+            // Prüfen, ob Benutzer noch nicht authentifiziert wurde
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (username != null && authentication == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
+                // Rollen aus dem Token extrahieren
                 List<String> roles = new ArrayList<>();
-                roles.add(jwtService.extractRoles(jwt));
+                roles.add(jwtService.extractRoles(jwt)); // Achtung: extrahiert nur eine Rolle!
 
+                // In Spring-Security-kompatible Autoritäten umwandeln
                 List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority(role))  // "ROLE_" wird für die Rollenbezeichnung vorausgesetzt
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
+                // Token validieren und Benutzer authentifizieren
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
-                            //userDetails.getAuthorities()
-                            authorities
+                            authorities // Alternativ: userDetails.getAuthorities()
                     );
-
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
 
+            // Weiter mit der Filterkette
             filterChain.doFilter(request, response);
+
         } catch (Exception exception) {
+            // Fehler an globalen Exception-Handler weitergeben
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
     }

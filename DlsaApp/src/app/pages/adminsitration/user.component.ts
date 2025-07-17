@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -20,18 +20,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Role, User, UserService } from '../../services/user.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-//import { Product, ProductService } from '../service/product.service';
-
-interface Column {
-    field: string;
-    header: string;
-    customExportHeader?: string;
-}
-
-interface ExportColumn {
-    title: string;
-    dataKey: string;
-}
 
 @Component({
     selector: 'app-user',
@@ -186,10 +174,8 @@ export class UserComponent implements OnInit {
                             user.id === data.id ? { ...user, ...data } : user
                         );
 
-                        // Aktualisiere das signal mit den neuen Benutzerdaten
                         this.users.set(_users);
 
-                        //this.users.set([...this.users(), ...data]);
                         this.userDialog = false;
                         this.user = {
                             role: {}

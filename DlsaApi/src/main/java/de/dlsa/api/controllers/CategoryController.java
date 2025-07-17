@@ -7,23 +7,50 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
+/**
+ * Verarbeitung von Anfragen zur Verwaltung und Anzeige von Kategorien
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @RestController
 public class CategoryController {
 
     private final CategoryService categoryService;
 
+    /**
+     * Konstruktor
+     *
+     * @param categoryService Service zur Weiterverarbeitung der Kategorien-Anfragen
+     */
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
+    /**
+     * Endpunkt zur Abfrage aller vorhandenen Kategorien
+     *
+     * Erlaubt für Rollen: Administrator, Benutzer, Gast
+     *
+     * @return Liste aller Kategorien als CategoryResponse
+     */
     @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer', 'Gast')")
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryResponse>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategories());
     }
 
+    /**
+     * Endpunkt zum Erstellen einer neuen Kategorie
+     *
+     * Erlaubt für Rollen: Administrator, Benutzer
+     *
+     * @param category Kategorie-Daten als CategoryDto (validiert)
+     * @return Die erstellte Kategorie als CategoryResponse
+     */
     @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
     @PostMapping("/category")
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryDto category) {
@@ -31,6 +58,15 @@ public class CategoryController {
         return ResponseEntity.ok(created);
     }
 
+    /**
+     * Endpunkt zum Aktualisieren einer bestehenden Kategorie
+     *
+     * Erlaubt für Rollen: Administrator, Benutzer
+     *
+     * @param id       ID der zu aktualisierenden Kategorie
+     * @param category Neue Kategorie-Daten als CategoryDto
+     * @return Die aktualisierte Kategorie als CategoryResponse
+     */
     @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
     @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable long id, @RequestBody CategoryDto category) {

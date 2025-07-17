@@ -1,7 +1,6 @@
 <div class="card">
     <p-table #dt [value]="categories()" [rows]="10" [paginator]="true" [globalFilterFields]="['categoryName']"
-        [rowHover]="true" dataKey="id"
-        currentPageReportTemplate="{first} bis {last} von {totalRecords} Sparten"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Sparten"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
         <ng-template #caption>

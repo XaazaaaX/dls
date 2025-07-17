@@ -2,18 +2,41 @@ package de.dlsa.api.entities;
 
 import jakarta.persistence.*;
 
-@Table(name = "Aktionen")
+/**
+ * Entität zur Abbildung einer Aktion innerhalb der Vereinsstruktur.
+ * Eine Aktion ist z. B. ein Ereignis oder Projekt, das in einem bestimmten Jahr stattfindet
+ * und einer Kontaktperson (Mitglied) zugewiesen ist.
+ *
+ * Diese Klasse ist per JPA mit der Datenbanktabelle "Aktionen" verbunden.
+ *
+ * @author Benito Ernst
+ * @version 05/2025
+ */
 @Entity
-public class Action extends BaseEntity{
+@Table(name = "Aktionen")
+public class Action extends BaseEntity {
 
+    /**
+     * Jahr, dem die Aktion zugeordnet ist (z. B. "2024").
+     */
     @Column(name = "jahr")
     private String year;
 
+    /**
+     * Beschreibung der Aktion.
+     * Muss eindeutig sein – {@code unique = true}.
+     */
     @Column(name = "beschreibung", unique = true)
     private String description;
 
+    /**
+     * Verknüpfung zur Kontaktperson (Mitglied), das für die Aktion verantwortlich ist.
+     */
     @ManyToOne
     private Member contact;
+
+    // ===== Getter & Setter (Fluent API) =====
+
     public String getYear() {
         return year;
     }
@@ -40,5 +63,4 @@ public class Action extends BaseEntity{
         this.contact = contact;
         return this;
     }
-
 }

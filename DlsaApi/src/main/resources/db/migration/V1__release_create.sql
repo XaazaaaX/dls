@@ -1,1 +1,0 @@
-INSERT INTO rollen (rollenname) VALUES ('Admin') ON CONFLICT (rollenname) DO NOTHING;

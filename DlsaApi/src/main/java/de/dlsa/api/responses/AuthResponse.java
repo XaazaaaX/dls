@@ -4,7 +4,7 @@ package de.dlsa.api.responses;
  * Klasse zur Darstellung des JWT bei Rückgabe aus der Registrierung ode dem Login
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version  05/2025
  */
 public class AuthResponse {
     private String token;

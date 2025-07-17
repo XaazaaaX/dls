@@ -1,7 +1,7 @@
 <div class="card">
     <p-table #dt [value]="members()" [rows]="10" [paginator]="true"
         [globalFilterFields]="['memberId', 'surname', 'forename', 'entryDate']" [rowHover]="true" dataKey="id"
-        currentPageReportTemplate="{first} bis {last} von {totalRecords} Bereichen" [showCurrentPageReport]="true"
+        currentPageReportTemplate="{first} bis {last} von {totalRecords} Mitglieder" [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10, 20, 30]">
 
         <ng-template #caption>
@@ -73,7 +73,7 @@
 <p-dialog [(visible)]="memberDialog" [style]="{ width: '450px' }" header="Mitgliedsdetails" [modal]="true">
     <ng-template #content>
         <div class="flex flex-col gap-6">
-            
+
             @if(isEdit) {
             <div>
                 <label for="memberRefDate" class="block font-bold mb-3">Bezugsdatum der Änderung*</label>
@@ -169,8 +169,9 @@
 <p-dialog [(visible)]="memberUploadDialog" [style]="{ width: '450px' }" header="Mitglieder Upload" [modal]="true">
     <ng-template #content>
         <div class="flex flex-col gap-6">
-            
-            <p-fileupload #fu mode="basic" chooseLabel="Auswählen" chooseIcon="pi pi-upload" accept=".csv" maxFileSize="1000000" (onSelect)="onFileChange($event)" />
+
+            <p-fileupload #fu mode="basic" chooseLabel="Auswählen" chooseIcon="pi pi-upload" accept=".csv"
+                maxFileSize="1000000" (onSelect)="onFileChange($event)" />
 
         </div>
     </ng-template>

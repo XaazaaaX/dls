@@ -25,7 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * Klasse zur Konfiguration der Api
  *
  * @author Benito Ernst
- * @version  01/2024
+ * @version  05/2025
  */
 @Configuration
 public class ApplicationConfiguration {
@@ -59,13 +59,6 @@ public class ApplicationConfiguration {
     BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    /*@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new Sha256PasswordEncoder();
-    }
-
-     */
 
     /**
      * Erstellt eine Instanz von BCryptPasswordEncoder
@@ -106,21 +99,6 @@ public class ApplicationConfiguration {
 
         // Konfiguration, die sicherstellt, dass nur null-Werte gemappt werden
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-
-/*
-        modelMapper.typeMap(BookingDto.class, Booking.class)
-                .addMappings(mapper -> mapper
-                        .skip(Booking::setId)
-                );
-
-        modelMapper.typeMap(ActionDto.class, Action.class)
-                .addMappings(mapper -> mapper
-                        .skip(Action::setId)
-                );
-
- */
-
-
 
         return modelMapper;
     }

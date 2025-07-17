@@ -1,14 +1,39 @@
 package de.dlsa.api.responses;
 
+/**
+ * Antwortstruktur zur Auswertung der Dienstleistungsstunden (DLS) eines Mitglieds.
+ * Enthält alle Kennzahlen für die Abrechnungs- oder Berichtsanzeige.
+ *
+ * @version 05/2025
+ * @author Benito Ernst
+ */
 public class EvaluationResponse {
+
+    /** Vorname des Mitglieds. */
     private String firstName;
+
+    /** Nachname des Mitglieds. */
     private String lastName;
+
+    /** Anzahl der relevanten Monate im Bezugszeitraum. */
     private int requiredMonths;
+
+    /** Anzahl der zu leistenden DLS im Zeitraum. */
     private double requiredDls;
+
+    /** Anzahl der tatsächlich erbrachten DLS. */
     private double achievedDls;
+
+    /** Kosten pro nicht geleisteter DLS. */
     private double costPerDls;
+
+    /** Gesamtsumme, die zu zahlen ist. */
     private double toPay;
+
+    /** Anmerkung oder Begründung zur Bewertung. */
     private String comment;
+
+    // --- Getter & Setter mit Fluent-API-Stil ---
 
     public String getFirstName() {
         return firstName;
