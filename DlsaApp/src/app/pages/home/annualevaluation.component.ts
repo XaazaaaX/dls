@@ -1,3 +1,15 @@
+/**
+ * AnnualEvaluationComponent – Verwaltung und Ausführung von Jahresauswertungen (Evaluationsläufen).
+ *
+ * Funktionen:
+ * - Lädt abgeschlossene Evaluationsläufe
+ * - Startet neue Auswertungen (Jahreslauf) mit Ergebnis als CSV-Datei
+ * - Ermöglicht das Herunterladen bestehender CSV-Dateien
+ *
+ * Autor: Benito Ernst
+ * Datum: 05/2025
+ */
+
 import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
@@ -32,6 +44,7 @@ import { CourseOfYear, EvaluationService, Year } from '../../services/evaluation
         CommonModule,
         TableModule,
         FormsModule,
+        ReactiveFormsModule,
         ButtonModule,
         RippleModule,
         ToastModule,
@@ -48,29 +61,26 @@ import { CourseOfYear, EvaluationService, Year } from '../../services/evaluation
         IconFieldModule,
         ConfirmDialogModule,
         ToggleSwitchModule,
-        ReactiveFormsModule,
         PickListModule,
         MultiSelectModule,
         DatePickerModule
     ],
-    templateUrl: `./annualevaluation.component.html`,
+    templateUrl: './annualevaluation.component.html',
     providers: [MessageService, ConfirmationService, DatePipe]
 })
 export class AnnualEvaluationComponent {
 
-    isEdit: boolean = false;
-    evaluationDialog: boolean = false;
-    submitted: boolean = false;
+    evaluationDialog: boolean = false;       // Sichtbarkeit des Dialogfensters für neue Auswertung
+    submitted: boolean = false;              // Validierungsstatus bei Ausführung
 
-    coys = signal<CourseOfYear[]>([]);
-    coy!: CourseOfYear;
+    coys = signal<CourseOfYear[]>([]);       // Reaktive Liste aller Auswertungen
+    coy!: CourseOfYear;                      // Aktuell selektierte Auswertung
 
-    year?: number;
-    preEvaluation?: boolean = true;
-    years: Year[] = [];
+    year?: number;                           // Gewähltes Jahr für die neue Auswertung
+    preEvaluation: boolean = true;           // true = Vorprüfung, false = Hauptlauf
+    years: Year[] = [];                      // Liste verfügbarer Jahre
 
-    @ViewChild('dt') dt!: Table;
-
+    @ViewChild('dt') dt!: Table;             // Referenz zur Tabelle (für Filter)
 
     constructor(
         private messageService: MessageService,
@@ -83,74 +93,74 @@ export class AnnualEvaluationComponent {
         this.loadCourseOfYears();
     }
 
+    /**
+     * Lädt alle verfügbaren Jahre aus der API.
+     */
     loadYears() {
         this.evaluationService.getAllYears().subscribe({
-            next: (data) => {
-                this.years = data;
-            },
+            next: (data) => this.years = data,
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error.title,
+                    detail: err.error.description
+                });
             }
         });
     }
 
+    /**
+     * Lädt alle durchgeführten Auswertungen (COY) aus der API.
+     */
     loadCourseOfYears() {
         this.evaluationService.getAllEvaluations().subscribe({
-            next: (data) => {
-                this.coys.set(data);
-            },
+            next: (data) => this.coys.set(data),
             error: (err) => {
-                if (err.error.description) {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                  } else {
-                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
-                  }
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error?.title || "Verbindungsfehler!",
+                    detail: err.error?.description || "Es gab einen Fehler bei der API-Anfrage."
+                });
             }
         });
     }
 
-    base64ToArrayBuffer(base64: string): ArrayBuffer {
-        const binaryString = atob(base64); // decode base64 to binary string
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-
-        // Convert binary string to ArrayBuffer (Uint8Array)
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-
-        return bytes.buffer;
-    }
-
+    /**
+     * Filtert die Tabelle global über ein Suchfeld.
+     */
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
+    /**
+     * Öffnet das Dialogfenster zur Auswahl und Start eines neuen Evaluationslaufs.
+     */
     openNew() {
         this.submitted = false;
         this.evaluationDialog = true;
-
         this.year = undefined;
         this.preEvaluation = true;
     }
 
+    /**
+     * Schließt den Auswertungsdialog.
+     */
     hideDialog() {
         this.evaluationDialog = false;
         this.submitted = false;
     }
 
+    /**
+     * Startet den Jahresauswertungsprozess und lädt eine CSV-Datei als Ergebnis herunter.
+     */
     executeEvaluation() {
         this.submitted = true;
 
         if (this.year) {
-
             this.evaluationService.doEvaluation(this.year, !this.preEvaluation).subscribe({
                 next: response => {
-
-                    console.log(response);
-
                     const contentDisposition = response.headers.get('Content-Disposition');
-                    const filename = this.getFilenameFromHeader(contentDisposition) || `Jahreslauf.csv`;
+                    const filename = this.getFilenameFromHeader(contentDisposition) || 'Jahreslauf.csv';
 
                     const blob = response.body!;
                     const url = window.URL.createObjectURL(blob);
@@ -159,27 +169,47 @@ export class AnnualEvaluationComponent {
                     a.href = url;
                     a.download = filename;
                     a.click();
-
                     window.URL.revokeObjectURL(url);
 
-
                     this.hideDialog();
-
                     this.loadCourseOfYears();
                 },
-                error: (err) => {
-                    this.messageService.add({ severity: 'warn', summary: "Hinweis!", detail: "Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist! Falls der angegebene Zeitraum vor oder in einem abgeschlossenem Jahreslauf liegt, bitte das Ergebnis in der Tabelle verwenden!" });
+                error: () => {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Hinweis!',
+                        detail: 'Der Jahreslauf kann erst gestartet werden, wenn der Zeitraum beendet ist! Bitte vorhandene Ergebnisse prüfen.'
+                    });
                 }
             });
         }
     }
 
+    /**
+     * Extrahiert den Dateinamen aus dem Content-Disposition Header.
+     */
     private getFilenameFromHeader(contentDisposition: string | null): string | null {
         if (!contentDisposition) return null;
         const matches = /filename="([^"]+)"/.exec(contentDisposition);
         return matches?.[1] ?? null;
     }
 
+    /**
+     * Wandelt Base64-Daten in ein ArrayBuffer (z. B. für Datei-Downloads).
+     */
+    base64ToArrayBuffer(base64: string): ArrayBuffer {
+        const binaryString = atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+
+    /**
+     * Löst den CSV-Download einer bestehenden Auswertung aus.
+     */
     downloadCsv(coy: CourseOfYear) {
         const blob = new Blob([this.base64ToArrayBuffer(coy.file!)], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
@@ -190,6 +220,9 @@ export class AnnualEvaluationComponent {
         window.URL.revokeObjectURL(url);
     }
 
+    /**
+     * Formatiert ein Datumsobjekt in deutsches Format (dd.MM.yyyy).
+     */
     formatDate(date: Date): string | null {
         return this.datePipe.transform(date, 'dd.MM.yyyy');
     }

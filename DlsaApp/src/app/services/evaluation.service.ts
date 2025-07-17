@@ -1,52 +1,76 @@
+/**
+ * EvaluationService – Dienst zur Jahresauswertung und DLS-Export
+ *
+ * Funktionen:
+ * - Liefert verfügbare Jahre mit Auswertungsdaten
+ * - Listet gespeicherte Jahresauswertungen auf
+ * - Führt Auswertung (optional finalisierend) aus und liefert PDF/Binary als Download
+ *
+ * Autor: Benito Ernst
+ * Datum: 05/2025
+ */
+
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
 import { HttpResponse } from '@angular/common/http';
 
+// Repräsentiert ein gespeichertes Auswertungsdokument für ein Jahr
 export interface CourseOfYear {
-    file?: string;
-    timestamp?: Date;
-    displayName?: string
-    filename?: string;
-    dueDate?: Date;
+  file?: string;         // Base64 oder Pfad
+  timestamp?: Date;      // Erstellzeitpunkt
+  displayName?: string;  // Anzeigename
+  filename?: string;     // Tatsächlicher Dateiname
+  dueDate?: Date;        // Stichtag zur Auswertung
 }
 
+// Liste der Jahre mit vorhandener Auswertung
 export interface Year {
-    year?: string;
+  year?: string;         // z. B. "2024"
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class EvaluationService {
 
-    constructor(private httpService: HttpService) { }
+  constructor(private httpService: HttpService) {}
 
-    getAllYears(): Observable<Year[]> {
-        return this.httpService.get<Year[]>("evaluations/years");
-    }
+  /**
+   * Gibt alle Jahre zurück, für die eine Auswertung verfügbar ist
+   */
+  getAllYears(): Observable<Year[]> {
+    return this.httpService.get<Year[]>("evaluations/years");
+  }
 
-    getAllEvaluations(): Observable<CourseOfYear[]> {
-        return this.httpService.get<CourseOfYear[]>("evaluations");
-    }
+  /**
+   * Gibt alle gespeicherten Auswertungen (DLS-Jahresverläufe) zurück
+   */
+  getAllEvaluations(): Observable<CourseOfYear[]> {
+    return this.httpService.get<CourseOfYear[]>("evaluations");
+  }
 
-    /*doEvaluation(): Observable<Blob> {
-        return this.httpService.getBlob('evaluation/export?year=2024&finalize=false');
-    }*/
+  /**
+   * Führt eine neue Auswertung durch und lädt das Ergebnis als PDF/Blob herunter
+   * @param year - Jahr für die Auswertung (z. B. 2024)
+   * @param finalize - true = endgültige Berechnung, false = Vorschau
+   */
+  doEvaluation(year: number, finalize: boolean): Observable<HttpResponse<Blob>> {
+    const url = `evaluation/export?year=${year}&finalize=${finalize}`;
+    return this.httpService.getBlob(url);
+  }
 
-    doEvaluation(year: number, finalize: boolean): Observable<HttpResponse<Blob>> {
-        return this.httpService.getBlob("evaluation/export?year=" + year + "&finalize=" + finalize );
-    }
+  /*
+  Beispiel für Dateidownload im Aufrufer:
 
-    /*
-    this.httpService.getBlob('download/pdf').subscribe(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'datei.pdf';
-        a.click();
-        window.URL.revokeObjectURL(url);
-    });
-    */
-
+  this.evaluationService.doEvaluation(2024, false).subscribe(response => {
+    const blob = response.body;
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'auswertung_2024.pdf';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+  */
 }

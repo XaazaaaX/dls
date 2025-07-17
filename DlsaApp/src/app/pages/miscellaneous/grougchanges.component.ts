@@ -1,3 +1,16 @@
+/**
+ * GroupChangesComponent – Anzeige von Gruppenänderungen (Historie)
+ *
+ * Funktionen:
+ * - Lädt und zeigt historische Gruppenänderungen in einer Tabelle an
+ * - Verwendet PrimeNG-Komponenten (Tabelle, Toasts, Buttons)
+ * - Fehlerbehandlung und Benutzerfeedback über PrimeNG Toast
+ * - Globale Filterfunktion für Tabelleninhalte
+ *
+ * Autor: Benito Ernst
+ * Datum: 05/2025
+ */
+
 import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
@@ -23,69 +36,73 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { GroupChanges, HistorieService } from '../../services/historie.service';
 
 @Component({
-    selector: 'app-groupchanges',
-    standalone: true,
-    imports: [
-        CommonModule,
-        TableModule,
-        FormsModule,
-        ButtonModule,
-        RippleModule,
-        ToastModule,
-        ToolbarModule,
-        RatingModule,
-        InputTextModule,
-        TextareaModule,
-        SelectModule,
-        RadioButtonModule,
-        InputNumberModule,
-        DialogModule,
-        TagModule,
-        InputIconModule,
-        IconFieldModule,
-        ConfirmDialogModule,
-        ToggleSwitchModule,
-        ReactiveFormsModule,
-        InputMaskModule
-
-    ],
-    templateUrl: `./groupchanges.component.html`,
-    providers: [MessageService, ConfirmationService]
+  selector: 'app-groupchanges',
+  standalone: true,
+  imports: [
+    // Angular + PrimeNG-Module für UI und Formulare
+    CommonModule,
+    TableModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    RippleModule,
+    ToastModule,
+    ToolbarModule,
+    RatingModule,
+    InputTextModule,
+    TextareaModule,
+    SelectModule,
+    RadioButtonModule,
+    InputNumberModule,
+    DialogModule,
+    TagModule,
+    InputIconModule,
+    IconFieldModule,
+    ConfirmDialogModule,
+    ToggleSwitchModule,
+    InputMaskModule
+  ],
+  templateUrl: `./groupchanges.component.html`,
+  providers: [MessageService, ConfirmationService]
 })
 export class GroupChangesComponent {
 
-    groupChanges = signal<GroupChanges[]>([]);
+  // Signal für reaktive Gruppenänderungsdaten
+  groupChanges = signal<GroupChanges[]>([]);
 
-    @ViewChild('dt') dt!: Table;
+  // ViewChild-Referenz zur Tabelle für Filterfunktionen
+  @ViewChild('dt') dt!: Table;
 
-    constructor(
-        private messageService: MessageService,
-        private hsitorieService: HistorieService
-    ) {
+  constructor(
+    private messageService: MessageService,
+    private hsitorieService: HistorieService // ⚠️ Tippfehler: sollte wahrscheinlich „historieService“ heißen
+  ) {}
 
-    }
+  ngOnInit() {
+    // Beim Laden: Daten abrufen
+    this.loadGroupChanges();
+  }
 
-    ngOnInit() {
-        this.loadGroupChanges();
-    }
+  // Abrufen aller Gruppenänderungen vom Backend
+  loadGroupChanges() {
+    this.hsitorieService.getAllGroupChanges().subscribe({
+      next: (data) => {
+        console.log(data);
+        this.groupChanges.set(data); // Signal aktualisieren
+      },
+      error: (err) => {
+        // Fehlerausgabe mit PrimeNG-Toast
+        if (err.error.description) {
+          this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+        } else {
+          this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
+        }
+      }
+    });
+  }
 
-    loadGroupChanges() {
-        this.hsitorieService.getAllGroupChanges().subscribe({
-            next: (data) => {
-                console.log(data);
-                this.groupChanges.set(data);
-            },
-            error: (err) => {
-                if (err.error.description) {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                } else {
-                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
-                }
-            }
-        });
-    }
-
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
-    }
+  // Globale Filterung für Tabelleninhalt
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
 }

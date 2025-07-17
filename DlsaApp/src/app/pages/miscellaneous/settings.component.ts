@@ -1,3 +1,16 @@
+/**
+ * SettingsComponent – Verwaltung systemweiter Einstellungen
+ *
+ * Funktionen:
+ * - Anzeigen und Bearbeiten von Konfigurationen für Dienstleistungsregeln
+ * - Formularfelder mit PrimeNG-Komponenten (Input, Select, Checkbox, Radiobuttons etc.)
+ * - Abruf und Speicherung der Einstellungen über SettingsService
+ * - Benutzerfeedback über PrimeNG Toast
+ *
+ * Autor: Benito Ernst
+ * Datum: 05/2025
+*/
+
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Settings, SettingsService } from '../../services/settings.service';
@@ -33,7 +46,9 @@ import { ToastModule } from 'primeng/toast';
 @Component({
     selector: 'app-documentation',
     standalone: true,
-    imports: [CommonModule,
+    imports: [
+        // Angular & PrimeNG Imports
+        CommonModule,
         FormsModule,
         InputTextModule,
         ButtonModule,
@@ -64,105 +79,99 @@ import { ToastModule } from 'primeng/toast';
     ],
     providers: [MessageService],
     template: `
+    <!-- Einstellungen Header + Speichern-Button -->
     <div class="card">
         <div class="flex flex-wrap items-center justify-between">
-                <h4 class="m-0">Einstellungen</h4>
-                <p-iconfield>
+            <h4 class="m-0">Einstellungen</h4>
+            <p-iconfield>
                 <p-button label="Speichern" icon="pi pi-save" severity="primary" class="mr-2" (onClick)="save()" />
             </p-iconfield>
         </div>
     </div>
 
-                <div class="card flex flex-col gap-4">
-                    <div class="font-semibold text-xl">Berechnungsgrundlagen</div>
+    <!-- Berechnungsgrundlagen -->
+    <div class="card flex flex-col gap-4">
+        <div class="font-semibold text-xl">Berechnungsgrundlagen</div>
 
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <label for="dueDate">Stichtag (Enddatum eines Monats)</label>
-                        <input pInputText id="dueDate" type="text" [(ngModel)]="settings.dueDate" />
-                    </div>
+        <!-- Stichtag -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <label for="dueDate">Stichtag (Enddatum eines Monats)</label>
+            <input pInputText id="dueDate" type="text" [(ngModel)]="settings.dueDate" />
+        </div>
 
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <label for="countDls">Anzahl der Dienstleistungsstunden pro Jahr</label>
-                        <p-inputnumber id="countDls" [(ngModel)]="settings.countDls" inputId="locale-german" mode="decimal" locale="de-DE" [maxFractionDigits]="2" />
-                    </div>
+        <!-- DLS-Stunden pro Jahr -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <label for="countDls">Anzahl der Dienstleistungsstunden pro Jahr</label>
+            <p-inputnumber id="countDls" [(ngModel)]="settings.countDls" mode="decimal" locale="de-DE" [maxFractionDigits]="2" />
+        </div>
 
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <label for="costDls">Kosten pro Dienstleistungsstunde</label>
-                        <p-inputnumber id="costDls" [(ngModel)]="settings.costDls" mode="currency"inputId="currency-germany"currency="EUR" locale="de-DE" />
-                    </div>
+        <!-- Kosten pro Stunde -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <label for="costDls">Kosten pro Dienstleistungsstunde</label>
+            <p-inputnumber id="costDls" [(ngModel)]="settings.costDls" mode="currency" currency="EUR" locale="de-DE" />
+        </div>
 
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <label for="ageFrom">Mindestalter für Dienstleistungsstunden</label>
-                        <p-inputnumber [(ngModel)]="settings.ageFrom" inputId="locale-german" min="0" max="99" />
-                    </div>
+        <!-- Altersgrenzen -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <label for="ageFrom">Mindestalter für Dienstleistungsstunden</label>
+            <p-inputnumber [(ngModel)]="settings.ageFrom" min="0" max="99" />
+        </div>
 
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <label for="ageTo">Maximalalter für Dienstleistungsstunden</label>
-                        <p-inputnumber [(ngModel)]="settings.ageTo" inputId="locale-german" min="0" max="99" />
-                    </div>
+        <div class="flex flex-wrap gap-2 items-center">
+            <label for="ageTo">Maximalalter für Dienstleistungsstunden</label>
+            <p-inputnumber [(ngModel)]="settings.ageTo" min="0" max="99" />
+        </div>
+    </div>
 
-                </div>
+    <!-- Buchungsverhalten -->
+    <div class="card flex flex-col gap-4">
+        <div class="font-semibold text-xl">Buchungsverhalten</div>
 
+        <!-- Jahreslauf-Methode -->
+        <div class="flex flex-col md:flex-row gap-4">
+            <label for="bookingMethod">Berechnung beim Jahreslauf</label>
+            <div class="flex items-center">
+                <p-radiobutton id="bookingMethod1" name="bookingMethod1" value="Volles Jahr zum Stichtag" [(ngModel)]="settings.bookingMethod" />
+                <label for="bookingMethod1" class="leading-none ml-2">Volles Jahr zum Stichtag</label>
+            </div>
+            <div class="flex items-center">
+                <p-radiobutton id="bookingMethod2" name="bookingMethod2" value="Anteilig bis zum Stichtag" [(ngModel)]="settings.bookingMethod" />
+                <label for="bookingMethod2" class="leading-none ml-2">Anteilig bis zum Stichtag</label>
+            </div>
+        </div>
 
+        <!-- Checkbox für Ausgleichsbuchung -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <div class="flex items-center">
+                <p-checkbox id="clearing" [(ngModel)]="settings.clearing" [binary]="true"/>
+                <label for="clearing" class="ml-2">Ausgleichsbuchungen beim Jahreslauf</label>
+            </div>
+        </div>
 
+        <!-- Granularität -->
+        <div class="flex flex-wrap gap-2 items-center">
+            <label for="granularity">Granularität</label>
+            <p-select [(ngModel)]="settings.granularity" [options]="granularityOptions" optionLabel="name" optionValue="name" placeholder="Auswählen" />
+        </div>
+    </div>
 
-                <div class="card flex flex-col gap-4">
-                    <div class="font-semibold text-xl">Buchungsverhalten</div>
-
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <label for="bookingMethod">Berechnung beim Jahreslauf</label>
-                        <div class="flex items-center">
-                            <p-radiobutton id="bookingMethod1" name="bookingMethod1" value="Volles Jahr zum Stichtag" [(ngModel)]="settings.bookingMethod" />
-                            <label for="bookingMethod1" class="leading-none ml-2">Volles Jahr zum Stichtag</label>
-                        </div>
-                        <div class="flex items-center">
-                            <p-radiobutton id="bookingMethod2" name="bookingMethod2" value="Anteilig bis zum Stichtag" [(ngModel)]="settings.bookingMethod" />
-                            <label for="bookingMethod2" class="leading-none ml-2">Anteilig bis zum Stichtag</label>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <div class="flex items-center">
-                            <p-checkbox type="checkbox" id="clearing" name="clearing" [(ngModel)]="settings.clearing" [binary]="true"/>
-                            <label for="clearing" class="ml-2">Ausgleichsbuchungen beim Jahreslauf</label>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <label for="granularity">Granularität</label>
-                        <p-select [(ngModel)]="settings.granularity" [options]="granularityOptions" optionLabel="name" optionValue="name" placeholder="Auswählen" />
-                    </div>
-
-                </div>
-
-                <p-toast />
-`,
+    <!-- Toast-Meldungen -->
+    <p-toast />
+    `,
     styles: ``
 })
 export class SettingsComponent {
 
+    // Einstellungen werden im ngModel gebunden
     settings: Settings = {};
 
-    inputGroupValue: any;
-    floatValue: any = null;
-    selectedAutoValue: any;
-    autoFilteredValue: any;
-    filterCountry: any;
-    calendarValue: any;
-    inputNumberValue: any;
-    radioValue: any;
-    checkboxValue: any;
-    date: any;
-
-
-
+    // Auswahloptionen für Granularität
     granularityOptions = [
         { name: 'Keine' },
         { name: 'Ganze' },
         { name: 'Halbe' },
         { name: 'Viertel' }
     ];
-
 
     constructor(
         private messageService: MessageService,
@@ -173,6 +182,7 @@ export class SettingsComponent {
         this.loadSettings();
     }
 
+    // Lädt Einstellungen vom Server
     loadSettings() {
         console.log("Fetch");
         this.settingsService.getSettings().subscribe({
@@ -180,32 +190,39 @@ export class SettingsComponent {
                 this.settings = data;
             },
             error: (err) => {
-                if (err.error.description) {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                } else {
-                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
-                }
+                const detail = err.error?.description || "Es gab einen Fehler bei der API-Anfrage.";
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error?.title || 'Verbindungsfehler!',
+                    detail
+                });
             }
         });
     }
 
+    // Speichert Einstellungen an den Server
     updateSettings() {
         this.settingsService.updateSettings(this.settings).subscribe({
-            next: (data) => {
-                this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: "Info",
+                    detail: "Die Änderungen wurden erfolgreich gespeichert!"
+                });
             },
             error: (err) => {
-                if (err.error.description) {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                } else {
-                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
-                }
+                const detail = err.error?.description || "Es gab einen Fehler bei der API-Anfrage.";
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error?.title || 'Verbindungsfehler!',
+                    detail
+                });
             }
         });
     }
 
+    // Speichern-Klickhandler
     save() {
         this.updateSettings();
     }
-
 }

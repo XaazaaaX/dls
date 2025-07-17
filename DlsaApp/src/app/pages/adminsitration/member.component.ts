@@ -1,3 +1,15 @@
+/**
+ * MemberComponent – Verwaltung von Mitgliedsdaten, inkl. Erstellung, Bearbeitung und Massenimport.
+ *
+ * Funktionen:
+ * - Mitglieder anzeigen, hinzufügen, bearbeiten und per Datei-Upload importieren
+ * - Zuordnung zu Gruppen und Kategorien
+ * - Nutzung von PrimeNG für UI-Komponenten und Upload-Funktion
+ *
+ * Autor: Benito Ernst
+ * Datum: 05/2025
+ */
+
 import { Component, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
@@ -32,9 +44,11 @@ import { FileUploadModule } from 'primeng/fileupload';
     selector: 'app-member',
     standalone: true,
     imports: [
+        // Angular / PrimeNG Module
         CommonModule,
         TableModule,
         FormsModule,
+        ReactiveFormsModule,
         ButtonModule,
         RippleModule,
         ToastModule,
@@ -51,37 +65,35 @@ import { FileUploadModule } from 'primeng/fileupload';
         IconFieldModule,
         ConfirmDialogModule,
         ToggleSwitchModule,
-        ReactiveFormsModule,
         PickListModule,
         MultiSelectModule,
         DatePickerModule,
         FileUploadModule
     ],
-    templateUrl: `./member.component.html`,
+    templateUrl: './member.component.html',
     providers: [MessageService, ConfirmationService]
 })
 export class MemberComponent {
 
-    isEdit: boolean = false;
-    memberDialog: boolean = false;
-    memberUploadDialog: boolean = false;
-    submitted: boolean = false;
+    isEdit: boolean = false;                   // Bearbeitungsmodus
+    memberDialog: boolean = false;            // Sichtbarkeit des Mitglieder-Dialogs
+    memberUploadDialog: boolean = false;      // Sichtbarkeit des Upload-Dialogs
+    submitted: boolean = false;               // Validierungsflag
 
-    members = signal<Member[]>([]);
-    member!: Member;
-    memberDto!: MemberDto;
-    memberEditDto!: MemberEditDto;
+    members = signal<Member[]>([]);           // Reaktive Liste der Mitglieder
+    member!: Member;                          // Aktuelles Mitglied im Formular
+    memberDto!: MemberDto;                    // DTO zum Erstellen
+    memberEditDto!: MemberEditDto;            // DTO zum Bearbeiten
 
-    groups: Group[] = [];
-    categories: Category[] = [];
+    groups: Group[] = [];                     // Alle verfügbaren Gruppen
+    categories: Category[] = [];              // Alle verfügbaren Kategorien
 
-    selectedGroups!: number[];
-    selectedCategories!: number[];
+    selectedGroups!: number[];                // Zugewiesene Gruppen (IDs)
+    selectedCategories!: number[];            // Zugewiesene Kategorien (IDs)
 
-    selectedFile: File | null = null;
+    selectedFile: File | null = null;         // Für Datei-Upload
 
-    @ViewChild('dt') dt!: Table;
-
+    @ViewChild('dt') dt!: Table;              // Tabellenreferenz (z. B. für Filter)
 
     constructor(
         private messageService: MessageService,
@@ -97,6 +109,9 @@ export class MemberComponent {
         this.loadCategories();
     }
 
+    /**
+     * Reagiert auf Dateiauswahl beim Upload.
+     */
     onFileChange(event: any): void {
         const file = event.files?.[0];
         if (file) {
@@ -104,71 +119,93 @@ export class MemberComponent {
         }
     }
 
+    /**
+     * Führt den Upload der ausgewählten Datei aus.
+     */
     upload(): void {
         if (this.selectedFile) {
             this.memberService.uploadMember(this.selectedFile).subscribe({
                 next: (data) => {
-
-                    let countAddedMembers = data.length
-                    this.messageService.add({ severity: 'success', summary: "Info", detail: countAddedMembers + " Mitglieder wurden erfolgreich angelegt!" });
-
-                    if (data.length > 0) {
+                    const count = data.length;
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Info',
+                        detail: `${count} Mitglieder wurden erfolgreich angelegt!`
+                    });
+                    if (count > 0) {
                         this.members.set([...this.members(), ...data]);
                     }
                     this.memberUploadDialog = false;
                 },
                 error: (err) => {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: err.error.title,
+                        detail: err.error.description
+                    });
                 }
             });
         }
     }
 
+    /**
+     * Lädt alle Mitglieder von der API.
+     */
     loadMembers() {
         this.memberService.getAllMembers().subscribe({
-            next: (data) => {
-                this.members.set(data);
-                console.log(data);
-            },
+            next: (data) => this.members.set(data),
             error: (err) => {
-                if (err.error.description) {
-                    this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
-                } else {
-                    this.messageService.add({ severity: 'warn', summary: "Verbindungsfehler!", detail: "Es gab einen Fehler bei der API-Anfrage." });
-                }
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error?.title || "Fehler",
+                    detail: err.error?.description || "Es gab einen Fehler bei der API-Anfrage."
+                });
             }
         });
     }
 
+    /**
+     * Lädt alle Kategorien.
+     */
     loadCategories() {
         this.categoryService.getAllCategories().subscribe({
-            next: (data) => {
-                this.categories = data;
-                console.log(data);
-            },
+            next: (data) => this.categories = data,
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error.title,
+                    detail: err.error.description
+                });
             }
         });
     }
 
+    /**
+     * Lädt alle Gruppen.
+     */
     loadGroups() {
         this.groupService.getAllGroups().subscribe({
-            next: (data) => {
-                this.groups = data;
-                console.log(data);
-            },
+            next: (data) => this.groups = data,
             error: (err) => {
-                this.messageService.add({ severity: 'warn', summary: err.error.title, detail: err.error.description });
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: err.error.title,
+                    detail: err.error.description
+                });
             }
         });
     }
 
-
+    /**
+     * Globaler Textfilter für Tabelle.
+     */
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
+    /**
+     * Öffnet Formular zum Anlegen eines neuen Mitglieds.
+     */
     openNew() {
         this.member = {};
         this.selectedGroups = [];
@@ -178,30 +215,28 @@ export class MemberComponent {
         this.isEdit = false;
         this.memberDialog = true;
     }
+
+    /**
+     * Öffnet den Upload-Dialog.
+     */
     openNewUpload() {
         this.selectedFile = null;
         this.memberUploadDialog = true;
     }
 
+    /**
+     * Öffnet das Formular zum Bearbeiten eines Mitglieds.
+     */
     editMember(member: Member) {
-
-        this.selectedGroups = [];
-        this.selectedCategories = [];
-
         this.member = { ...member };
 
-        this.selectedGroups = this.member.groups!
-            .map(group => group.id)
-            .filter(id => id !== undefined) as number[];
+        this.selectedGroups = this.member.groups?.map(g => g.id!).filter(Boolean) || [];
+        this.selectedCategories = this.member.categories?.map(c => c.id!).filter(Boolean) || [];
 
-        this.selectedCategories = this.member.categories!
-            .map(category => category.id)
-            .filter(id => id !== undefined) as number[];
-
-        this.member.birthdate ? this.member.birthdate = new Date(this.member.birthdate!) : null;
-        this.member.entryDate ? this.member.entryDate = new Date(this.member.entryDate!) : null;
-        this.member.leavingDate ? this.member.leavingDate = new Date(this.member.leavingDate!) : null;
-
+        // Datumsfelder konvertieren
+        this.member.birthdate &&= new Date(this.member.birthdate);
+        this.member.entryDate &&= new Date(this.member.entryDate);
+        this.member.leavingDate &&= new Date(this.member.leavingDate);
         this.member.refDate = new Date();
 
         this.memberDto = {};
@@ -211,23 +246,30 @@ export class MemberComponent {
         this.memberDialog = true;
     }
 
+    /**
+     * Schließt das Mitgliederformular.
+     */
     hideDialog() {
         this.memberDialog = false;
         this.submitted = false;
     }
 
+    /**
+     * Schließt den Upload-Dialog.
+     */
     hideUploadDialog() {
         this.memberUploadDialog = false;
         this.selectedFile = null;
     }
 
+    /**
+     * Speichert ein neues oder bearbeitetes Mitglied.
+     */
     saveMember() {
-
         this.submitted = true;
 
         if (this.isEdit) {
-
-
+            // Bearbeitungsmodus
             if (this.member.refDate && this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate) {
 
                 this.memberEditDto = {
@@ -241,18 +283,13 @@ export class MemberComponent {
                     active: this.member.active,
                     groupIds: this.selectedGroups,
                     categorieIds: this.selectedCategories
-                }
+                };
 
                 this.memberService.updateMember(this.memberEditDto, this.member.id!).subscribe({
                     next: (data) => {
-                        this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Änderungen wurden erfolgreich gespeichert!" });
-
-                        const currentMember = this.members();
-                        const _members = currentMember.map(member =>
-                            member.id === data.id ? { ...member, ...data } : member
-                        );
-
-                        this.members.set(_members);
+                        this.messageService.add({ severity: 'success', summary: 'Info', detail: 'Die Änderungen wurden erfolgreich gespeichert!' });
+                        const updated = this.members().map(m => m.id === data.id ? { ...m, ...data } : m);
+                        this.members.set(updated);
 
                         this.memberDialog = false;
                         this.member = {};
@@ -263,8 +300,9 @@ export class MemberComponent {
                     }
                 });
             }
-        } else {
 
+        } else {
+            // Neuanlage
             if (this.member.memberId && this.member.forename && this.member.surname && this.member.birthdate && this.member.entryDate) {
 
                 this.memberDto = {
