@@ -76,21 +76,21 @@
             </div>
 
             <div>
-                <label for="password" class="block font-bold mb-3">Passwort@if(!isEdit) {*}</label>
+                <label for="password" class="block font-normal mb-3">Passwort@if(!isEdit) {*}</label>
                 <input type="text" pInputText id="password" [(ngModel)]="user.password" required autofocus fluid />
                 <small class="text-red-500" *ngIf="submitted && !user.password && !isEdit">Passwort ist
                     erforderlich!</small>
             </div>
 
             <div>
-                <label for="role" class="block font-bold mb-3">Rolle*</label>
+                <label for="role" class="block font-normal mb-3">Rolle*</label>
                 <p-select [(ngModel)]="user.role.rolename" appendTo="body" inputId="role" [options]="roles"
                     optionLabel="label" optionValue="value" placeholder="Auswählen" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !user.role.rolename">Rolle ist erforderlich!</small>
             </div>
 
             <div>
-                <label for="isActive" class="block font-bold mb-3">Aktiver Account?</label>
+                <label for="isActive" class="block font-normal mb-3">Aktiver Account?</label>
                 <p-toggleswitch id="isActive" [(ngModel)]="user.active">
                     <ng-template #handle let-checked="checked">
                         <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>

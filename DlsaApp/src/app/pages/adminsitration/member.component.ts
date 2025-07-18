@@ -320,7 +320,7 @@ export class MemberComponent {
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Das Mitglied wurde erfolgreich angelegt!" });
 
-                        this.members.set([...this.members(), data]);
+                        this.members.set([data, ...this.members()]);
                         this.memberDialog = false;
                         this.member = {};
                         this.memberDto = {};

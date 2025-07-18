@@ -59,7 +59,7 @@
         <div class="flex flex-col gap-6">
 
             <div>
-                <label for="bookingAction" class="block font-bold mb-3">Jahr*</label>
+                <label for="bookingAction" class="block font-normal mb-3">Jahr*</label>
                 <p-select id="bookingAction" [options]="years" appendTo="body" [filter]="true" filterBy="description"
                     [(ngModel)]="year" optionLabel="year" optionValue="year" placeholder="Auswählen" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !year">Jahr ist
@@ -67,7 +67,7 @@
             </div>
 
             <div>
-                <label for="preEvaluation" class="block font-bold mb-3">Vorläufiger Jahreslauf?</label>
+                <label for="preEvaluation" class="block font-normal mb-3">Vorläufiger Jahreslauf?</label>
                 <p-toggleswitch id="preEvaluation" [(ngModel)]="preEvaluation">
                     <ng-template #handle let-checked="checked">
                         <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>

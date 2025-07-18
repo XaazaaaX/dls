@@ -18,7 +18,8 @@ public class ActionDto {
      * Muss 1–4 Ziffern enthalten (z. B. "2024").
      */
     @NotBlank(message = "Jahr ist erforderlich")
-    @Pattern(regexp = "^\\d{1,4}$", message = "Jahr darf nur 4 Zahlen besitzen")
+    @Pattern(regexp = "^\\d{4}$", message = "Jahr muss genau aus 4 Ziffern bestehen")
+    @Pattern(regexp = "\\d+", message = "Jahr darf nur aus Nummern bestehen")
     private String year;
 
     /**

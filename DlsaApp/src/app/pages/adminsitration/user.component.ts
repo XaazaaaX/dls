@@ -227,7 +227,7 @@ export class UserComponent implements OnInit {
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Der Benutzer wurde erfolgreich angelegt!" });
 
-                        this.users.set([...this.users(), data]);
+                        this.users.set([ data, ...this.users()]);
                         this.userDialog = false;
                         this.user = {
                             role: {}

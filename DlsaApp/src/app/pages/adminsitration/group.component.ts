@@ -184,7 +184,7 @@ export class GroupComponent {
                         detail: 'Die Gruppe wurde erfolgreich angelegt!'
                     });
 
-                    this.groups.set([...this.groups(), data]);
+                    this.groups.set([data, ...this.groups()]);
                     this.groupDialog = false;
                     this.group = {};
                 },

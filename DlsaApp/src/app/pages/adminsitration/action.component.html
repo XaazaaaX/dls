@@ -67,13 +67,6 @@
         <div class="flex flex-col gap-6">
 
             <div>
-                <label for="actionYear" class="block font-bold mb-3">Jahr*</label>
-                <input type="text" pInputText id="actionYear" [(ngModel)]="action.year" required autofocus fluid />
-                <small class="text-red-500" *ngIf="submitted && !action.year">Jahr ist
-                    erforderlich!</small>
-            </div>
-
-            <div>
                 <label for="actionDescription" class="block font-bold mb-3">Beschreibung*</label>
                 <input type="text" pInputText id="actionDescription" [(ngModel)]="action.description" required autofocus
                     fluid />
@@ -82,7 +75,14 @@
             </div>
 
             <div>
-                <label for="actionContact" class="block font-bold mb-3">Ansprechpartner:in*</label>
+                <label for="actionYear" class="block font-normal    mb-3">Jahr*</label>
+                <input type="text" pInputText id="actionYear" [(ngModel)]="action.year" maxlength="4" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !action.year">Jahr ist
+                    erforderlich!</small>
+            </div>
+
+            <div>
+                <label for="actionContact" class="block font-normal    mb-3">Ansprechpartner:in*</label>
                 <p-select id="actionContact" [options]="fullNameMemberOptions" appendTo="body" [filter]="true"
                     filterBy="fullname" [(ngModel)]="contactId" optionLabel="fullname" optionValue="id"
                     placeholder="Auswählen" required fluid />

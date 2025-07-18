@@ -59,7 +59,7 @@ public class Booking extends BaseEntity {
      * Pflichtfeld.
      */
     @ManyToOne(optional = false)
-    @JoinColumn(name = "campaign_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "campaign_id", referencedColumnName = "id")
     private Action action;
 
     // ===== Getter & Setter (Fluent API) =====

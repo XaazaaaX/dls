@@ -76,7 +76,7 @@
 
             @if(isEdit) {
             <div>
-                <label for="memberRefDate" class="block font-bold mb-3">Bezugsdatum der Änderung*</label>
+                <label for="memberRefDate" class="block font-normal mb-3">Bezugsdatum der Änderung*</label>
                 <p-datepicker id="memberRefDate" [(ngModel)]="member.refDate" dateFormat="dd.mm.yy" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !member.refDate">Bezugsdatum ist
                     erforderlich!</small>
@@ -91,14 +91,14 @@
             </div>
 
             <div>
-                <label for="memberForename" class="block font-bold mb-3">Vorname*</label>
+                <label for="memberForename" class="block font-normal mb-3">Vorname*</label>
                 <input type="text" pInputText id="memberForename" [(ngModel)]="member.forename" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !member.forename">Vorname ist
                     erforderlich!</small>
             </div>
 
             <div>
-                <label for="memberSurname" class="block font-bold mb-3">Nachname*</label>
+                <label for="memberSurname" class="block font-normal mb-3">Nachname*</label>
                 <input type="text" pInputText id="memberSurname" [(ngModel)]="member.surname" required fluid />
                 <small class="text-red-500" *ngIf="submitted && !member.surname">Nachname ist
                     erforderlich!</small>
@@ -106,7 +106,7 @@
 
             <div class="flex flex-wrap gap-6">
                 <div class="flex flex-col grow basis-0">
-                    <label for="memberBirthdate" class="block font-bold mb-3">Geburtstag*</label>
+                    <label for="memberBirthdate" class="block font-normal mb-3">Geburtstag*</label>
                     <p-datepicker id="memberBirthdate" appendTo="body" [(ngModel)]="member.birthdate"
                         dateFormat="dd.mm.yy" required fluid />
                     <small class="text-red-500" *ngIf="submitted && !member.birthdate">Geburtstag ist
@@ -114,7 +114,7 @@
                 </div>
                 @if(isEdit) {
                 <div class="flex flex-col grow basis-0">
-                    <label for="memberActive" class="block font-bold mb-3">Mitglied aktiv?</label>
+                    <label for="memberActive" class="block font-normal mb-3">Mitglied aktiv?</label>
                     <p-toggleswitch id="memberActive" [(ngModel)]="member.active">
                         <ng-template #handle let-checked="checked">
                             <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
@@ -126,7 +126,7 @@
 
             <div class="flex flex-wrap gap-6">
                 <div class="flex flex-col grow basis-0">
-                    <label for="memberEntryDate" class="block font-bold mb-3">Eintrittsdatum*</label>
+                    <label for="memberEntryDate" class="block font-normal mb-3">Eintrittsdatum*</label>
                     <p-datepicker id="memberEntryDate" appendTo="body" [(ngModel)]="member.entryDate"
                         dateFormat="dd.mm.yy" required fluid />
                     <small class="text-red-500" *ngIf="submitted && !member.entryDate">Eintrittsdatum ist
@@ -134,7 +134,7 @@
                 </div>
                 @if(isEdit) {
                 <div class="flex flex-col grow basis-0">
-                    <label for="memberLeavingDate" class="block font-bold mb-3">Austrittsdatum</label>
+                    <label for="memberLeavingDate" class="block font-normal mb-3">Austrittsdatum</label>
                     <p-datepicker id="memberLeavingDate" appendTo="body" [(ngModel)]="member.leavingDate"
                         dateFormat="dd.mm.yy" fluid />
                 </div>
@@ -142,14 +142,14 @@
             </div>
 
             <div>
-                <label for="memberGroups" class="block font-bold mb-3">Funktionsgruppen</label>
+                <label for="memberGroups" class="block font-normal mb-3">Funktionsgruppen</label>
                 <p-multiselect id="memberGroups" [options]="groups" appendTo="body" [(ngModel)]="selectedGroups"
                     optionLabel="groupName" optionValue="id" placeholder="Auswählen" [maxSelectedLabels]="0"
                     [selectedItemsLabel]="'{0} Gruppe(n) ausgewählt'" fluid />
             </div>
 
             <div>
-                <label for="memberCategories" class="block font-bold mb-3">Sparten</label>
+                <label for="memberCategories" class="block font-normal mb-3">Sparten</label>
                 <p-multiselect id="memberCategories" [options]="categories" appendTo="body"
                     [(ngModel)]="selectedCategories" optionLabel="categoryName" optionValue="id" placeholder="Auswählen"
                     [maxSelectedLabels]="0" [selectedItemsLabel]="'{0} Sparte(n) ausgewählt'" fluid />

@@ -38,7 +38,7 @@ public class CategoryService {
      */
     public List<CategoryResponse> getCategories() {
         return categoryRepository.findAll().stream()
-                .sorted(Comparator.comparingLong(Category::getId))
+                .sorted(Comparator.comparingLong(Category::getId).reversed())
                 .map(category -> modelMapper.map(category, CategoryResponse.class))
                 .collect(Collectors.toList());
     }

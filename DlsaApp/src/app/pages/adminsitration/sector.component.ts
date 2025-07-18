@@ -222,7 +222,7 @@ export class SectorComponent {
                         detail: 'Der Bereich wurde erfolgreich angelegt!'
                     });
 
-                    this.sectors.set([...this.sectors(), data]);
+                    this.sectors.set([data, ...this.sectors()]);
                     this.sectorDialog = false;
                     this.sector = {};
                     this.sectorDto = {};

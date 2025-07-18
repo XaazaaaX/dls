@@ -60,7 +60,7 @@ public class GroupService {
     public List<GroupResponse> getGroups() {
         List<Group> groups = groupRepository.findAll();
         return groups.stream()
-                .sorted(Comparator.comparingLong(Group::getId))
+                .sorted(Comparator.comparingLong(Group::getId).reversed())
                 .map(group -> modelMapper.map(group, GroupResponse.class))
                 .collect(Collectors.toList());
     }

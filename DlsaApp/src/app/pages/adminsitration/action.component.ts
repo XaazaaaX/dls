@@ -216,7 +216,7 @@ export class ActionComponent implements OnInit {
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Aktion wurde erfolgreich angelegt!" });
 
-                        this.actions.set([...this.actions(), data]);
+                        this.actions.set([data, ...this.actions()]);
                         this.actionDialog = false;
                         this.action = {};
                         this.actionDto = {};

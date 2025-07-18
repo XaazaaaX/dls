@@ -49,7 +49,7 @@ public class ActionService {
      */
     public List<ActionResponse> getActions() {
         return actionRepository.findAll().stream()
-                .sorted(Comparator.comparingLong(Action::getId))
+                .sorted(Comparator.comparingLong(Action::getId).reversed())
                 .map(action -> modelMapper.map(action, ActionResponse.class))
                 .collect(Collectors.toList());
     }

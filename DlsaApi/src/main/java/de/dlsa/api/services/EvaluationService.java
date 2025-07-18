@@ -90,7 +90,7 @@ public class EvaluationService {
     public List<CourseOfYearResponse> getEvaluations() {
         List<CourseOfYear> coys = courseOfyearRepository.findAll();
         return coys.stream()
-                //.sorted(Comparator.comparing(Booking::getDoneDate).reversed())
+                .sorted(Comparator.comparing(CourseOfYear::getDueDate).reversed())
                 .map(coy -> modelMapper.map(coy, CourseOfYearResponse.class))
                 .collect(Collectors.toList());
     }

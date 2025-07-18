@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 /**
  * Entität zur Abbildung einer Aktion innerhalb der Vereinsstruktur.
- * Eine Aktion ist z. B. ein Ereignis oder Projekt, das in einem bestimmten Jahr stattfindet
+ * Eine Aktion ist z. B. ein Ereignis oder Projekt, das in einem bestimmten Jahr stattfindet
  * und einer Kontaktperson (Mitglied) zugewiesen ist.
  *
  * Diese Klasse ist per JPA mit der Datenbanktabelle "Aktionen" verbunden.
@@ -13,11 +13,13 @@ import jakarta.persistence.*;
  * @version 05/2025
  */
 @Entity
-@Table(name = "Aktionen")
+@Table(name = "Aktionen", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"jahr", "beschreibung"})
+})
 public class Action extends BaseEntity {
 
     /**
-     * Jahr, dem die Aktion zugeordnet ist (z. B. "2024").
+     * Jahr, dem die Aktion zugeordnet ist (z. B. "2024").
      */
     @Column(name = "jahr")
     private String year;
@@ -26,7 +28,7 @@ public class Action extends BaseEntity {
      * Beschreibung der Aktion.
      * Muss eindeutig sein – {@code unique = true}.
      */
-    @Column(name = "beschreibung", unique = true)
+    @Column(name = "beschreibung")
     private String description;
 
     /**

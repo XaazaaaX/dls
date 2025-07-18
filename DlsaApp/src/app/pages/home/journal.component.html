@@ -73,7 +73,7 @@
         <div class="flex flex-col gap-6">
 
             <div>
-                <label for="bookingMember" class="block font-bold mb-3">Mitglied*</label>
+                <label for="bookingMember" class="block font-normal mb-3">Mitglied*</label>
                 <p-select id="bookingMember" [options]="fullNameMemberOptions" appendTo="body" [filter]="true"
                     filterBy="fullname" [(ngModel)]="memberId" optionLabel="fullname" optionValue="id"
                     placeholder="Auswählen" required fluid />
@@ -82,7 +82,7 @@
             </div>
 
             <div>
-                <label for="bookingDoneDate" class="block font-bold mb-3">Ableistungsdatum*</label>
+                <label for="bookingDoneDate" class="block font-normal mb-3">Ableistungsdatum*</label>
                 <p-datepicker id="bookingDoneDate" [(ngModel)]="booking.doneDate" dateFormat="dd.mm.yy" required
                     fluid />
                 <small class="text-red-500" *ngIf="submitted && !booking.doneDate">Ableistungsdatum ist
@@ -90,7 +90,7 @@
             </div>
 
             <div>
-                <label for="bookingAction" class="block font-bold mb-3">Aktion*</label>
+                <label for="bookingAction" class="block font-normal mb-3">Aktion*</label>
                 <p-select id="bookingAction" [options]="actions" appendTo="body" [filter]="true" filterBy="description"
                     [(ngModel)]="actionId" optionLabel="description" optionValue="id" placeholder="Auswählen" required
                     fluid />
@@ -99,7 +99,7 @@
             </div>
 
             <div>
-                <label for="bookingCountDls" class="block font-bold mb-3">Anzahl Dienstleistungsstunden*</label>
+                <label for="bookingCountDls" class="block font-normal mb-3">Anzahl Dienstleistungsstunden*</label>
                 <p-inputnumber id="bookingCountDls" [(ngModel)]="booking.countDls" showButtons [min]="0" integer="true" minFractionDigits="0"
                     fluid></p-inputnumber>
                 <small class="text-red-500" *ngIf="submitted && !booking.countDls">Anzahl Dienstleistungsstunden ist
@@ -107,7 +107,7 @@
             </div>
 
             <div>
-                <label for="bookingComment" class="block font-bold mb-3">Bemerkung</label>
+                <label for="bookingComment" class="block font-normal mb-3">Bemerkung</label>
                 <textarea pTextarea id="bookingComment" [(ngModel)]="booking.comment" [autoResize]="true" rows="3"
                     cols="30" fluid></textarea>
             </div>

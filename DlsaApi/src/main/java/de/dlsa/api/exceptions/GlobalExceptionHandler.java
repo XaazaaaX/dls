@@ -1,5 +1,6 @@
 package de.dlsa.api.exceptions;
 
+import jakarta.validation.constraints.Pattern;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.FieldError;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +48,7 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof DataIntegrityViolationException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
-            errorDetail.setProperty("description", "Diese Bezeichnung wird bereits verwendet!");
+            errorDetail.setProperty("description", "Ein Eintrag mit diesem Identifizierungsmerkmal ist bereits vorhanden!");
             return errorDetail;
         }
 
@@ -99,4 +101,5 @@ public class GlobalExceptionHandler {
 
         return errorDetail;
     }
+
 }

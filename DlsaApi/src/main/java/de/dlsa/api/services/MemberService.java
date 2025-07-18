@@ -65,7 +65,7 @@ public class MemberService {
     public List<MemberResponse> getMembers() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
-                .sorted(Comparator.comparingLong(Member::getId))
+                .sorted(Comparator.comparingLong(Member::getId).reversed())
                 .map(member -> modelMapper.map(member, MemberResponse.class))
                 .collect(Collectors.toList());
     }
@@ -226,7 +226,7 @@ public class MemberService {
         if (member.getSurname() != null) existing.setSurname(member.getSurname());
         if (member.getBirthdate() != null) existing.setBirthdate(member.getBirthdate());
 
-        if (member.getEntryDate() != null && !member.getEntryDate().equals(existing.getEntryDate())) {
+        if (member.getEntryDate() != null && !Objects.equals(member.getEntryDate(), existing.getEntryDate())) {
             memberChangesRepository.save(new MemberChanges()
                     .setMemberId(existing.getId())
                     .setRefDate(member.getRefDate())

@@ -57,8 +57,9 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         createRoles();
+        createAdmin();
+        createSettings();
         //createUser();
-        //createSettings();
         //createMember();
     }
 
@@ -81,11 +82,39 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     /**
-     * Erstellt Standardnutzer mit festen Rollen und Passwort "admin", falls noch nicht vorhanden.
+     * Erstellt Standardadmin mit festen Rollen und Passwort "admin", falls noch nicht vorhanden.
+     */
+    private void createAdmin() {
+        Map<String, String> standardUsers = Map.of(
+                "admin", "Administrator"
+        );
+
+        for (Map.Entry<String, String> entry : standardUsers.entrySet()) {
+            String username = entry.getKey();
+            String rolename = entry.getValue();
+
+            userRepository.findByUsername(username)
+                    .orElseGet(() -> {
+                        Role role = roleRepository.findByRolename(rolename)
+                                .orElseThrow(() -> new RuntimeException("Rolle nicht gefunden: " + rolename));
+
+                        User newUser = new User()
+                                .setUsername(username)
+                                .setPassword(passwordEncoder.encode("admin")) // Standardpasswort
+                                .setActive(true)
+                                .setRole(role);
+                        return userRepository.save(newUser);
+                    });
+        }
+
+        System.out.println("User wurden initialisiert.");
+    }
+
+    /**
+     * Erstellt Standardnutzer mit festen Rollen und Passwort "max", falls noch nicht vorhanden.
      */
     private void createUser() {
         Map<String, String> standardUsers = Map.of(
-                "admin", "Administrator",
                 "max", "Benutzer",
                 "lisa", "Gast"
         );

@@ -224,7 +224,7 @@ export class JournalComponent {
                 next: (data) => {
                     this.messageService.add({ severity: 'success', summary: "Info", detail: "Die Buchung wurde erfolgreich angelegt!" });
 
-                    const updatedBookings = [...this.bookings(), data];
+                    const updatedBookings = [data, ...this.bookings()];
 
                     // Nach Datum sortieren (neueste zuerst, leere ans Ende)
                     updatedBookings.sort((a, b) => {

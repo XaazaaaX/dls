@@ -49,7 +49,7 @@ public class SectorService {
     public List<SectorResponse> getSectors() {
         List<Sector> sectors = sectorRepository.findAll();
         return sectors.stream()
-                .sorted(Comparator.comparingLong(Sector::getId))
+                .sorted(Comparator.comparingLong(Sector::getId).reversed())
                 .map(sector -> modelMapper.map(sector, SectorResponse.class))
                 .collect(Collectors.toList());
     }

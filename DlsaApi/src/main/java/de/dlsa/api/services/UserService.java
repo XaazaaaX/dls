@@ -53,7 +53,7 @@ public class UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .sorted(Comparator.comparingLong(User::getId))
+                .sorted(Comparator.comparingLong(User::getId).reversed())
                 .map(user -> modelMapper.map(user, UserResponse.class))
                 .collect(Collectors.toList());
     }
