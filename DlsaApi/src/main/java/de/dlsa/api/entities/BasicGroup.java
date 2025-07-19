@@ -20,7 +20,7 @@ public class BasicGroup extends BaseEntity {
      * Gibt an, ob die Gruppe von der Dienstleistungsstundenpflicht befreit ist.
      * true = befreit, false = nicht befreit.
      */
-    @Column(name = "dlsBefreit")
+    @Column(name = "dlsbefreit")
     private Boolean liberate;
 
     /**

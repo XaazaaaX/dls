@@ -1,2 +1,2 @@
 FROM postgres:15
-COPY pg-data /var/lib/postgresql/data
+COPY data /var/lib/postgresql/data

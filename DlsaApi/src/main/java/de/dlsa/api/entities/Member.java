@@ -70,6 +70,7 @@ public class Member extends BaseEntity {
      * Basisdaten des Mitglieds (1:1-Beziehung).
      */
     @OneToOne
+    @JoinColumn(name = "basicmember_id")
     private BasicMember basicMember;
 
     /**

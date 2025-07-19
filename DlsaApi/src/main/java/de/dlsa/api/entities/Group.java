@@ -33,6 +33,7 @@ public class Group extends BaseEntity {
      * Diese enthält ggf. weiterführende Metadaten zur Gruppe.
      */
     @OneToOne
+    @JoinColumn(name = "basicgroup_id")
     private BasicGroup basicGroup;
 
     /**

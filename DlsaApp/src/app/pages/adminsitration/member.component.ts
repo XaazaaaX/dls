@@ -309,8 +309,8 @@ export class MemberComponent {
                     memberId: this.member.memberId,
                     surname: this.member.surname,
                     forename: this.member.forename,
-                    birthdate: this.member.birthdate,
-                    entryDate: this.member.entryDate,
+                    birthdate: new Date(Date.UTC(this.member.birthdate.getFullYear(), this.member.birthdate.getMonth(), this.member.birthdate.getDate())),
+                    entryDate: new Date(Date.UTC(this.member.entryDate.getFullYear(), this.member.entryDate.getMonth(), this.member.entryDate.getDate())),
                     active: true,
                     groupIds: this.selectedGroups,
                     categorieIds: this.selectedCategories

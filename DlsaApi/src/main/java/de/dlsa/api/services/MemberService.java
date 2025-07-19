@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * Service zur Verwaltung von Mitgliedsdaten, inklusive Erstellung, Bearbeitung
  * und Massenimport über CSV-Dateien. Außerdem werden Änderungen an relevanten
  * Attributen als Historie gespeichert.
+ *
  */
 @Service
 public class MemberService {
@@ -225,6 +226,9 @@ public class MemberService {
         if (member.getForename() != null) existing.setForename(member.getForename());
         if (member.getSurname() != null) existing.setSurname(member.getSurname());
         if (member.getBirthdate() != null) existing.setBirthdate(member.getBirthdate());
+
+        var test1 = member.getEntryDate();
+        var test2 = existing.getEntryDate();
 
         if (member.getEntryDate() != null && !Objects.equals(member.getEntryDate(), existing.getEntryDate())) {
             memberChangesRepository.save(new MemberChanges()

@@ -60,7 +60,7 @@ public class BookingService {
      */
     public List<BookingResponse> getBookings() {
         return bookingRepository.findAll().stream()
-                .sorted(Comparator.comparing(Booking::getDoneDate).reversed())
+                .sorted(Comparator.comparing(Booking::getId).reversed())
                 .map(booking -> modelMapper.map(booking, BookingResponse.class))
                 .collect(Collectors.toList());
     }

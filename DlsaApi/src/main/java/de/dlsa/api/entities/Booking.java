@@ -58,7 +58,7 @@ public class Booking extends BaseEntity {
      * Referenz auf die zugehörige Aktion (z. B. Projekt oder Arbeitsdienst).
      * Pflichtfeld.
      */
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "campaign_id", referencedColumnName = "id")
     private Action action;
 
