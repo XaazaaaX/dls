@@ -43,7 +43,7 @@ export interface Contact {
 })
 export class ActionService {
 
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: HttpService) { }
 
     /**
      * Ruft alle vorhandenen Aktionen vom Backend ab
@@ -67,5 +67,13 @@ export class ActionService {
      */
     updateAction(action: ActionDto, id: number): Observable<Action> {
         return this.httpService.put<Action>("actions/" + id, action);
+    }
+
+    /**
+   * Löscht eine Aktion anhand seiner ID
+   * @param actionId ID der Aktion
+   */
+    deleteAction(actionId?: number): Observable<any> {
+        return this.httpService.delete<any>("action/" + actionId);
     }
 }

@@ -36,9 +36,11 @@
             <tr>
                 <td style="width: auto; min-width: 5rem;">{{ category.categoryName }}</td>
 
-                <td style="width: 10%; min-width: 6rem;">
+                <td style="width: 10%; min-width: 8rem;">
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                         (click)="editCategory(category)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                        (click)="deleteCategory(category)" />
                 </td>
             </tr>
         </ng-template>

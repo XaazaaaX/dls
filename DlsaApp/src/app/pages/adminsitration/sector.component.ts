@@ -237,4 +237,45 @@ export class SectorComponent {
             });
         }
     }
+
+    /**
+    * Öffnet eine Bestätigungsabfrage und löscht den Bereich bei Bestätigung.
+    */
+    deleteSector(sector: Sector) {
+        this.confirmationService.confirm({
+            message: `Soll der Bereich "${sector.sectorname}" wirklich gelöscht werden?`,
+            header: 'Bestätigen',
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                icon: 'pi pi-times',
+                label: 'Nein',
+                outlined: true
+            },
+            acceptButtonProps: {
+                icon: 'pi pi-check',
+                label: 'Ja'
+            },
+            accept: () => {
+                this.sectorService.deleteSector(sector.id).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Info',
+                            detail: 'Der Bereich wurde erfolgreich gelöscht!'
+                        });
+
+                        this.sectors.set(this.sectors().filter(u => u.id !== sector.id));
+                        this.sector = {};
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: err.error.title,
+                            detail: err.error.description
+                        });
+                    }
+                });
+            }
+        });
+    }
 }

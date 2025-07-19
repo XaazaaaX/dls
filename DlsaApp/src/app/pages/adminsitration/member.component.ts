@@ -333,4 +333,45 @@ export class MemberComponent {
         }
 
     }
+
+    /**
+        * Öffnet eine Bestätigungsabfrage und löscht den Bereich bei Bestätigung.
+        */
+        deleteMember(member: Member) {
+            this.confirmationService.confirm({
+                message: `Soll das Mitglied "${member.forename} ${member.surname}" wirklich gelöscht werden?`,
+                header: 'Bestätigen',
+                icon: 'pi pi-exclamation-triangle',
+                rejectButtonProps: {
+                    icon: 'pi pi-times',
+                    label: 'Nein',
+                    outlined: true
+                },
+                acceptButtonProps: {
+                    icon: 'pi pi-check',
+                    label: 'Ja'
+                },
+                accept: () => {
+                    this.memberService.deleteMember(member.id).subscribe({
+                        next: () => {
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Info',
+                                detail: 'Das Mitglied wurde erfolgreich gelöscht!'
+                            });
+    
+                            this.members.set(this.members().filter(u => u.id !== member.id));
+                            this.member = {};
+                        },
+                        error: (err) => {
+                            this.messageService.add({
+                                severity: 'warn',
+                                summary: err.error.title,
+                                detail: err.error.description
+                            });
+                        }
+                    });
+                }
+            });
+        }
 }

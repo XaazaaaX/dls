@@ -64,7 +64,7 @@ export interface Member {
 })
 export class MemberService {
 
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: HttpService) { }
 
     /**
      * Holt alle Mitglieder inkl. Gruppenzuordnung und Kategorien
@@ -98,5 +98,13 @@ export class MemberService {
         const formData: FormData = new FormData();
         formData.append('file', file);
         return this.httpService.postMultipart<Member>("member/upload", formData);
+    }
+
+    /**
+   * Löscht ein Mitglied anhand seiner ID
+   * @param memberId ID der Mitglied
+   */
+    deleteMember(memberId?: number): Observable<any> {
+        return this.httpService.delete<any>("member/" + memberId);
     }
 }

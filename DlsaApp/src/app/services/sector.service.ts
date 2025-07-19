@@ -33,7 +33,7 @@ export interface Sector {
 })
 export class SectorService {
 
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   /**
    * Holt alle Sektoren inkl. Gruppen vom Backend
@@ -57,5 +57,13 @@ export class SectorService {
    */
   updateSector(sector: SectorDto, id: number): Observable<Sector> {
     return this.httpService.put<Sector>("sectors/" + id, sector);
+  }
+
+  /**
+   * Löscht einen Bereich anhand seiner ID
+   * @param sectorId ID der Bereich
+   */
+  deleteSector(sectorId?: number): Observable<any> {
+    return this.httpService.delete<any>("sector/" + sectorId);
   }
 }

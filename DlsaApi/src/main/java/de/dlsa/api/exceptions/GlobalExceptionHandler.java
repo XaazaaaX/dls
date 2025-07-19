@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof DataIntegrityViolationException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
-            errorDetail.setProperty("description", "Ein Eintrag mit diesem Identifizierungsmerkmal ist bereits vorhanden!");
+            errorDetail.setProperty("description", "Die Aktion konnte aufgrund eines Datenkonflikts nicht verarbeitet werden!");
             return errorDetail;
         }
 

@@ -63,7 +63,7 @@ public class MemberService {
      * @return Liste von {@link MemberResponse}
      */
     public List<MemberResponse> getMembers() {
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findByAikzTrue();
         return members.stream()
                 .sorted(Comparator.comparingLong(Member::getId).reversed())
                 .map(member -> modelMapper.map(member, MemberResponse.class))
@@ -278,5 +278,22 @@ public class MemberService {
 
         Member updatedMember = memberRepository.save(existing);
         return modelMapper.map(updatedMember, MemberResponse.class);
+    }
+
+
+    /**
+     * Löscht ein Mitglied anhand der übergebenen Id.
+     * Änderungen an bestimmten Feldern werden in der Änderungsverfolgung gespeichert.
+     *
+     * @param id     Die ID des zu löschenden Mitglieds
+     * @return None
+     */
+    public void deleteMember(long id) {
+        Member existing = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mitglied wurde nicht gefunden!"));
+
+        existing.setAikz(false);
+
+        memberRepository.save(existing);
     }
 }

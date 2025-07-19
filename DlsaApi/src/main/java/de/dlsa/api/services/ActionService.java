@@ -102,4 +102,14 @@ public class ActionService {
         return modelMapper.map(updatedAction, ActionResponse.class);
     }
 
+
+    /**
+     * Löscht eine bestehende Aktion anhand der ID.
+     *
+     * @param id     ID der zu aktualisierenden Aktion
+     */
+    public void deleteAction(long id) {
+        actionRepository.deleteById(id);
+    }
+
 }

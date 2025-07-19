@@ -232,4 +232,45 @@ export class ActionComponent implements OnInit {
             }
         }
     }
+
+    /**
+         * Öffnet eine Bestätigungsabfrage und löscht die Aktion bei Bestätigung.
+         */
+    deleteAction(action: Action) {
+        this.confirmationService.confirm({
+            message: `Soll die Aktion "${action.year} ${action.description}" wirklich gelöscht werden?`,
+            header: 'Bestätigen',
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                icon: 'pi pi-times',
+                label: 'Nein',
+                outlined: true
+            },
+            acceptButtonProps: {
+                icon: 'pi pi-check',
+                label: 'Ja'
+            },
+            accept: () => {
+                this.actionService.deleteAction(action.id).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Info',
+                            detail: 'Die Aktion wurde erfolgreich gelöscht!'
+                        });
+
+                        this.actions.set(this.actions().filter(u => u.id !== action.id));
+                        this.action = {};
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: err.error.title,
+                            detail: err.error.description
+                        });
+                    }
+                });
+            }
+        });
+    }
 }

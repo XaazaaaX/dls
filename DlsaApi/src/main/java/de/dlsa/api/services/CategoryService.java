@@ -3,8 +3,10 @@ package de.dlsa.api.services;
 import de.dlsa.api.dtos.CategoryDto;
 import de.dlsa.api.entities.Category;
 import de.dlsa.api.repositories.CategoryRepository;
+import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.responses.CategoryResponse;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,12 +24,14 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
 
     /**
      * Konstruktor mit benötigten Abhängigkeiten.
      */
-    public CategoryService(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public CategoryService(CategoryRepository categoryRepository, MemberRepository memberRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
+        this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -81,6 +85,7 @@ public class CategoryService {
      * @param id ID der zu löschenden Sparte
      */
     public void deleteCategory(long id) {
+
         categoryRepository.deleteById(id);
     }
 }

@@ -75,4 +75,19 @@ public class SectorController {
         SectorResponse updated = sectorService.updateSector(id, sector);
         return ResponseEntity.ok(updated);
     }
+
+    /**
+     * Endpunkt zum Löschen eines Benutzers
+     *
+     * Erlaubt für Rolle: Administrator, Benutzer
+     *
+     * @param id ID des zu löschenden Benutzers
+     * @return Leere Antwort mit Status 204 (No Content)
+     */
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
+    @DeleteMapping("/sector/{id}")
+    public ResponseEntity<Void> deleteSector(@PathVariable long id) {
+        sectorService.deleteSector(id);
+        return ResponseEntity.noContent().build();
+    }
 }

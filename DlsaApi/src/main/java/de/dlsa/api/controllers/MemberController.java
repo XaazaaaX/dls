@@ -92,4 +92,19 @@ public class MemberController {
         MemberResponse updated = memberService.updateMember(id, member);
         return ResponseEntity.ok(updated);
     }
+
+    /**
+     * Endpunkt zum Löschen eines Mitglieds
+     *
+     * Erlaubt für Rolle: Administrator, Benutzer
+     *
+     * @param id ID des zu löschenden Mitlieds
+     * @return Leere Antwort mit Status 204 (No Content)
+     */
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
+    @DeleteMapping("/member/{id}")
+    public ResponseEntity<Void> deleteMember(@PathVariable long id) {
+        memberService.deleteMember(id);
+        return ResponseEntity.noContent().build();
+    }
 }

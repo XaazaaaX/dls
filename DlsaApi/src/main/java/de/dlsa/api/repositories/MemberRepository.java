@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Repository zur Verwaltung von {@link Member}-Entitäten.
@@ -22,6 +23,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return Das gefundene {@link Member}-Objekt oder null
      */
     Member findByMemberId(String memberId);
+
+    /**
+     * Gibt alle Mitglieder zurück, bei denen das AIKZ-Flag (Arbeit in kürzester Zeit) aktiviert ist.
+     *
+     * @return Liste von Mitgliedern mit aktivem AIKZ-Status
+     */
+    List<Member> findByAikzTrue();
 
     /**
      * Zählt alle Mitglieder, bei denen das AIKZ-Flag gesetzt ist.

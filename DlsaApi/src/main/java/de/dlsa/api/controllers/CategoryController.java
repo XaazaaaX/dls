@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Verarbeitung von Anfragen zur Verwaltung und Anzeige von Kategorien
+ * Verarbeitung von Anfragen zur Verwaltung und Anzeige von Sparten
  *
  * @author Benito Ernst
  * @version 05/2025
@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     /**
-     * Endpunkt zur Abfrage aller vorhandenen Kategorien
+     * Endpunkt zur Abfrage aller vorhandenen Sparten
      *
      * Erlaubt für Rollen: Administrator, Benutzer, Gast
      *
@@ -44,7 +44,7 @@ public class CategoryController {
     }
 
     /**
-     * Endpunkt zum Erstellen einer neuen Kategorie
+     * Endpunkt zum Erstellen einer neuen Sparten
      *
      * Erlaubt für Rollen: Administrator, Benutzer
      *
@@ -59,7 +59,7 @@ public class CategoryController {
     }
 
     /**
-     * Endpunkt zum Aktualisieren einer bestehenden Kategorie
+     * Endpunkt zum Aktualisieren einer bestehenden Sparte
      *
      * Erlaubt für Rollen: Administrator, Benutzer
      *
@@ -72,5 +72,20 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable long id, @RequestBody CategoryDto category) {
         CategoryResponse updated = categoryService.updateCategory(id, category);
         return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Endpunkt zum Löschen einer Sparte
+     *
+     * Erlaubt für Rolle: Administrator, Benutzer
+     *
+     * @param id ID des zu löschenden Sparte
+     * @return Leere Antwort mit Status 204 (No Content)
+     */
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
+    @DeleteMapping("/category/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }

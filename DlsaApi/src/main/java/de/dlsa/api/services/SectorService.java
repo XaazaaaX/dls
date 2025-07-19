@@ -98,4 +98,13 @@ public class SectorService {
 
         return modelMapper.map(updatedSector, SectorResponse.class);
     }
+
+    /**
+     * Löscht eine bestehenden Bereich anhand der ID.
+     *
+     * @param id     ID des zu aktualisierenden Bereichs
+     */
+    public void deleteSector(long id) {
+        sectorRepository.deleteById(id);
+    }
 }

@@ -125,7 +125,7 @@ public class EvaluationService {
 
 
         // Calculate for active and aikz member
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findByAikzTrue();
         List<EvaluationResponse> results = calculateForMemberList(members, fromDate, toDate, settings, finalize);
 
 

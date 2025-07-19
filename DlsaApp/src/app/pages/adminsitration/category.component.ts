@@ -75,6 +75,7 @@ export class CategoryComponent {
 
     constructor(
         private messageService: MessageService,
+        private confirmationService: ConfirmationService,
         private categoryService: CategoryService
     ) { }
 
@@ -191,5 +192,46 @@ export class CategoryComponent {
                 }
             });
         }
+    }
+
+    /**
+    * Öffnet eine Bestätigungsabfrage und löscht die Sparte bei Bestätigung.
+    */
+    deleteCategory(category: Category) {
+        this.confirmationService.confirm({
+            message: `Soll die Sparte "${category.categoryName}" wirklich gelöscht werden?`,
+            header: 'Bestätigen',
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                icon: 'pi pi-times',
+                label: 'Nein',
+                outlined: true
+            },
+            acceptButtonProps: {
+                icon: 'pi pi-check',
+                label: 'Ja'
+            },
+            accept: () => {
+                this.categoryService.deleteCategory(category.id).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Info',
+                            detail: 'Die Sparte wurde erfolgreich gelöscht!'
+                        });
+
+                        this.categories.set(this.categories().filter(u => u.id !== category.id));
+                        this.category = {};
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: err.error.title,
+                            detail: err.error.description
+                        });
+                    }
+                });
+            }
+        });
     }
 }

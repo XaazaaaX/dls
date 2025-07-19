@@ -27,14 +27,14 @@ export class CategoryService {
   constructor(private httpService: HttpService) {}
 
   /**
-   * Ruft alle verfügbaren Kategorien vom Server ab
+   * Ruft alle verfügbaren Sparten vom Server ab
    */
   getAllCategories(): Observable<Category[]> {
     return this.httpService.get<Category[]>("categories");
   }
 
   /**
-   * Erstellt eine neue Kategorie
+   * Erstellt eine neue Sparte
    * @param category - Kategorieobjekt mit Name
    */
   createCategory(category: Category): Observable<Category> {
@@ -42,10 +42,18 @@ export class CategoryService {
   }
 
   /**
-   * Aktualisiert eine bestehende Kategorie
+   * Aktualisiert eine bestehende Sparte
    * @param category - Kategorieobjekt mit ID und neuem Namen
    */
   updateCategory(category: Category): Observable<Category> {
     return this.httpService.put<Category>("categories/" + category.id, category);
+  }
+
+  /**
+   * Löscht einen Bereich anhand seiner ID
+   * @param sectorId ID der Sparte
+   */
+  deleteCategory(sectorId?: number): Observable<any> {
+    return this.httpService.delete<any>("category/" + sectorId);
   }
 }

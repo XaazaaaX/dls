@@ -80,6 +80,7 @@ export class GroupComponent {
 
     constructor(
         private messageService: MessageService,
+        private confirmationService: ConfirmationService,
         private groupService: GroupService
     ) { }
 

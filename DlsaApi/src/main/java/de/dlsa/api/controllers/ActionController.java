@@ -73,4 +73,19 @@ public class ActionController {
         ActionResponse updated = actionService.updateAction(id, action);
         return ResponseEntity.ok(updated);
     }
+
+    /**
+     * Endpunkt zum Löschen eines Benutzers
+     *
+     * Erlaubt für Rolle: Administrator, Benutzer
+     *
+     * @param id ID des zu löschenden Benutzers
+     * @return Leere Antwort mit Status 204 (No Content)
+     */
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
+    @DeleteMapping("/action/{id}")
+    public ResponseEntity<Void> deleteAction(@PathVariable long id) {
+        actionService.deleteAction(id);
+        return ResponseEntity.noContent().build();
+    }
 }
