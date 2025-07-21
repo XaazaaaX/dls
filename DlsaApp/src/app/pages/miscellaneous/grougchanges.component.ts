@@ -76,7 +76,7 @@ export class GroupChangesComponent {
   constructor(
     private messageService: MessageService,
     private hsitorieService: HistorieService // ⚠️ Tippfehler: sollte wahrscheinlich „historieService“ heißen
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Beim Laden: Daten abrufen
@@ -87,8 +87,26 @@ export class GroupChangesComponent {
   loadGroupChanges() {
     this.hsitorieService.getAllGroupChanges().subscribe({
       next: (data) => {
-        console.log(data);
-        this.groupChanges.set(data); // Signal aktualisieren
+        const formattedData = data.map((change: any) => {
+          const date = new Date(change.refDate);
+          
+          const formattedDate = date.toLocaleDateString('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+          const formattedTime = date.toLocaleTimeString('de-DE', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+
+          return {
+            ...change,
+            refDateFormatted: `${formattedDate} ${formattedTime}`,
+          };
+        });
+        this.groupChanges.set(formattedData);
       },
       error: (err) => {
         // Fehlerausgabe mit PrimeNG-Toast

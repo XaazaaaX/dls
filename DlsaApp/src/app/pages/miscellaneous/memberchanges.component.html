@@ -1,6 +1,6 @@
 <div class="card">
     <p-table #dt [value]="memberChanges()" [rows]="10" [paginator]="true" stripedRows
-        [globalFilterFields]="['memberName', 'column', 'refDate', 'timestamp']" [rowHover]="true" dataKey="id"
+        [globalFilterFields]="['memberName', 'column', 'timestampFormatted', 'refDateFormatted']" [rowHover]="true" dataKey="id"
         currentPageReportTemplate="{first} bis {last} von {totalRecords} Änderungen" [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10, 20, 30]">
 

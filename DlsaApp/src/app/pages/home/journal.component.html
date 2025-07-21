@@ -1,5 +1,5 @@
 <div class="card">
-    <p-table #dt [value]="bookings()" [rows]="10" [paginator]="true" [globalFilterFields]="['memberId']"
+    <p-table #dt [value]="bookings()" [rows]="10" [paginator]="true" [globalFilterFields]="['doneDateFormatted', 'member.memberId', 'countDls']"
         [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Buchungen"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
@@ -27,9 +27,9 @@
                     <p-sortIcon field="doneDate" />
                 </th>
 
-                <th pSortableColumn="member.id">
+                <th pSortableColumn="member.memberId">
                     Mitgliedsnummer
-                    <p-sortIcon field="member.id" />
+                    <p-sortIcon field="member.memberId" />
                 </th>
 
                 <th pSortableColumn="countDls">

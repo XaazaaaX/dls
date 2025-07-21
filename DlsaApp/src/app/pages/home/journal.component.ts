@@ -126,8 +126,17 @@ export class JournalComponent {
     loadBookings() {
         this.bookingService.getAllBookings().subscribe({
             next: (data) => {
-                this.bookings.set(data);
-                console.log(data);
+                // Datum direkt formatiert hinzufügen
+                const formattedData = data.map((booking: any) => ({
+                    ...booking,
+                    doneDateFormatted: new Date(booking.doneDate).toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    })
+                }));
+
+                this.bookings.set(formattedData);
             },
             error: (err) => {
                 const detail = err.error?.description || "Es gab einen Fehler bei der API-Anfrage.";

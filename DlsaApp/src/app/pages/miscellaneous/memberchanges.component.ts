@@ -94,8 +94,31 @@ export class MemberChangesComponent {
   loadMemberChanges() {
     this.hsitorieService.getAllMemberChanges().subscribe({
       next: (data) => {
-        console.log(data); // Debug-Ausgabe (kann später entfernt werden)
-        this.memberChanges.set(data);
+        const formattedData = data.map((change: any) => {
+          const date = new Date(change.timestamp);
+          
+          const formattedDate = date.toLocaleDateString('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+          const formattedTime = date.toLocaleTimeString('de-DE', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+
+          return {
+            ...change,
+            timestampFormatted: `${formattedDate} ${formattedTime}`,
+            refDateFormatted: new Date(change.refDate).toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    })
+          };
+        });
+        this.memberChanges.set(formattedData);
       },
       error: (err) => {
         // Fehlerbehandlung mit PrimeNG-Toast

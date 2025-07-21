@@ -153,7 +153,17 @@ export class MemberComponent {
      */
     loadMembers() {
         this.memberService.getAllMembers().subscribe({
-            next: (data) => this.members.set(data),
+            next: (data) => {
+                const formattedData = data.map((member: any) => ({
+                    ...member,
+                    entryDateFormatted: new Date(member.entryDate).toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    })
+                }));
+                this.members.set(formattedData);
+            },
             error: (err) => {
                 this.messageService.add({
                     severity: 'warn',

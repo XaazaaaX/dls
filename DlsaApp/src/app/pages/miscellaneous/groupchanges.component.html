@@ -1,5 +1,5 @@
 <div class="card">
-    <p-table #dt [value]="groupChanges()" [rows]="10" [paginator]="true" [globalFilterFields]="['groupName', 'refDate']"
+    <p-table #dt [value]="groupChanges()" [rows]="10" [paginator]="true" [globalFilterFields]="['groupName', 'refDateFormatted']"
         [rowHover]="true" dataKey="id" currentPageReportTemplate="{first} bis {last} von {totalRecords} Änderungen"
         [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 20, 30]">
 
