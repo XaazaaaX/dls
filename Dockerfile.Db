@@ -1,14 +1,1 @@
 FROM postgres:15
-COPY data /var/lib/postgresql/data
-RUN mkdir -p /var/lib/postgresql/data/pg_commit_ts
-RUN mkdir -p /var/lib/postgresql/data/pg_dynshmem
-RUN mkdir -p /var/lib/postgresql/data/pg_dynshmem
-RUN mkdir -p /var/lib/postgresql/data/pg_logical/mappings
-RUN mkdir -p /var/lib/postgresql/data/pg_logical/snapshots
-RUN mkdir -p /var/lib/postgresql/data/pg_notify
-RUN mkdir -p /var/lib/postgresql/data/pg_replslot
-RUN mkdir -p /var/lib/postgresql/data/pg_serial
-RUN mkdir -p /var/lib/postgresql/data/pg_snapshots
-RUN mkdir -p /var/lib/postgresql/data/pg_stat_tmp
-RUN mkdir -p /var/lib/postgresql/data/pg_tblspc
-RUN mkdir -p /var/lib/postgresql/data/pg_twophase
