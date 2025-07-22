@@ -1,7 +1,9 @@
 package de.dlsa.api.controllers;
 
+import de.dlsa.api.dtos.SettingsDto;
 import de.dlsa.api.entities.Settings;
 import de.dlsa.api.services.SettingsService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +57,7 @@ public class SettingsController {
      */
     @PreAuthorize("hasAuthority('Administrator')")
     @PutMapping("/{id}")
-    public ResponseEntity<Settings> updateUser(@PathVariable long id, @RequestBody Settings settings) {
+    public ResponseEntity<Settings> updateSettings(@PathVariable long id, @Valid @RequestBody SettingsDto settings) {
         Settings updated = settingsService.updateSettings(id, settings);
         return ResponseEntity.ok(updated);
     }

@@ -1,5 +1,6 @@
 package de.dlsa.api.services;
 
+import de.dlsa.api.dtos.SettingsDto;
 import de.dlsa.api.entities.Settings;
 import de.dlsa.api.repositories.SettingsRepository;
 import org.modelmapper.ModelMapper;
@@ -47,13 +48,13 @@ public class SettingsService {
      * @return Das aktualisierte {@link Settings}-Objekt
      * @throws RuntimeException Wenn keine Einstellung mit der übergebenen ID gefunden wurde
      */
-    public Settings updateSettings(long id, Settings settings) {
+    public Settings updateSettings(long id, SettingsDto settings) {
 
-        Settings existing = settingsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Einstellung wurde nicht gefunden!"));
+        Settings existing = settingsRepository.findById(id).orElseThrow(() -> new RuntimeException("Einstellung wurde nicht gefunden!"));
 
         // Alle Felder werden auf Grundlage der neuen Einstellungen überschrieben
         existing = modelMapper.map(settings, Settings.class);
+        existing.setId(id);
 
         return settingsRepository.save(existing);
     }

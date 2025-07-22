@@ -11,7 +11,7 @@
  */
 
 import { Component, signal, ViewChild } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, SortEvent } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -384,4 +384,56 @@ export class MemberComponent {
                 }
             });
         }
+
+customSort(event: SortEvent) {
+  if (!event.data || !event.field || typeof event.order !== 'number') {
+    return; // Keine gültige Sortierung möglich
+  }
+
+  const field = event.field;
+  const order = event.order;
+
+  event.data.sort((a, b) => {
+    const value1 = a[field];
+    const value2 = b[field];
+
+    // Spezialfall: Alphanumerische Mitgliedsnummern
+    if (field === 'memberId') {
+      return order * this.naturalCompare(value1, value2);
+    }
+
+    // Standardvergleich für alle anderen Felder
+    if (value1 == null && value2 != null) return -1;
+    if (value1 != null && value2 == null) return 1;
+    if (value1 == null && value2 == null) return 0;
+    return order * value1.toString().localeCompare(value2.toString());
+  });
+}
+
+naturalCompare(a: string = '', b: string = ''): number {
+  const regex = /(\d+)|(\D+)/g;
+
+  const aParts: string[] = a.match(regex) ?? [];
+  const bParts: string[] = b.match(regex) ?? [];
+
+  const len = Math.min(aParts.length, bParts.length);
+
+  for (let i = 0; i < len; i++) {
+    const aPart = aParts[i];
+    const bPart = bParts[i];
+
+    const aNum = parseInt(aPart, 10);
+    const bNum = parseInt(bPart, 10);
+
+    const bothNumbers = !isNaN(aNum) && !isNaN(bNum);
+
+    if (bothNumbers) {
+      if (aNum !== bNum) return aNum - bNum;
+    } else {
+      if (aPart !== bPart) return aPart.localeCompare(bPart);
+    }
+  }
+
+  return aParts.length - bParts.length;
+}
 }

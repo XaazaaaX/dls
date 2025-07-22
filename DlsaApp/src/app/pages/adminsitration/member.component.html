@@ -1,5 +1,6 @@
 <div class="card">
-    <p-table #dt [value]="members()" [rows]="10" [paginator]="true"
+    <p-table #dt [value]="members()"  [customSort]="true"
+  (sortFunction)="customSort($event)" [rows]="10" [paginator]="true"
         [globalFilterFields]="['memberId', 'surname', 'forename', 'entryDateFormatted']" [rowHover]="true" dataKey="id"
         currentPageReportTemplate="{first} bis {last} von {totalRecords} Mitglieder" [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10, 20, 30]">
