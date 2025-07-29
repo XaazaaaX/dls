@@ -20,6 +20,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ import { AuthService } from './auth.service';
 export class HttpService {
 
   // Basis-URL der REST-API
-  private apiUrl = 'http://127.0.0.1:5005';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
