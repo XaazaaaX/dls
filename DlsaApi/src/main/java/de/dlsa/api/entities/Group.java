@@ -32,7 +32,7 @@ public class Group extends BaseEntity {
      * 1:1-Verknüpfung zur zugehörigen {@link BasicGroup}.
      * Diese enthält ggf. weiterführende Metadaten zur Gruppe.
      */
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "basicgroup_id")
     private BasicGroup basicGroup;
 

@@ -1,10 +1,10 @@
 /**
- * SectorService – Verwaltung von Sektoren (z. B. organisatorische Einheiten)
+ * SectorService – Verwaltung von Bereichen (z. B. organisatorische Einheiten)
  *
  * Funktionen:
- * - Abruf aller Sektoren
- * - Erstellung und Aktualisierung von Sektoren
- * - Verknüpfung von Gruppen mit Sektoren über IDs
+ * - Abruf aller Bereichen
+ * - Erstellung und Aktualisierung von Bereichen
+ * - Verknüpfung von Gruppen mit Bereichen über IDs
  *
  * Autor: Benito Ernst
  * Datum: 05/2025
@@ -17,7 +17,7 @@ import { HttpService } from './http.service';
 
 // Datenmodell für Eingaben (DTO)
 export interface SectorDto {
-  sectorname?: string;     // Bezeichnung des Sektors
+  sectorname?: string;     // Bezeichnung des Bereichs
   groupIds?: number[];     // Zugehörige Gruppen (IDs)
 }
 
@@ -36,24 +36,24 @@ export class SectorService {
   constructor(private httpService: HttpService) { }
 
   /**
-   * Holt alle Sektoren inkl. Gruppen vom Backend
+   * Holt alle Bereichen inkl. Gruppen vom Backend
    */
   getAllSectors(): Observable<Sector[]> {
     return this.httpService.get<Sector[]>("sectors");
   }
 
   /**
-   * Erstellt einen neuen Sektor mit Gruppenreferenzen
-   * @param sector - Eingabeobjekt mit Sektorname und zugeordneten Gruppen-IDs
+   * Erstellt einen neuen Bereichs mit Gruppenreferenzen
+   * @param sector - Eingabeobjekt mit Bereichname und zugeordneten Gruppen-IDs
    */
   createSectors(sector: SectorDto): Observable<Sector> {
     return this.httpService.post<Sector>("sector", sector);
   }
 
   /**
-   * Aktualisiert einen vorhandenen Sektor
-   * @param sector - Neue Sektordaten
-   * @param id - ID des zu aktualisierenden Sektors
+   * Aktualisiert einen vorhandenen Bereich
+   * @param sector - Neue Bereichdaten
+   * @param id - ID des zu aktualisierenden Bereichs
    */
   updateSector(sector: SectorDto, id: number): Observable<Sector> {
     return this.httpService.put<Sector>("sectors/" + id, sector);

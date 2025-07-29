@@ -4,9 +4,11 @@ import de.dlsa.api.dtos.GroupDto;
 import de.dlsa.api.entities.BasicGroup;
 import de.dlsa.api.entities.Group;
 import de.dlsa.api.entities.GroupChanges;
+import de.dlsa.api.entities.MemberChanges;
 import de.dlsa.api.repositories.BasicGroupRepository;
 import de.dlsa.api.repositories.GroupChangesRepository;
 import de.dlsa.api.repositories.GroupRepository;
+import de.dlsa.api.repositories.MemberChangesRepository;
 import de.dlsa.api.responses.GroupResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final BasicGroupRepository basicGroupRepository;
     private final GroupChangesRepository groupChangesRepository;
+    private final MemberChangesRepository memberChangesRepository;
     private final ModelMapper modelMapper;
 
     /**
@@ -45,10 +48,12 @@ public class GroupService {
             GroupRepository groupRepository,
             BasicGroupRepository basicGroupRepository,
             GroupChangesRepository groupChangesRepository,
+            MemberChangesRepository memberChangesRepository,
             ModelMapper modelMapper) {
         this.groupRepository = groupRepository;
         this.basicGroupRepository = basicGroupRepository;
         this.groupChangesRepository = groupChangesRepository;
+        this.memberChangesRepository = memberChangesRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -118,5 +123,32 @@ public class GroupService {
 
         Group updatedGroup = groupRepository.save(existing);
         return modelMapper.map(updatedGroup, GroupResponse.class);
+    }
+
+    /**
+     * Endpunkt zum Löschen einer Gruppe
+     *
+     * Erlaubt für Rolle: Administrator, Benutzer
+     *
+     * @param id ID des zu löschenden Gruppe
+     * @return Leere Antwort mit Status 204 (No Content)
+     */
+    public void deleteGroup(long id) {
+
+        List<GroupChanges> changes = groupChangesRepository.findAllByGroupId(id);
+
+        if (changes != null){
+            groupChangesRepository.deleteAll(changes);
+        }
+
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        // Trenne die Beziehung, um Orphan Removal auszulösen
+        if (group.getBasicGroup() != null) {
+            group.setBasicGroup(null);  // Dadurch wird BasicGroup gelöscht
+        }
+
+        groupRepository.delete(group);
     }
 }

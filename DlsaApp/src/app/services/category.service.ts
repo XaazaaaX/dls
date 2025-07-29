@@ -50,7 +50,7 @@ export class CategoryService {
   }
 
   /**
-   * Löscht einen Bereich anhand seiner ID
+   * Löscht einen Sparte anhand seiner ID
    * @param sectorId ID der Sparte
    */
   deleteCategory(sectorId?: number): Observable<any> {

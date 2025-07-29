@@ -49,4 +49,12 @@ export class GroupService {
   updateGroup(group: Group): Observable<Group> {
     return this.httpService.put<Group>("groups/" + group.id, group);
   }
+
+  /**
+   * Löscht einen Gruppe anhand seiner ID
+   * @param groupId ID der Gruppe
+   */
+  deleteGroup(groupId?: number): Observable<any> {
+    return this.httpService.delete<any>("groups/" + groupId);
+  }
 }

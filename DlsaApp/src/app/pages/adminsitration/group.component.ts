@@ -200,4 +200,45 @@ export class GroupComponent {
             });
         }
     }
+
+    /**
+        * Öffnet eine Bestätigungsabfrage und löscht die Gruppe bei Bestätigung.
+        */
+    deleteGroup(group: Group) {
+        this.confirmationService.confirm({
+            message: `Soll die Gruppe "${group.groupName}" wirklich gelöscht werden? HINWEIS: Nur löschen, wenn die Gruppe keinem Mitglied zugewiesen ist oder war!`,
+            header: 'Bestätigen',
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                icon: 'pi pi-times',
+                label: 'Nein',
+                outlined: true
+            },
+            acceptButtonProps: {
+                icon: 'pi pi-check',
+                label: 'Ja'
+            },
+            accept: () => {
+                this.groupService.deleteGroup(group.id).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Info',
+                            detail: 'Die Gruppe wurde erfolgreich gelöscht!'
+                        });
+
+                        this.groups.set(this.groups().filter(u => u.id !== group.id));
+                        this.group = {};
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: err.error.title,
+                            detail: err.error.description
+                        });
+                    }
+                });
+            }
+        });
+    }
 }

@@ -75,4 +75,19 @@ public class GroupController {
         GroupResponse updated = groupService.updateGroup(id, group);
         return ResponseEntity.ok(updated);
     }
+
+    /**
+     * Endpunkt zum Löschen einer Gruppe
+     *
+     * Erlaubt für Rolle: Administrator, Benutzer
+     *
+     * @param id ID des zu löschenden Gruppe
+     * @return Leere Antwort mit Status 204 (No Content)
+     */
+    @PreAuthorize("hasAnyAuthority('Administrator', 'Benutzer')")
+    @DeleteMapping("/groups/{id}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable long id) {
+        groupService.deleteGroup(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -29,4 +29,6 @@ public interface GroupChangesRepository extends JpaRepository<GroupChanges, Long
             @Param("id") long groupId,
             @Param("targetDate") LocalDateTime targetDate
     );
+
+    List<GroupChanges> findAllByGroupId(long id);
 }
