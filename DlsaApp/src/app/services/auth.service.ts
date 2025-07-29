@@ -17,6 +17,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 // Anmeldedaten (Login-Formular)
 interface LoginRequest {
@@ -34,7 +35,7 @@ interface LoginResponse {
 })
 export class AuthService {
 
-  private authUrl = 'http://localhost:5005/auth/login'; // API-Login-Endpunkt
+  private authUrl = environment.apiUrl + '/auth/login'; // API-Login-Endpunkt
   private tokenKey = 'authToken';                        // Key für LocalStorage
 
   constructor(private http: HttpClient, private router: Router) {}
