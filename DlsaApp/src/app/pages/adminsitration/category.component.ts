@@ -179,7 +179,8 @@ export class CategoryComponent {
                         detail: "Die Sparte wurde erfolgreich angelegt!"
                     });
 
-                    this.categories.set([data, ...this.categories()]);
+                    //this.categories.set([data, ...this.categories()]);
+                    this.loadCategories();
                     this.categoryDialog = false;
                     this.category = {};
                 },

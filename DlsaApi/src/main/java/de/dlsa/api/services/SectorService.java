@@ -2,10 +2,12 @@ package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.SectorDto;
 import de.dlsa.api.entities.Group;
+import de.dlsa.api.entities.Member;
 import de.dlsa.api.entities.Sector;
 import de.dlsa.api.repositories.GroupRepository;
 import de.dlsa.api.repositories.SectorRepository;
 import de.dlsa.api.responses.SectorResponse;
+import de.dlsa.api.shared.AlphanumComparator;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +51,7 @@ public class SectorService {
     public List<SectorResponse> getSectors() {
         List<Sector> sectors = sectorRepository.findAll();
         return sectors.stream()
-                .sorted(Comparator.comparingLong(Sector::getId).reversed())
+                .sorted(Comparator.comparing(Sector::getSectorname, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(sector -> modelMapper.map(sector, SectorResponse.class))
                 .collect(Collectors.toList());
     }

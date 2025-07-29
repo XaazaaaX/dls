@@ -5,6 +5,7 @@ import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.ActionRepository;
 import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.responses.ActionResponse;
+import de.dlsa.api.shared.AlphanumComparator;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,7 @@ public class ActionService {
      */
     public List<ActionResponse> getActions() {
         return actionRepository.findAll().stream()
-                .sorted(Comparator.comparingLong(Action::getId).reversed())
+                .sorted(Comparator.comparing(Action::getDescription, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(action -> modelMapper.map(action, ActionResponse.class))
                 .collect(Collectors.toList());
     }

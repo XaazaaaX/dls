@@ -2,9 +2,11 @@ package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.CategoryDto;
 import de.dlsa.api.entities.Category;
+import de.dlsa.api.entities.Group;
 import de.dlsa.api.repositories.CategoryRepository;
 import de.dlsa.api.repositories.MemberRepository;
 import de.dlsa.api.responses.CategoryResponse;
+import de.dlsa.api.shared.AlphanumComparator;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,7 @@ public class CategoryService {
      */
     public List<CategoryResponse> getCategories() {
         return categoryRepository.findAll().stream()
-                .sorted(Comparator.comparingLong(Category::getId).reversed())
+                .sorted(Comparator.comparing(Category::getCategoryName, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(category -> modelMapper.map(category, CategoryResponse.class))
                 .collect(Collectors.toList());
     }

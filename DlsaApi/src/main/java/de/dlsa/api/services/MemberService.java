@@ -4,6 +4,7 @@ import de.dlsa.api.dtos.*;
 import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.*;
 import de.dlsa.api.responses.*;
+import de.dlsa.api.shared.AlphanumComparator;
 import de.dlsa.api.shared.MemberColumn;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class MemberService {
     public List<MemberResponse> getMembers() {
         List<Member> members = memberRepository.findByAikzTrue();
         return members.stream()
-                .sorted(Comparator.comparingLong(Member::getId).reversed())
+                .sorted(Comparator.comparing(Member::getMemberId, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(member -> modelMapper.map(member, MemberResponse.class))
                 .collect(Collectors.toList());
     }

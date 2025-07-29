@@ -1,15 +1,13 @@
 package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.GroupDto;
-import de.dlsa.api.entities.BasicGroup;
-import de.dlsa.api.entities.Group;
-import de.dlsa.api.entities.GroupChanges;
-import de.dlsa.api.entities.MemberChanges;
+import de.dlsa.api.entities.*;
 import de.dlsa.api.repositories.BasicGroupRepository;
 import de.dlsa.api.repositories.GroupChangesRepository;
 import de.dlsa.api.repositories.GroupRepository;
 import de.dlsa.api.repositories.MemberChangesRepository;
 import de.dlsa.api.responses.GroupResponse;
+import de.dlsa.api.shared.AlphanumComparator;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +63,7 @@ public class GroupService {
     public List<GroupResponse> getGroups() {
         List<Group> groups = groupRepository.findAll();
         return groups.stream()
-                .sorted(Comparator.comparingLong(Group::getId).reversed())
+                .sorted(Comparator.comparing(Group::getGroupName, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(group -> modelMapper.map(group, GroupResponse.class))
                 .collect(Collectors.toList());
     }

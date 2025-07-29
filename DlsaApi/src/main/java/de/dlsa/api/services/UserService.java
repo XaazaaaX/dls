@@ -1,11 +1,13 @@
 package de.dlsa.api.services;
 
 import de.dlsa.api.dtos.UserDto;
+import de.dlsa.api.entities.Action;
 import de.dlsa.api.entities.Role;
 import de.dlsa.api.repositories.RoleRepository;
 import de.dlsa.api.repositories.UserRepository;
 import de.dlsa.api.entities.User;
 import de.dlsa.api.responses.UserResponse;
+import de.dlsa.api.shared.AlphanumComparator;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,7 +55,7 @@ public class UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .sorted(Comparator.comparingLong(User::getId).reversed())
+                .sorted(Comparator.comparing(User::getUsername, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(user -> modelMapper.map(user, UserResponse.class))
                 .collect(Collectors.toList());
     }
