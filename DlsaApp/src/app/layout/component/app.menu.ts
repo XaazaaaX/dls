@@ -34,9 +34,9 @@ export class AppMenu {
         this.model = [
             {
                 label: 'Home',
-                visible: this.isUser,
+                visible: this.isGuest,
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'], visible: this.isUser },
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'], visible: this.isGuest },
                     { label: 'Jahresläufe', icon: 'pi pi-fw pi-calendar', routerLink: ['/dashboard/evaluation'], visible: this.isUser },
                     { label: 'Journal', icon: 'pi pi-fw pi-pencil', routerLink: ['/dashboard/journal'], visible: this.isUser }
                 ]
@@ -54,7 +54,7 @@ export class AppMenu {
             },
             {
                 label: 'Sonstiges',
-                visible: this.isGuest,
+                visible: this.isUser,
                 items: [
                     { label: 'Benutzer', icon: 'pi pi-fw pi-shield', routerLink: ['/dashboard/user'], visible: this.isAdmin },
                     { label: 'Einstellungen', icon: 'pi pi-fw pi-cog', routerLink: ['/dashboard/settings'], visible: this.isAdmin},
@@ -71,9 +71,8 @@ export class AppMenu {
                             routerLink: ['/dashboard/groupchanges'],
                             visible: this.isUser
                         }
-                    ]}
-                    //]},
-                    //{ label: 'Dokumentation', icon: 'pi pi-fw pi-book', routerLink: ['/dashboard/documentation'], visible: this.isGuest },
+                    ]},
+                    { label: 'Dokumentation', icon: 'pi pi-fw pi-book', routerLink: ['/dashboard/documentation'], visible: this.isUser },
                 ]
             },
         ];

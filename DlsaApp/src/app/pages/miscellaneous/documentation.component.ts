@@ -5,11 +5,7 @@ import { Component } from '@angular/core';
     selector: 'app-documentation',
     standalone: true,
     imports: [CommonModule],
-    template: `
-        <div class="card">
-            
-        </div>
-    `,
+    templateUrl: `./documentation.component.html`,
     styles: `
         @media screen and (max-width: 991px) {
             .video-container {
@@ -29,4 +25,4 @@ import { Component } from '@angular/core';
         }
     `
 })
-export class DocumentationComponent {}
+export class DocumentationComponent { }

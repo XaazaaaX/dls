@@ -38,6 +38,7 @@ import { Group, GroupService } from '../../services/group.service';
 import { Member, MemberDto, MemberEditDto, MemberService } from '../../services/member.service';
 import { Category, CategoryService } from '../../services/category.service';
 import { FileUploadModule } from 'primeng/fileupload';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -75,6 +76,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 })
 export class MemberComponent {
 
+    isUser: boolean = false;
     isEdit: boolean = false;                   // Bearbeitungsmodus
     memberDialog: boolean = false;            // Sichtbarkeit des Mitglieder-Dialogs
     memberUploadDialog: boolean = false;      // Sichtbarkeit des Upload-Dialogs
@@ -99,6 +101,7 @@ export class MemberComponent {
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         private memberService: MemberService,
+        private authService: AuthService,
         private categoryService: CategoryService,
         private groupService: GroupService
     ) { }
@@ -107,6 +110,7 @@ export class MemberComponent {
         this.loadMembers();
         this.loadGroups();
         this.loadCategories();
+        this.isUser = this.authService.isUser();
     }
 
     /**

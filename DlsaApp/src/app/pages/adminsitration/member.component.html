@@ -9,10 +9,12 @@
             <div class="flex flex-wrap items-center justify-between">
                 <h4 class="m-0">Mitgliederverwaltung</h4>
                 <div class="flex flex-wrap items-center justify-between">
+                    @if(isUser) {
                     <p-button label="Hinzufügen" icon="pi pi-plus" severity="primary" class="mr-2"
                         (onClick)="openNew()" />
                     <p-button label="Import" icon="pi pi-upload" severity="secondary" class="mr-2"
                         (onClick)="openNewUpload()" />
+                    }
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
                         <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Suche..." />
@@ -65,8 +67,10 @@
                 <td style="width: 10%; min-width: 8rem;">
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                         (click)="editMember(member)" />
+                    @if(isUser) {
                     <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
                         (click)="deleteMember(member)" />
+                    }
                 </td>
             </tr>
         </ng-template>
@@ -164,7 +168,9 @@
 
     <ng-template #footer>
         <p-button label="Abbrechen" icon="pi pi-times" text (click)="hideDialog()" />
+        @if(isUser) {
         <p-button label="Speichern" icon="pi pi-check" (click)="saveMember()" />
+        }
     </ng-template>
 </p-dialog>
 

@@ -39,7 +39,6 @@ import { MemberChangesComponent } from './pages/miscellaneous/memberchanges.comp
 export const routes: Routes = [
   // Login nur für nicht authentifizierte Nutzer
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
-
   {
     path: 'dashboard',
     component: AppLayout, // Layout mit Menü, Header etc.
@@ -113,6 +112,12 @@ export const routes: Routes = [
       {
         path: 'memberchanges',
         component: MemberChangesComponent,
+        canActivate: [RoleGuard],
+        data: { roles: ['Administrator', 'Benutzer'] }
+      },
+      {
+        path: 'documentation',
+        component: DocumentationComponent,
         canActivate: [RoleGuard],
         data: { roles: ['Administrator', 'Benutzer'] }
       }

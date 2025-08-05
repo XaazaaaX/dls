@@ -1,0 +1,70 @@
+<div class="card">
+    <div class="font-semibold text-2xl mb-4">Dokumentation</div>
+    <p class="text-lg mb-4">
+        Die Anwendung dient der Erfassung und Abrechnung von Dienstleistungsstunden in Vereinen.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Dashboard</div>
+    <p class="text-lg mb-4">
+        Das Dashboard ist der zentrale Einstiegspunkt der Anwendung und bietet statistische Auswertungen zu Mitgliederzahlen sowie zu geleisteten Dienstleistungsstunden.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Jahresläufe</div>
+    <p class="text-lg mb-4">
+        Über die Jahresläufe werden die Ist- und Soll-Dienstleistungsstunden jedes Mitglieds für einen bestimmten Zeitraum berechnet. In den Einstellungen können Parameter für die Berechnung individuell angepasst werden. Jahresläufe können vorläufig ausgeführt werden – in diesem Fall wird das Ergebnis nicht gespeichert und erscheint nicht in der Übersichtstabelle. Erst nach Deaktivierung des „Vorläufig“-Toggles wird das Ergebnis gespeichert. Für diesen Zeitraum ist dann keine erneute Berechnung mehr möglich.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Journal</div>
+    <p class="text-lg mb-4">
+        Im Journal werden die Dienstleistungsstunden der Mitglieder im Zusammenhang mit bestimmten Aktionen gebucht. Buchungen können storniert werden – dabei wird eine gegenläufige Buchung erstellt, die die ursprüngliche Buchung neutralisiert. Auch diese kann bei Bedarf storniert werden.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Funktionsgruppen</div>
+    <p class="text-lg mb-4">
+        Funktionsgruppen können bestimmte Rollen wie z. B. „Trainer“ oder „Vorstand“ oder Sportarten abbilden. Mitglieder solcher Gruppen können von der Dienstleistungsstundenpflicht befreit werden.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Bereiche</div>
+    <p class="text-lg mb-4">
+        Bereiche dienen der organisatorischen Gliederung, etwa zur Unterscheidung zwischen Leistungs- und Breitensport. Sie können zusätzlich mit Funktionsgruppen verknüpft werden.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Sparten</div>
+    <p class="text-lg mb-4">
+        Sparten können bestimmte Sportgruppen repräsentieren, z. B. „Turnen ab 60 Jahren“.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Mitglieder</div>
+    <p class="text-lg mb-4">
+        In der Mitgliederverwaltung können Vereinsmitglieder angelegt und bearbeitet werden. Pflichtfelder bei der Neuanlage sind: Vorname, Nachname, Geburtsdatum, Mitgliedsnummer und Eintrittsdatum. Optional können Sparten und Funktionsgruppen zugewiesen werden. Mitglieder lassen sich als aktiv oder passiv kennzeichnen, ein Austrittsdatum kann gesetzt werden. Änderungen können mit einem Bezugsdatum versehen werden, sodass sie bei der Jahreslaufberechnung berücksichtigt werden.
+    </p>
+    <p class="text-lg mb-4">
+        Der Mitgliederimport ermöglicht das Einlesen mehrerer Mitglieder per CSV-Datei (Feldtrennung mit Semikolon). Pflichtfelder: Vorname, Nachname, Geburtsdatum, Mitgliedsnummer, Eintritt. Optional: Sparten, Gruppen (mehrere Werte können durch Kommas getrennt angegeben werden). Nicht vorhandene Gruppen und Sparten werden automatisch angelegt. Bereits vorhandene Mitglieder werden nicht erneut hinzugefügt oder aktualisiert. Die Groß- und Kleinschrebung ist nicht zu beachten.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Aktionen</div>
+    <p class="text-lg mb-4">
+        Aktionen definieren, für welche Tätigkeit ein Mitglied Dienstleistungsstunden erbracht hat. Sie dienen als Grundlage für die Buchungen im Journal.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Benutzer</div>
+    <p class="text-lg mb-4">
+        Benutzer sind Personen mit Zugriff auf die Anwendung. Es gibt drei Rollen: Administrator, Bearbeiter und Gast. Administratoren haben uneingeschränkten Zugriff. Bearbeiter haben ebenfalls umfassende Rechte, jedoch keinen Zugang zur Benutzerverwaltung. Gäste können nur lesend auf das Dashboard und die Mitgliederverwaltung zugreifen.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Einstellungen</div>
+    <p class="text-lg mb-4">
+        Die Einstellungen gliedern sich in zwei Bereiche: Berechnungsgrundlagen für Jahresläufe und Buchungsverhalten.
+    </p>
+    <p class="text-lg mb-2">
+        <strong>Berechnungsgrundlagen:</strong> Der Stichtag bestimmt das Datum, zu dem der Zeitraum für die Abrechnung festgelegt wird. Die Anzahl der jährlichen Dienstleistungsstunden definiert die Verpflichtung eines Mitglieds. Der Betrag pro nicht geleisteter Stunde legt die finanzielle Kompensation fest. Mindest- und Höchstalter geben an, in welchem Alter Mitglieder zur Ableistung von Stunden verpflichtet sind.
+    </p>
+    <p class="text-lg mb-2">
+        <strong>Buchungsverhalten:</strong> Bei ganzjähriger Berechnung wird geprüft, ob das Mitglied am letzten Tag des Abrechnungszeitraums von der Pflicht befreit war. Bei anteiliger Berechnung erfolgt die Prüfung für jeden Monatsabschluss innerhalb des Zeitraums.
+    </p>
+
+    <div class="font-semibold text-xl mb-4">Historie</div>
+    <p class="text-lg mb-4">
+        In der Historie werden alle Änderungen an Mitgliedsdaten oder Funktionsgruppen dokumentiert. Diese Änderungen werden bei der Jahreslaufberechnung berücksichtigt.
+    </p>
+</div>
