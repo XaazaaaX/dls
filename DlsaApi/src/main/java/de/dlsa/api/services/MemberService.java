@@ -67,7 +67,7 @@ public class MemberService {
     public List<MemberResponse> getMembers() {
         List<Member> members = memberRepository.findByAikzTrue();
         return members.stream()
-                .sorted(Comparator.comparing(Member::getMemberId, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
+                .sorted(Comparator.comparing(Member::getSurname, AlphanumComparator.NATURAL_ORDER_CASE_INSENSITIVE))
                 .map(member -> modelMapper.map(member, MemberResponse.class))
                 .collect(Collectors.toList());
     }

@@ -59,7 +59,7 @@ public class HistorieService {
      */
     public List<GroupChangesResponse> getGroupChanges() {
         return groupChangesRepository.findAll().stream()
-                .sorted(Comparator.comparing(GroupChanges::getId).reversed())
+                .sorted(Comparator.comparing(GroupChanges::getRefDate).reversed())
                 .map(this::mapGroupChangesToResponse)
                 .collect(Collectors.toList());
     }
