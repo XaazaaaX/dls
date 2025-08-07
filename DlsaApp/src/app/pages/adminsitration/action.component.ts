@@ -196,7 +196,8 @@ export class ActionComponent implements OnInit {
                         const updatedActions = this.actions().map(action =>
                             action.id === data.id ? { ...action, ...data } : action
                         );
-                        this.actions.set(updatedActions);
+                        //this.actions.set(updatedActions);
+                        this.loadActions();
 
                         this.actionDialog = false;
                         this.action = {};

@@ -207,7 +207,8 @@ export class UserComponent implements OnInit {
                             user.id === data.id ? { ...user, ...data } : user
                         );
 
-                        this.users.set(_users);
+                        //this.users.set(_users);
+                        this.loadUserData();
 
                         this.userDialog = false;
                         this.user = {

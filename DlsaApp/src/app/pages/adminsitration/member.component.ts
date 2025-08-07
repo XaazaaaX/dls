@@ -137,7 +137,8 @@ export class MemberComponent {
                         detail: `${count} Mitglieder wurden erfolgreich angelegt!`
                     });
                     if (count > 0) {
-                        this.members.set([...this.members(), ...data]);
+                        //this.members.set([...this.members(), ...data]);
+                        this.loadMembers();
                     }
                     this.memberUploadDialog = false;
                 },
@@ -303,7 +304,8 @@ export class MemberComponent {
                     next: (data) => {
                         this.messageService.add({ severity: 'success', summary: 'Info', detail: 'Die Änderungen wurden erfolgreich gespeichert!' });
                         const updated = this.members().map(m => m.id === data.id ? { ...m, ...data } : m);
-                        this.members.set(updated);
+                        //this.members.set(updated);
+                        this.loadMembers();
 
                         this.memberDialog = false;
                         this.member = {};

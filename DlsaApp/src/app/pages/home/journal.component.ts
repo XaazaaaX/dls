@@ -242,7 +242,8 @@ export class JournalComponent {
                         return dateB - dateA;
                     });
 
-                    this.bookings.set(updatedBookings);
+                    //this.bookings.set(updatedBookings);
+                    this.loadBookings();
                     this.bookingDialog = false;
                     this.booking = {};
                     this.bookingDto = {};

@@ -156,7 +156,8 @@ export class CategoryComponent {
                     const updatedList = this.categories().map(category =>
                         category.id === data.id ? { ...category, ...data } : category
                     );
-                    this.categories.set(updatedList);
+                    //this.categories.set(updatedList);
+                    this.loadCategories();
 
                     this.categoryDialog = false;
                     this.category = {};

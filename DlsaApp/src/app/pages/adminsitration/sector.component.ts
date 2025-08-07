@@ -197,7 +197,8 @@ export class SectorComponent {
                     const updated = this.sectors().map(s =>
                         s.id === data.id ? { ...s, ...data } : s
                     );
-                    this.sectors.set(updated);
+                    //this.sectors.set(updated);
+                    this.loadSectors();
 
                     this.sectorDialog = false;
                     this.sector = {};

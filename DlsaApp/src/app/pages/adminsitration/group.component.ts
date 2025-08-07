@@ -162,7 +162,8 @@ export class GroupComponent {
                     const updatedGroups = this.groups().map(group =>
                         group.id === data.id ? { ...group, ...data } : group
                     );
-                    this.groups.set(updatedGroups);
+                    //this.groups.set(updatedGroups);
+                    this.loadGroups();
 
                     this.groupDialog = false;
                     this.group = {};
